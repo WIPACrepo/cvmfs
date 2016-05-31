@@ -10,8 +10,7 @@ from build_util import wget, version_dict
 
 def install_pkg(package,prefix=None,upgrade=False):
     print('installing python package',package)
-    options = ['--no-cache-dir',
-               '--allow-external', package,
+    options = ['--no-cache-dir', package,
               ]
     if prefix:
         options.extend(['--prefix',prefix])
@@ -28,7 +27,7 @@ def install_pip(dir_name,version=None):
             tmp_dir = tempfile.mkdtemp()
             path = os.path.join(tmp_dir,name)
             wget('https://bootstrap.pypa.io/get-pip.py',path)
-            if subprocess.call([os.path.join(dir_name,'bin','python'),path,'--quiet']):
+            if subprocess.call([os.path.join(dir_name,'bin','python'),path]):
                 raise Exception('pip failed to install')
         finally:
             shutil.rmtree(tmp_dir)
