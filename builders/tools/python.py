@@ -5,6 +5,7 @@ import subprocess
 import tempfile
 import shutil
 
+from distutils.version import LooseVersion
 from build_util import wget, unpack, version_dict
 
 def install(dir_name,version=None):
@@ -28,8 +29,9 @@ def install(dir_name,version=None):
                 raise Exception('python failed to install')
             # Python 3 specific symlinks
             # Assumes no python2 version is installed
-            if int(version.split(".")[0]) == 3:
-                version_short = ".".join(str(version).split(".")[0:2])
+            v = LooseVersion(version)
+            if v.version[0] == 3:
+                version_short = v.version[:2]
                 os.symlink(os.path.join(dir_name,'bin','python3'),
                            os.path.join(dir_name,'bin','python'))
                 os.symlink(os.path.join(dir_name, 'bin', 'python3-config'),
