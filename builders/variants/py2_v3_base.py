@@ -21,7 +21,7 @@ def python_packages(dir_name):
                 'urllib3==1.20','requests==2.13.0',
                 'jsonschema==2.6.0','virtualenv==15.1.0',
                 'pyOpenSSL==16.2.0','jupyter==1.0.0',
-                'pymongo==3.4.0',
+                'pymongo==3.4.0','htcondor==8.7.4rc1',
                ]
 
     for pkg in packages:
