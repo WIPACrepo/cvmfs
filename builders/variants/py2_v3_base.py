@@ -99,10 +99,15 @@ def build(src,dest,**build_kwargs):
     #tools['qt']['5.8.0'](dir_name)
 
     # build extra software
-    # not happy with ssl 1.1
-    #tools['globus']['6.0.1478289945'](dir_name)
-    #tools['gsoap']['2.8.45'](dir_name)
-    #tools['voms']['2.0.14'](dir_name)
+    before = ''
+    if 'PKG_CONFIG_PATH' in os.environ:
+        before = os.environ['PKG_CONFIG_PATH']
+    os.environ['PKG_CONFIG_PATH'] = '$SROOT/lib/pkgconfig:$SROOT/share/pkgconfig:/usr/lib64/pkgconfig:/usr/lib/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/share/pkgconfig'
+    tools['globus']['6.0.1506371041'](dir_name)
+    tools['gsoap']['2.8.55'](dir_name)
+    tools['voms']['2.0.14'](dir_name)
+    tools['uberftp']['master'](dir_name)
+    os.environ['PKG_CONFIG_PATH'] = before
 
     # build physics software
     tools['gsl']['2.3'](dir_name)
