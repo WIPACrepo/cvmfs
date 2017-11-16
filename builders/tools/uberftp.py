@@ -18,10 +18,15 @@ def install(dir_name,version=None):
             wget(url,path)
             unpack(path,tmp_dir)
             src_dir = os.path.join(tmp_dir,'UberFTP-master')
+            globus_include = os.path.join(dir_name,'include','gcc64dbg')
+            globus_flavor = 'gcc64dbg'
+            if not os.path.exists(globus_include):
+                globus_include = os.path.join(dir_name,'include')
+                globus_flavor = 'gcc64'
             if subprocess.call([os.path.join(src_dir,'configure'),
                                 '--with-globus='+dir_name,
-                                '--with-globus-flavor=gcc64dbg',
-                                '--with-globus_config='+os.path.join(dir_name,'include','gcc64dbg'),
+                                '--with-globus-flavor='+globus_flavor,
+                                '--with-globus_config='+globus_include,
                                 '--prefix='+dir_name],
                                 cwd=src_dir):
                 raise Exception('failed to configure')
