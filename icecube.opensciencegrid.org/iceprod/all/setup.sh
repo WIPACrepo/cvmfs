@@ -23,11 +23,13 @@ MANPATH=$ICEPRODROOT/man:$ICEPRODROOT/share/man:$MANPATH
 
 VARS="OS_ARCH ICEPRODBASE ICEPRODROOT PATH PYTHONPATH PKG_CONFIG_PATH LD_LIBRARY_PATH MANPATH"
 
+CUR_SHELL=`readlink "/proc/$$/exe"|awk -F'/' '{print $NF}'`
+
 IFS=' '
 for name in ${VARS}
 do
   eval VALUE=\$$name
-  case ${SHELL##*/} in
+  case ${CUR_SHELL} in
     tcsh)
         echo 'setenv '$name' '\"$VALUE\"' ;' ;;
     csh)
