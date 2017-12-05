@@ -29,6 +29,10 @@ fi
 
 $NEW_SHELL "$@"
 
+EXIT_CODE=$?
+
 if [ -z "$ARGV" ]; then
     echo "Exited IceProd env"
 fi
+
+exit $EXIT_CODE
