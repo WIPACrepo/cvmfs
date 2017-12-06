@@ -6,11 +6,14 @@ import shutil
 from functools import partial
 from collections import Iterable
 
-try:
-    import multiprocessing
-    cpu_cores = str(min(multiprocessing.cpu_count(),8))
-except ImportError:
-    cpu_cores = '1'
+if 'CPUS' in os.environ:
+    cpu_cores = os.environ['CPUS']
+else:
+    try:
+        import multiprocessing
+        cpu_cores = str(min(multiprocessing.cpu_count(),8))
+    except ImportError:
+        cpu_cores = '1'
 
 def get_module(name, class_name='build'):
     """Import module"""
