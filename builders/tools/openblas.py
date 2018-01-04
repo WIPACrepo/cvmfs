@@ -24,7 +24,9 @@ def install(dir_name,version=None):
                 f.write('NO_AVX2 = 1\n')
                 f.write('PREFIX = %s\n'%dir_name)
                 f.write('NUM_THREADS = 24\n')
-            if subprocess.call(['make', '-j', cpu_cores],cwd=openblas_dir):
+            #if subprocess.call(['make', '-j', cpu_cores],cwd=openblas_dir):
+            print('cpu cores',cpu_cores)
+            if subprocess.call(['make'],cwd=openblas_dir):
                 raise Exception('openblas failed to make')
             if subprocess.call(['make','install'],cwd=openblas_dir):
                 raise Exception('openblas failed to install')
