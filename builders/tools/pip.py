@@ -11,6 +11,7 @@ from build_util import wget, version_dict
 def install_pkg(package,prefix=None,upgrade=False,from_src=False):
     print('installing python package',package)
     options = ['--no-cache-dir', package,
+               '-I', # ignore installed packages
               ]
     if prefix:
         options.extend(['--prefix',prefix])
