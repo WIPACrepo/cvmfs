@@ -19,6 +19,8 @@ def install(dir_name,meta=None,version=None,svn_up=True,branch=False):
         try:
             if branch:
                 svn_url = 'http://code.icecube.wisc.edu/svn/meta-projects/%s/branches/%s'%(meta,version)
+            elif 'RC' in version:
+                svn_url = 'http://code.icecube.wisc.edu/svn/meta-projects/%s/candidates/%s'%(meta,version)
             elif is_release(version):
                 svn_url = 'http://code.icecube.wisc.edu/svn/meta-projects/%s/releases/%s'%(meta,version)
             else:
