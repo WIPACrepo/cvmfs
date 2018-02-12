@@ -45,6 +45,8 @@ def main():
                       help="Scratch directory (default: /tmp)")
     parser.add_option("--svnup", type="string", default=None, 
                       help="SVN update {True,False}")
+    parser.add_option("--svnonly", type="string", default=None, 
+                      help="Skip build, only do SVN {True,False}")
     parser.add_option('--debug', default=False, action='store_true')
     
     (options, args) = parser.parse_args()
@@ -67,6 +69,12 @@ def main():
         kwargs['svn_up'] = False
     elif options.svnup:
         raise Exception('unknown option for svnup: %s'%options.svnup)
+    if options.svnonly and options.svnonly.lower() in ('1','true','on','yes','y','t'):
+        kwargs['svn_only'] = True
+    elif options.svnonly and options.svnonly.lower() in ('0','false','off','no','n','f'):
+        kwargs['svn_only'] = False
+    elif options.svnonly:
+        raise Exception('unknown option for svnonly: %s'%options.svnonly)
     if options.version:
         kwargs['version'] = options.version
     if options.debug:

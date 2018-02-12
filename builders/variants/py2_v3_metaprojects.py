@@ -10,7 +10,7 @@ from build_util import *
 
 tools = get_tools()
 
-def build(src,dest,svn_up=None,**build_kwargs):
+def build(src,dest,svn_up=None,svn_only=None,**build_kwargs):
     """The main builder"""
     # first, make sure the base dir is there
     dir_name = os.path.join(dest,'py2-v3')
@@ -26,15 +26,18 @@ def build(src,dest,svn_up=None,**build_kwargs):
     kwargs = {}
     if svn_up is not None:
         kwargs['svn_up'] = svn_up
+    if svn_only is not None:
+        kwargs['svn_only'] = svn_only
 
     # releases
     tools['i3_metaproject']['simulation']['V05-02-00'](dir_name,**kwargs)
     tools['i3_metaproject']['simulation']['V06-00-00'](dir_name,**kwargs)
     tools['i3_metaproject']['simulation']['V06-00-01'](dir_name,**kwargs)
     tools['i3_metaproject']['simulation']['V06-00-02-RC1'](dir_name,**kwargs)
+    tools['i3_metaproject']['simulation']['V06-00-02-RC2'](dir_name,**kwargs)
 
     #tools['i3_metaproject']['icerec']['V05-01-00'](dir_name,**kwargs)
 
     # trunks
-    tools['i3_metaproject']['combo']['stable'](dir_name,**kwargs)
+    #tools['i3_metaproject']['combo']['stable'](dir_name,**kwargs)
 

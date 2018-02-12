@@ -11,7 +11,7 @@ from build_util import wget, unpack, version_dict, cpu_cores
 def is_release(version):
     return version not in ('trunk','stable')
 
-def install(dir_name,meta=None,version=None,svn_up=True,branch=False):
+def install(dir_name,meta=None,version=None,svn_up=True,svn_only=False,branch=False):
     build_dir = os.path.join(dir_name,'metaprojects',meta,version)
     svn_auth = ['--username','icecube','--password','skua','--non-interactive']
     if not os.path.exists(build_dir) or not is_release(version):
@@ -34,15 +34,16 @@ def install(dir_name,meta=None,version=None,svn_up=True,branch=False):
                         raise Exception('%s %s could not check out source'%(meta,version))
             elif not os.path.exists(src_dir):
                 raise Exception('source dir is empty')
-            if (not is_release(version)) and os.path.exists(build_dir):
-                shutil.rmtree(build_dir)
-            os.makedirs(build_dir)
-            if subprocess.call(['cmake', '-DCMAKE_BUILD_TYPE=Release',
-                                '-DCOPY_PYTHON_DIR=True', src_dir],
-                                cwd=build_dir):
-                raise Exception('%s %s failed to cmake'%(meta,version))
-            if subprocess.call(['make','-j',cpu_cores], cwd=build_dir):
-                raise Exception('%s %s failed to cmake'%(meta,version))
+            if not svn_only:
+                if (not is_release(version)) and os.path.exists(build_dir):
+                    shutil.rmtree(build_dir)
+                os.makedirs(build_dir)
+                if subprocess.call(['cmake', '-DCMAKE_BUILD_TYPE=Release',
+                                    '-DCOPY_PYTHON_DIR=True', src_dir],
+                                    cwd=build_dir):
+                    raise Exception('%s %s failed to cmake'%(meta,version))
+                if subprocess.call(['make','-j',cpu_cores], cwd=build_dir):
+                    raise Exception('%s %s failed to cmake'%(meta,version))
         except Exception:
             shutil.rmtree(build_dir)
             raise
