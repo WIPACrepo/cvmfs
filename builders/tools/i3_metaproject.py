@@ -45,7 +45,8 @@ def install(dir_name,meta=None,version=None,svn_up=True,svn_only=False,branch=Fa
                 if subprocess.call(['make','-j',cpu_cores], cwd=build_dir):
                     raise Exception('%s %s failed to cmake'%(meta,version))
         except Exception:
-            shutil.rmtree(build_dir)
+            if os.path.exists(build_dir):
+                shutil.rmtree(build_dir)
             raise
 
 def versions():
