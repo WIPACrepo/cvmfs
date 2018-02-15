@@ -10,7 +10,7 @@ from build_util import *
 
 tools = get_tools()
 
-def build(src,dest,svn_up=None,svn_only=None,**build_kwargs):
+def build(src,dest,svn_up=None,svn_only=None,nightly=False,**build_kwargs):
     """The main builder"""
     # first, make sure the base dir is there
     dir_name = os.path.join(dest,'py2-v3')
@@ -38,6 +38,7 @@ def build(src,dest,svn_up=None,svn_only=None,**build_kwargs):
 
     #tools['i3_metaproject']['icerec']['V05-01-00'](dir_name,**kwargs)
 
-    # trunks
-    #tools['i3_metaproject']['combo']['stable'](dir_name,**kwargs)
+    if nightly:
+        # trunks
+        tools['i3_metaproject']['combo']['stable'](dir_name,**kwargs)
 

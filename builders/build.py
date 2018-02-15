@@ -47,6 +47,8 @@ def main():
                       help="SVN update {True,False}")
     parser.add_option("--svnonly", type="string", default=None, 
                       help="Skip build, only do SVN {True,False}")
+    parser.add_option("--nightly", type="store_true", default=False, 
+                      help="This is a nightly build")
     parser.add_option('--debug', default=False, action='store_true')
     
     (options, args) = parser.parse_args()
@@ -79,6 +81,8 @@ def main():
         kwargs['version'] = options.version
     if options.debug:
         kwargs['debug'] = True
+    if options.nightly:
+        kwargs['nightly'] = True
     
     not_found = True
     for v in build_variants:
