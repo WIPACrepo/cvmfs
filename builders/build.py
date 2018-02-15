@@ -47,7 +47,7 @@ def main():
                       help="SVN update {True,False}")
     parser.add_option("--svnonly", type="string", default=None, 
                       help="Skip build, only do SVN {True,False}")
-    parser.add_option("--nightly", type="store_true", default=False, 
+    parser.add_option("--nightly", action="store_true", default=False, 
                       help="This is a nightly build")
     parser.add_option('--debug', default=False, action='store_true')
     
