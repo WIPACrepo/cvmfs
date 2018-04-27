@@ -1,5 +1,3 @@
-# build the /py2-v1 directory, for this OS
-
 import sys
 import os
 import subprocess
@@ -13,7 +11,7 @@ tools = get_tools()
 def build(src,dest,svn_up=None,svn_only=None,nightly=False,**build_kwargs):
     """The main builder"""
     # first, make sure the base dir is there
-    dir_name = os.path.join(dest,'py2-v3')
+    dir_name = os.path.join(dest,'py2-v3.0.1')
     if not os.path.isdir(dir_name):
         raise Exception('base does not exist')
 
@@ -30,15 +28,11 @@ def build(src,dest,svn_up=None,svn_only=None,nightly=False,**build_kwargs):
         kwargs['svn_only'] = svn_only
 
     # releases
-    tools['i3_metaproject']['simulation']['V05-02-00'](dir_name,**kwargs)
-    tools['i3_metaproject']['simulation']['V06-00-00'](dir_name,**kwargs)
-    tools['i3_metaproject']['simulation']['V06-00-01'](dir_name,**kwargs)
-    tools['i3_metaproject']['simulation']['V06-00-02-RC1'](dir_name,**kwargs)
-    tools['i3_metaproject']['simulation']['V06-00-02-RC2'](dir_name,**kwargs)
+#    tools['i3_metaproject']['simulation']['V06-00-02-RC2'](dir_name,**kwargs)
 
     #tools['i3_metaproject']['icerec']['V05-01-00'](dir_name,**kwargs)
 
-#    if nightly:
+    if nightly:
         # trunks
-#        tools['i3_metaproject']['combo']['stable'](dir_name,**kwargs)
+        tools['i3_metaproject']['combo']['stable'](dir_name,**kwargs)
 
