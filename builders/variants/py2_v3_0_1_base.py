@@ -15,7 +15,7 @@ tools = get_tools()
 def python_packages(dir_name):
     packages = ['setuptools==34.4.1','numpy==1.12.1','scipy==0.19.0','readline==6.2.4.1',
                 'ipython==5.3.0','pyfits==3.4','numexpr==2.6.2',
-                'Cython==0.25.2','PyMySQL==0.7.11','cffi==1.10.0',
+                'Cython==0.25.2','PyMySQL==0.7.11','cffi==1.11.5',
                 'matplotlib==2.0.0','Sphinx==1.5.5','healpy==1.10.3',
                 'spectrum==0.6.2','urwid==1.3.1',
                 'urllib3==1.20','requests==2.13.0',
