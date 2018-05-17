@@ -23,7 +23,9 @@ case $DISTRIB in
         ;;
     "ubuntu")
         DISTRIB="Ubuntu"
-        if echo $VERSION | grep -q '17\.\?'; then
+        if echo $VERSION | grep -q '18\.\?'; then
+            VERSION="18.04"
+        elif echo $VERSION | grep -q '17\.\?'; then
             VERSION="16.04"
         elif echo $VERSION | grep -q '16\.\?'; then
             VERSION="16.04"
@@ -41,8 +43,12 @@ case $DISTRIB in
         ;;
     "debian")
         DISTRIB="Ubuntu"
-        if [ "$VERSION" = "testing" ]; then
-            VERSION="16.04"
+        if [ "$VERSION" = "unstable" ]; then
+            VERSION="18.04"
+        elif [ "$VERSION" = "testing" ]; then
+            VERSION="18.04"
+        elif echo $VERSION | grep -q '10\.\?'; then
+            VERSION="18.04"
         elif echo $VERSION | grep -q '9\.\?'; then
             VERSION="16.04"
         elif echo $VERSION | grep -q '8\.\?'; then
