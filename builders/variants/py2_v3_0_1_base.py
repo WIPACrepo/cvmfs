@@ -13,7 +13,7 @@ from build_util import *
 tools = get_tools()
 
 def python_packages(dir_name):
-    packages = ['setuptools==34.4.1','numpy==1.12.1','scipy==0.19.0','readline==6.2.4.1',
+    packages = ['setuptools==34.4.1','numpy==1.14.0','scipy==0.19.0','readline==6.2.4.1',
                 'ipython==5.3.0','pyfits==3.4','numexpr==2.6.2',
                 'Cython==0.25.2','PyMySQL==0.7.11','cffi==1.10.0',
                 'matplotlib==2.0.0','Sphinx==1.5.5','healpy==1.10.3',
