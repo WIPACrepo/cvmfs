@@ -40,6 +40,8 @@ def install(dir_name,version=None):
             elif int(version[0]) >= 6:
                 if subprocess.call([os.path.join(globus_dir,'configure'),
                                     '--disable-gram5','--disable-myproxy',
+                                    '--with-ltdl-include='+os.path.join(dir_name,'include'),
+                                    '--with-ltdl-lib='+os.path.join(dir_name,'lib'),
                                     '--prefix',dir_name],cwd=globus_dir):
                     raise Exception('globus failed to configure')
                 if subprocess.call(['make', '-j', cpu_cores],cwd=globus_dir):

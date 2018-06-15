@@ -13,7 +13,7 @@ from build_util import *
 tools = get_tools()
 
 def python_packages(dir_name):
-    packages = ['setuptools==34.4.1','numpy==1.12.1','scipy==0.19.0','readline==6.2.4.1',
+    packages = ['setuptools==34.4.1','numpy==1.14.0','scipy==0.19.0','readline==6.2.4.1',
                 'ipython==5.3.0','pyfits==3.4','numexpr==2.6.2',
                 'Cython==0.25.2','PyMySQL==0.7.11','cffi==1.10.0',
                 'matplotlib==2.0.0','Sphinx==1.5.5','healpy==1.10.3',
@@ -55,7 +55,7 @@ def python_packages(dir_name):
 def build(src,dest,**build_kwargs):
     """The main builder"""
     # make sure the base dir is there
-    srootbase = os.path.join(dest,'py2-v3')
+    srootbase = os.path.join(dest,'py2-v3.0.1')
     copy_src(os.path.join(src,'py2-v3'),srootbase)
 
     orig_env = os.environ.copy()
@@ -105,7 +105,10 @@ def build(src,dest,**build_kwargs):
     os.environ['PKG_CONFIG_PATH'] = '$SROOT/lib/pkgconfig:$SROOT/share/pkgconfig:/usr/lib64/pkgconfig:/usr/lib/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/share/pkgconfig'
     tools['globus']['6.0.1506371041'](dir_name)
     tools['gsoap']['2.8.55'](dir_name)
-    tools['voms']['2.0.14'](dir_name)
+    if os.environ['OS_ARCH'] == 'Ubuntu_18.04_x86_64':
+        tools['voms']['2.1.0-rc0'](dir_name)
+    else:
+        tools['voms']['2.0.14'](dir_name)
     tools['uberftp']['master'](dir_name)
     os.environ['PKG_CONFIG_PATH'] = before
 
@@ -139,8 +142,8 @@ def build(src,dest,**build_kwargs):
     python_packages(dir_name)
 
     # tools that require python packages
-    tools['boostnumpy']['master'](dir_name)
-    tools['photospline']['2.0.0'](dir_name)
+    #tools['boostnumpy']['master'](dir_name) # provided upstream by boost
+    tools['photospline']['2.0.1'](dir_name)
 
     # copy "tools"
     for t in ('libgfortran',):

@@ -8,7 +8,7 @@ import glob
 
 from build_util import wget, version_dict
 
-def install_pkg(package,prefix=None,upgrade=False):
+def install_pkg(package,prefix=None,upgrade=False,from_src=False,ignore_installed=False):
     print('installing python package',package)
     options = ['--no-cache-dir', package,
               ]
@@ -16,6 +16,12 @@ def install_pkg(package,prefix=None,upgrade=False):
         options.extend(['--prefix',prefix])
     if upgrade:
         options.append('--upgrade')
+    if from_src:
+        options.extend(['--no-binary',':all:'])
+    if ignore_installed:
+        # this option is important for py2-v2, but doesn't seem relevant
+        # for py2-v3
+        options.extend(['-I'])
     if subprocess.call(['pip','install']+options+[package]):
         raise Exception(package+' failed to install')
 

@@ -18,13 +18,18 @@ def install(dir_name,version=None):
             url = os.path.join('http://downloads.sourceforge.net/project/gsoap2',
                                'gsoap-%s' % version_short,
                                name)
-            wget(url,path)
+            try:
+                wget(url,path)
+            except:
+                url = os.path.join('http://downloads.sourceforge.net/project/gsoap2/oldreleases',
+                                   name)
+                wget(url,path)
             unzip(path,tmp_dir)
             gsoap_dir = os.path.join(tmp_dir,'gsoap-'+'.'.join(version.split('.')[:2]))
             if subprocess.call([os.path.join(gsoap_dir,'configure'),
                                 '--prefix',dir_name,'--disable-static'],cwd=gsoap_dir):
                 raise Exception('gsoap failed to configure')
-            if subprocess.call(['make', '-j', cpu_cores],cwd=gsoap_dir):
+            if subprocess.call(['make'],cwd=gsoap_dir):
                 raise Exception('gsoap failed to make')
             if subprocess.call(['make','install'],cwd=gsoap_dir):
                 raise Exception('gsoap failed to install')

@@ -39,10 +39,17 @@ def main():
                       help="Source for repository template")
     parser.add_option("--variant", type="string", default=None, 
                       help="Specific variant to build")
+    parser.add_option("--version", type="string", default=None, 
+                      help="Specific version of variant to build")
     parser.add_option("--scratch", type="string", default=None, 
                       help="Scratch directory (default: /tmp)")
     parser.add_option("--svnup", type="string", default=None, 
                       help="SVN update {True,False}")
+    parser.add_option("--svnonly", type="string", default=None, 
+                      help="Skip build, only do SVN {True,False}")
+    parser.add_option("--nightly", action="store_true", default=False, 
+                      help="This is a nightly build")
+    parser.add_option('--debug', default=False, action='store_true')
     
     (options, args) = parser.parse_args()
     
@@ -64,6 +71,18 @@ def main():
         kwargs['svn_up'] = False
     elif options.svnup:
         raise Exception('unknown option for svnup: %s'%options.svnup)
+    if options.svnonly and options.svnonly.lower() in ('1','true','on','yes','y','t'):
+        kwargs['svn_only'] = True
+    elif options.svnonly and options.svnonly.lower() in ('0','false','off','no','n','f'):
+        kwargs['svn_only'] = False
+    elif options.svnonly:
+        raise Exception('unknown option for svnonly: %s'%options.svnonly)
+    if options.version:
+        kwargs['version'] = options.version
+    if options.debug:
+        kwargs['debug'] = True
+    if options.nightly:
+        kwargs['nightly'] = True
     
     not_found = True
     for v in build_variants:

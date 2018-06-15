@@ -12,8 +12,10 @@ def install(dir_name,version=None):
         print('installing photospline version',version)
         if version=='master':
             name = 'master.tar.gz'
-        else:
+        elif version=='2.0.0':
             name = 'v'+str(version)+'.tar.gz'
+        else:
+            name = str(version)+'.tar.gz'
         try:
             tmp_dir = tempfile.mkdtemp()
             path = os.path.join(tmp_dir,name)
