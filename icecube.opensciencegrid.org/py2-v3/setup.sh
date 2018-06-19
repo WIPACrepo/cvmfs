@@ -194,27 +194,27 @@ if [ -d ${sroot_pcfg} ]; then
 fi
 
 # prepend SROOT Perl libraries to PERL5LIB
-tmp_path=
+tmp_path=''
 for subdir in perl perl5 perl5/site_perl; do
     tmp_dir="$SROOT/lib/$subdir"
     if [ -d ${tmp_dir} ]; then
         tmp_path=$(appendPath "$tmp_path" "$tmp_dir")
     fi
 done
-if [ ! -z ${tmp_path} ]; then
+if [ "" != "${tmp_path}" ]; then
     PERL5LIB=$(prependPath "$PERL5LIB" "$tmp_path")
     VARS=$(modifyList "$VARS" "PERL5LIB")
 fi
 
 # prepend SROOT manual page directories to MANPATH
-tmp_path=
+tmp_path=''
 for subdir in man share/man; do
     tmp_dir="$SROOT/$subdir"
     if [ -d ${tmp_dir} ]; then
         tmp_path=$(appendPath "$tmp_path" "$tmp_dir")
     fi
 done
-if [ ! -z ${tmp_path} ]; then
+if [ "" != "${tmp_path}" ]; then
     MANPATH=$(prependPath "$MANPATH" "$tmp_path")
     VARS=$(modifyList "$VARS" "MANPATH")
 fi
