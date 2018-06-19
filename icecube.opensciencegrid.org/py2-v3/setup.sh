@@ -56,12 +56,12 @@ modifyList() {
 
 # append the second argument to the path list
 appendPath() {
-    modifyList ${1} ${2} ":"
+    modifyList "$1" "$2" ":"
 }
 
 # prepend the second argument to the path list
 prependPath() {
-    modifyList ${1} ${2} ":" before
+    modifyList "$1" "$2" ":" before
 }
 
 # find the architecture-specific Java executable
@@ -262,7 +262,7 @@ if ([ -z ${tmp_home} ] || [ ! -f ${tmp_home}/bin/java ]); then
             VARS=$(modifyList "$VARS" "JAVA_HOME")
 
             LD_LIBRARY_PATH=$(prependPath "$LD_LIBRARY_PATH" "$tmp_path")
-            VARS=$(modifyList "$VARS" "JAVA_HOME")
+            VARS=$(modifyList "$VARS" "LD_LIBRARY_PATH")
         fi
     fi
 fi
@@ -375,7 +375,7 @@ CUR_SHELL=`readlink "/proc/$$/exe"|awk -F'/' '{print $NF}'`
 for name in ${VARS}
 do
   eval VALUE=\$$name
-  case ${CUR_SHELL} in 
+  case ${CUR_SHELL} in
         tcsh)
             echo 'setenv '$name' '\"$VALUE\"' ;' ;;
         csh)
