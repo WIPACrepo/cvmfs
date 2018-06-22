@@ -95,4 +95,5 @@ case $DISTRIB in
 esac
 
 OS_ARCH=${DISTRIB}_${VERSION}_${ARCH}
+echo ${OS_ARCH}
 export OS_ARCH
