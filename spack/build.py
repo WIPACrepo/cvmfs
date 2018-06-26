@@ -45,6 +45,64 @@ def run_cmd(*args, **kwargs):
     print('cmd:',*args)
     subprocess.check_call(*args, **kwargs)
 
+def disable_compiler(spack_path, compiler):
+    """
+    Disable the compiler config for spack.
+
+    Args:
+        spack_path (str): path to spack
+        compiler (str): name of compiler package
+    """
+    print('disable_compiler',compiler)
+    spack_bin = os.path.join(spack_path,'bin','spack')
+
+    # get arch
+    p = subprocess.Popen([spack_bin, 'arch'],
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE)
+    output = p.communicate()[0]
+    spack_arch = output.strip(' \n')
+    platform = spack_arch.split('-')[1]
+
+    # update compilers.yaml
+    compiler_cfg = os.path.join(spack_path,'etc','spack','compilers.yaml')
+    if os.path.exists(compiler_cfg):
+        with open(compiler_cfg) as f:
+            compiler_txt = f.read()
+        compiler_lines = compiler_txt.split('\n')
+        start_line = -1
+        output_lines = []
+        for i,line in enumerate(compiler_lines):
+            if line == '- compiler:':
+                if start_line > 0:
+                    output_lines.extend(compiler_lines[start_line:i])
+                start_line = i
+            elif 'operating_system: {}'.format(platform) in line:
+                start_line = -1 # erase this compiler
+        if start_line > 0:
+            output_lines.extend(compiler_lines[start_line:])
+
+        if output_lines:
+            with open(compiler_cfg, 'w') as f:
+                f.write('compilers:\n')
+                for line in output_lines:
+                    f.write(line+'\n')
+        else:
+            os.remove(compiler_cfg)
+
+    # update packages.yaml
+    packages_cfg = os.path.join(spack_path,'etc','spack','packages.yaml')
+    if os.path.exists(packages_cfg):
+        with open(packages_cfg) as f:
+            packages_txt = f.read()
+    else:
+        packages_txt = 'packages:\n  all:'
+    with open(packages_cfg,'w') as f:
+        for line in packages_txt.split('\n'):
+            if 'compiler:' in line:
+                continue
+            f.write(line+'\n')
+
 def update_compiler(spack_path, compiler):
     """
     Update the compiler config for spack.
@@ -53,6 +111,7 @@ def update_compiler(spack_path, compiler):
         spack_path (str): path to spack
         compiler (str): name of compiler package
     """
+    print('update_compiler',compiler)
     spack_bin = os.path.join(spack_path,'bin','spack')
 
     # get arch
@@ -78,7 +137,7 @@ def update_compiler(spack_path, compiler):
         with open(compiler_cfg) as f:
             compiler_txt = f.read()
     else:
-        compiler_txt = 'compilers:'
+        compiler_txt = 'compilers:\n'
     compiler_txt += """
 - compiler:
     modules: []
@@ -98,9 +157,9 @@ def update_compiler(spack_path, compiler):
         with open(packages_cfg) as f:
             packages_txt = f.read()
     else:
-        packages_txt = 'packages:\n  all:'
+        packages_txt = 'packages:\n  all:\n'
     if 'compiler' not in packages_txt:
-        packages_txt.replace('all:','all:\n    compiler: [{}spack]'.format(compiler))
+        packages_txt = packages_txt.replace('all:','all:\n    compiler: [{}spack]'.format(compiler))
         with open(packages_cfg,'w') as f:
             f.write(packages_txt)
 
@@ -147,17 +206,20 @@ def build(src, dest, version):
         path = os.path.join(os.path.dirname(__file__), version+'-compiler')
         if os.path.exists(path):
             packages = get_packages(path)
-            cmd = [spack_bin, 'install', '-y']
-            if 'CPUS' in os.environ:
-                cmd.extend(['-j', os.environ['CPUS']])
             compiler_package = None
             for name, package in packages:
-                print('installing', name)
-                run_cmd(cmd+package.split())
                 if 'gcc' in name:
                     compiler_package = package.split()[0]
             if not compiler_package:
                 raise Exception('could not find compiler package name')
+            disable_compiler(spack_path, compiler_package)
+
+            cmd = [spack_bin, 'install', '-y']
+            if 'CPUS' in os.environ:
+                cmd.extend(['-j', os.environ['CPUS']])
+            for name, package in packages:
+                print('installing', name)
+                run_cmd(cmd+package.split())
             update_compiler(spack_path, compiler_package)
         
         # install packages
