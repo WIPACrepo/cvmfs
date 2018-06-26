@@ -45,6 +45,65 @@ def run_cmd(*args, **kwargs):
     print('cmd:',*args)
     subprocess.check_call(*args, **kwargs)
 
+def update_compiler(spack_path, compiler):
+    """
+    Update the compiler config for spack.
+
+    Args:
+        spack_path (str): path to spack
+        compiler (str): name of compiler package
+    """
+    spack_bin = os.path.join(spack_path,'bin','spack')
+
+    # get arch
+    p = subprocess.Popen([spack_bin, 'arch'],
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE)
+    output = p.communicate()[0]
+    spack_arch = output.strip(' \n')
+    platform = spack_arch.split('-')[1]
+
+    # get compiler
+    p = subprocess.Popen([spack_bin, 'location', '-i', compiler],
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE)
+    output = p.communicate()[0]
+    loc = output.strip(' \n')
+    if (not loc) or not os.path.exists(loc):
+        raise Exception('cannot find compiler '+compiler)
+
+    # update compilers.yaml
+    compiler_cfg = os.path.join(spack_path,'etc','spack','compilers.yaml')
+    if os.path.exists(compiler_cfg):
+        with open(compiler_cfg) as f:
+            compiler_txt = f.read()
+    else:
+        compiler_txt = 'compilers:'
+    compiler_txt += """
+- compiler:
+    modules: []
+    operating_system: {0}
+    paths:
+      cc: {1}/bin/gcc
+      cxx: {1}/bin/g++
+      f77: {1}/bin/gfortran
+      fc: {1}/bin/gfortran
+    spec: {2}spack""".format(platform, loc, compiler)
+    with open(compiler_cfg, 'w') as f:
+        f.write(compiler_txt)
+
+    # update packages.yaml
+    packages_cfg = os.path.join(spack_path,'etc','spack','packages.yaml')
+    if os.path.exists(packages_cfg):
+        with open(packages_cfg) as f:
+            packages_txt = f.read()
+    else:
+        packages_txt = 'packages:\n  all:'
+    if 'compiler' not in packages_txt:
+        packages_txt.replace('all:','all:\n    compiler: [{}spack]'.format(compiler))
+        with open(packages_cfg,'w') as f:
+            f.write(packages_txt)
+
 def get_packages(filename):
     """
     Get packages from a file.
@@ -52,16 +111,16 @@ def get_packages(filename):
     Args:
         filename (str): the filename to read from
     Returns:
-        dict: {package name: install string}
+        list: [(package name, install string)]
     """
-    ret = {}
+    ret = []
     with open(filename) as f:
         for line in f.read().split('\n'):
             line = line.strip()
-            if line.startswith('#'):
+            if (not line) or line.startswith('#'):
                 continue
             name = line.split('@',1)[0]
-            ret[name] = line
+            ret.append((name, line))
     return ret
 
 def build(src, dest, version):
@@ -78,29 +137,46 @@ def build(src, dest, version):
     os.environ['SPACK_ROOT'] = spack_path
     spack_bin = os.path.join(spack_path,'bin','spack')
     try:
-        run_cmd([spack_bin, 'repo', 'add',
+        run_cmd([spack_bin, 'repo', 'add', '--scope', 'site',
                  os.path.join(os.path.dirname(__file__),'repo')])
     except Exception:
         pass
 
     try:
+        # setup compiler
+        path = os.path.join(os.path.dirname(__file__), version+'-compiler')
+        if os.path.exists(path):
+            packages = get_packages(path)
+            cmd = [spack_bin, 'install', '-y']
+            if 'CPUS' in os.environ:
+                cmd.extend(['-j', os.environ['CPUS']])
+            compiler_package = None
+            for name, package in packages:
+                print('installing', name)
+                run_cmd(cmd+package.split())
+                if 'gcc' in name:
+                    compiler_package = package.split()[0]
+            if not compiler_package:
+                raise Exception('could not find compiler package name')
+            update_compiler(spack_path, compiler_package)
+        
         # install packages
         packages = get_packages(os.path.join(os.path.dirname(__file__), version))
 
         cmd = [spack_bin, 'install', '-y']
         if 'CPUS' in os.environ:
             cmd.extend(['-j', os.environ['CPUS']])
-        for p in packages:
-            print('installing',p)
-            run_cmd(cmd+packages[p].split())
+        for name, package in packages:
+            print('installing', name)
+            run_cmd(cmd+package.split())
 
         # set up view
         copy_src(os.path.join(src,version), os.path.join(dest,version))
         sroot = get_sroot(os.path.join(dest,version))
         cmd = [spack_bin, 'view', 'soft', '-i', sroot]
-        for p in packages:
-            print('adding',p,'to view')
-            run_cmd(cmd+packages[p].split()[:1])
+        for name, package in packages:
+            print('adding', name, 'to view')
+            run_cmd(cmd+package.split()[:1])
 
     finally:
         # cleanup
