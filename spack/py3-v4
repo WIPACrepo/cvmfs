@@ -25,23 +25,24 @@ globus-toolkit@6.0.1506371041
 #voms
 uberftp@2_8
 
-# physics libraries
+# numeric libraries
 gsl@2.4
-boost@1.67.0 date_time=True numpy=True python=True
 #sprng
 openblas@0.3.0 cpu_target=SSE_GENERIC virtual_machine=True
-suite-sparse@5.2.0
+suite-sparse@5.2.0 ^openblas@0.3.0 cpu_target=SSE_GENERIC virtual_machine=True
+
+# core libraries
+py-numpy@1.14.3 ^python@3.6.5 ^openblas@0.3.0 cpu_target=SSE_GENERIC virtual_machine=True
+py-scipy@1.1.0 ^python@3.6.5 ^openblas@0.3.0 cpu_target=SSE_GENERIC virtual_machine=True
+boost@1.67.0 date_time=True numpy=True python=True ^python@3.6.5 ^openblas@0.3.0 cpu_target=SSE_GENERIC virtual_machine=True
+
+# physics libraries
 cfitsio@3.420
 fftw@3.3.7 mpi=False simd=sse2
 #cdk
-gnuplot@5.2.2
+###gnuplot@5.2.2 ^python@3.6.5  # wants glib dependency
 hdf5@1.10.2 cxx=True hl=True mpi=False
-nlopt@2.4.2 build_type=Release cxx=True python=False
-
-# python packages
-py-numpy@1.14.3 ^python@3.6.5
-py-scipy@1.1.0 ^python@3.6.5
-py-gnuplot@1.8 ^python@3.6.5
+###nlopt@2.4.2 build_type=Release cxx=True python=False # only builds from master
 
 # physics applications
 #erfa
@@ -53,7 +54,7 @@ geant4@10.04 cxx11=False cxx14=True
 #genie
 
 # extra python packages
-
+###py-gnuplot@1.8 ^python@3.6.5
 
 # icecube packages
 #photospline

@@ -184,14 +184,13 @@ def get_packages(filename):
 
 def build(src, dest, version):
     print('building version',version)
+    del os.environ['PYTHONPATH']
 
     # set up spack
     spack_path = os.path.join(dest, 'spack')
     if not os.path.exists(spack_path):
         url = 'https://github.com/spack/spack.git'
         run_cmd(['git', 'clone', url, spack_path])
-    #copy_src(os.path.join(os.path.dirname(__file__),'etc'),
-    #         os.path.join(spack_path,'etc'))
         
     os.environ['SPACK_ROOT'] = spack_path
     spack_bin = os.path.join(spack_path,'bin','spack')
@@ -203,10 +202,10 @@ def build(src, dest, version):
 
     try:
         # setup compiler
+        compiler_package = ''
         path = os.path.join(os.path.dirname(__file__), version+'-compiler')
         if os.path.exists(path):
             packages = get_packages(path)
-            compiler_package = None
             for name, package in packages:
                 if 'gcc' in name:
                     compiler_package = package.split()[0]
@@ -226,19 +225,26 @@ def build(src, dest, version):
         packages = get_packages(os.path.join(os.path.dirname(__file__), version))
 
         cmd = [spack_bin, 'install', '-y']
+        cmd_activate = [spack_bin, 'activate']
         if 'CPUS' in os.environ:
             cmd.extend(['-j', os.environ['CPUS']])
         for name, package in packages:
             print('installing', name)
             run_cmd(cmd+package.split())
+            if name.startswith('py-'):
+                run_cmd(cmd_activate+[name])
 
         # set up view
         copy_src(os.path.join(src,version), os.path.join(dest,version))
         sroot = get_sroot(os.path.join(dest,version))
+        run_cmd([spack_bin, 'view', '-d', 'false', 'soft', '-i', sroot, compiler_package])
         cmd = [spack_bin, 'view', 'soft', '-i', sroot]
         for name, package in packages:
             print('adding', name, 'to view')
-            run_cmd(cmd+package.split()[:1])
+            view_cmd = cmd+package.split()[:1]
+            if compiler_package:
+                view_cmd[-1] += '%'+compiler_package+'spack'
+            run_cmd(view_cmd)
 
     finally:
         # cleanup
