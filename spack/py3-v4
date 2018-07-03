@@ -7,22 +7,23 @@ libffi@3.2.1
 libarchive@3.3.2
 libxml2@2.9.8
 zstd@1.3.0
-#blosc
+snappy@1.1.7
+c-blosc@1.14.3 avx2=False
 zeromq@4.2.5
 
 # system applications
 sqlite@3.23.1
 python@3.6.5
 cmake@3.11.4
-#log4cpp
+log4cpp@1.1.3
 
 # basic python
 py-pip@10.0.1 ^python@3.6.5
 
 # file transfer tools
 globus-toolkit@6.0.1506371041
-#gsoap
-#voms
+gsoap@2.8.55
+voms@2.0.14 ^gsoap@2.8.55
 uberftp@2_8
 
 # numeric libraries
@@ -39,14 +40,14 @@ boost@1.67.0 date_time=True numpy=True python=True ^python@3.6.5 ^openblas@0.3.0
 # physics libraries
 cfitsio@3.420
 fftw@3.3.7 mpi=False simd=sse2
-#cdk
+cdk@5.0-20180306
 ###gnuplot@5.2.2 ^python@3.6.5  # wants glib dependency
 hdf5@1.10.2 cxx=True hl=True mpi=False
-###nlopt@2.4.2 build_type=Release cxx=True python=False # only builds from master
+###nlopt@2.4.2 cxx=True python=False # only builds from master
 
 # physics applications
-#erfa
-#pal
+erfa@1.4.0
+pal@develop
 #healpix
 #pythia
 #root
@@ -57,4 +58,4 @@ geant4@10.04 cxx11=False cxx14=True
 ###py-gnuplot@1.8 ^python@3.6.5
 
 # icecube packages
-#photospline
+photospline@2.0.1

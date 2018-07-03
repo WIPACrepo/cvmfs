@@ -224,15 +224,15 @@ def build(src, dest, version):
         # install packages
         packages = get_packages(os.path.join(os.path.dirname(__file__), version))
 
-        cmd = [spack_bin, 'install', '-y']
-        cmd_activate = [spack_bin, 'activate']
+        cmd = [spack_bin, 'install', '-y', '--no-checksum']
+        cmd_deactivate = [spack_bin, 'deactivate', '-f', '-a']
         if 'CPUS' in os.environ:
             cmd.extend(['-j', os.environ['CPUS']])
         for name, package in packages:
             print('installing', name)
             run_cmd(cmd+package.split())
-            if name.startswith('py-'):
-                run_cmd(cmd_activate+[name])
+            if name.startswith('py-'): # make sure it's deactivated
+                run_cmd(cmd_deactivate+[name])
 
         # set up view
         copy_src(os.path.join(src,version), os.path.join(dest,version))
@@ -245,6 +245,21 @@ def build(src, dest, version):
             if compiler_package:
                 view_cmd[-1] += '%'+compiler_package+'spack'
             run_cmd(view_cmd)
+
+        # activate python
+        cmd_activate = [spack_bin, 'activate']
+        for name, package in packages:
+            if name.startswith('py-'):
+                print('activating', name)
+                run_cmd(cmd_activate+[name])
+
+        # make I3_DATA symlinks
+        i3_data = os.path.join(os.path.dirname(os.path.abspath(dest)),'data')
+        for path in ('etc/vomsdir','etc/vomses','share/certificates',
+                     'share/vomsdir'):
+            if not os.path.lexists(os.path.join(sroot,path)):
+                os.symlink(os.path.join(i3_data,'voms',path),
+                           os.path.join(sroot,path))
 
     finally:
         # cleanup
