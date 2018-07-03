@@ -28,7 +28,7 @@ uberftp@2_8
 
 # numeric libraries
 gsl@2.4
-#sprng
+sprng@2.0b
 openblas@0.3.0 cpu_target=SSE_GENERIC virtual_machine=True
 suite-sparse@5.2.0 ^openblas@0.3.0 cpu_target=SSE_GENERIC virtual_machine=True
 
