@@ -48,7 +48,7 @@ hdf5@1.10.2 cxx=True hl=True mpi=False
 # physics applications
 erfa@1.4.0
 pal@develop
-#healpix
+healpix@3.31
 #pythia
 #root
 geant4@10.04 cxx11=False cxx14=True
