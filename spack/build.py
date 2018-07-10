@@ -186,19 +186,44 @@ def build(src, dest, version):
     print('building version',version)
     del os.environ['PYTHONPATH']
 
+    srootbase = os.path.join(dest,version)
+    copy_src(os.path.join(src,version), srootbase)
+    sroot = get_sroot(srootbase)
+    if not os.path.isdir(sroot):
+        os.makedirs(sroot)
+
+    # make I3_DATA symlinks
+    i3_data = os.path.join(dest,'data')
+    for path in ('etc/vomsdir','etc/vomses','share/certificates',
+                 'share/vomsdir'):
+        basedir = os.path.join(sroot,os.path.dirname(path))
+        if not os.path.isdir(basedir):
+            os.makedirs(basedir)
+        if not os.path.lexists(os.path.join(sroot,path)):
+            os.symlink(os.path.join(i3_data,'voms',path),
+                       os.path.join(sroot,path))
+
     # set up spack
-    spack_path = os.path.join(dest, 'spack')
+    spack_path = os.path.join(srootbase, 'spack')
     if not os.path.exists(spack_path):
         url = 'https://github.com/spack/spack.git'
         run_cmd(['git', 'clone', url, spack_path])
         
     os.environ['SPACK_ROOT'] = spack_path
     spack_bin = os.path.join(spack_path,'bin','spack')
+
     try:
         run_cmd([spack_bin, 'repo', 'add', '--scope', 'site',
                  os.path.join(os.path.dirname(__file__),'repo')])
     except Exception:
         pass
+
+    hep_repo_path = os.path.join(spack_path,'spack/var/spack/repos/hep-spack')
+    if not os.path.exists(spack_path):
+        url = 'https://github.com/HEP-SF/hep-spack.git'
+        run_cmd(['git', 'clone', url, hep_repo_path])
+        run_cmd([spack_bin, 'repo', 'add', '--scope', 'site',
+                 hep_repo_path])
 
     try:
         # setup compiler
@@ -223,21 +248,16 @@ def build(src, dest, version):
         
         # install packages
         packages = get_packages(os.path.join(os.path.dirname(__file__), version))
-
         cmd = [spack_bin, 'install', '-y', '--no-checksum']
-        cmd_deactivate = [spack_bin, 'deactivate', '-f', '-a']
         if 'CPUS' in os.environ:
             cmd.extend(['-j', os.environ['CPUS']])
         for name, package in packages:
             print('installing', name)
             run_cmd(cmd+package.split())
-            if name.startswith('py-'): # make sure it's deactivated
-                run_cmd(cmd_deactivate+[name])
 
         # set up view
-        copy_src(os.path.join(src,version), os.path.join(dest,version))
-        sroot = get_sroot(os.path.join(dest,version))
-        run_cmd([spack_bin, 'view', '-d', 'false', 'soft', '-i', sroot, compiler_package])
+        if compiler_package:
+            run_cmd([spack_bin, 'view', '-d', 'false', 'soft', '-i', sroot, compiler_package])
         cmd = [spack_bin, 'view', 'soft', '-i', sroot]
         for name, package in packages:
             print('adding', name, 'to view')
@@ -246,24 +266,9 @@ def build(src, dest, version):
                 view_cmd[-1] += '%'+compiler_package+'spack'
             run_cmd(view_cmd)
 
-        # activate python
-        cmd_activate = [spack_bin, 'activate']
-        for name, package in packages:
-            if name.startswith('py-'):
-                print('activating', name)
-                run_cmd(cmd_activate+[name])
-
-        # make I3_DATA symlinks
-        i3_data = os.path.join(os.path.dirname(os.path.abspath(dest)),'data')
-        for path in ('etc/vomsdir','etc/vomses','share/certificates',
-                     'share/vomsdir'):
-            if not os.path.lexists(os.path.join(sroot,path)):
-                os.symlink(os.path.join(i3_data,'voms',path),
-                           os.path.join(sroot,path))
-
     finally:
         # cleanup
-        run_cmd([spack_bin,'clean','-s','-d'])
+        pass#run_cmd([spack_bin,'clean','-s','-d'])
 
 if __name__ == '__main__':
     from optparse import OptionParser

@@ -13,12 +13,12 @@ zeromq@4.2.5
 
 # system applications
 sqlite@3.23.1
-python@3.6.5
+python@3.6.5+optimizations
 cmake@3.11.4
 log4cpp@1.1.3
 
 # basic python
-py-pip@10.0.1 ^python@3.6.5
+py-pip@10.0.1 ^python@3.6.5+optimizations
 
 # file transfer tools
 globus-toolkit@6.0.1506371041
@@ -33,29 +33,29 @@ openblas@0.3.0 cpu_target=SSE_GENERIC virtual_machine=True
 suite-sparse@5.2.0 ^openblas@0.3.0 cpu_target=SSE_GENERIC virtual_machine=True
 
 # core libraries
-py-numpy@1.14.3 ^python@3.6.5 ^openblas@0.3.0 cpu_target=SSE_GENERIC virtual_machine=True
-py-scipy@1.1.0 ^python@3.6.5 ^openblas@0.3.0 cpu_target=SSE_GENERIC virtual_machine=True
-boost@1.67.0 date_time=True numpy=True python=True ^python@3.6.5 ^openblas@0.3.0 cpu_target=SSE_GENERIC virtual_machine=True
+py-numpy@1.14.3 ^python@3.6.5+optimizations ^openblas@0.3.0 cpu_target=SSE_GENERIC virtual_machine=True
+py-scipy@1.1.0 ^python@3.6.5+optimizations ^openblas@0.3.0 cpu_target=SSE_GENERIC virtual_machine=True
+boost@1.67.0 date_time=True numpy=True python=True ^python@3.6.5+optimizations ^openblas@0.3.0 cpu_target=SSE_GENERIC virtual_machine=True
 
 # physics libraries
 cfitsio@3.420
 fftw@3.3.7 mpi=False simd=sse2
 cdk@5.0-20180306
-###gnuplot@5.2.2 ^python@3.6.5  # wants glib dependency
+gnuplot@5.2.2 ^python@3.6.5+optimizations
 hdf5@1.10.2 cxx=True hl=True mpi=False
 ###nlopt@2.4.2 cxx=True python=False # only builds from master
 
 # physics applications
 erfa@1.4.0
 pal@develop
-healpix@3.31
+healpix@3.31 ^cfitsio@3.420
 #pythia
 #root
-geant4@10.04 cxx11=False cxx14=True
+geant4@10.04
 #genie
 
 # extra python packages
-###py-gnuplot@1.8 ^python@3.6.5
+###py-gnuplot@1.8 ^python@3.6.5+optimizations
 
 # icecube packages
-photospline@2.0.1
+photospline@2.0.1 ^cfitsio@3.420
