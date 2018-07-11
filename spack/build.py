@@ -184,7 +184,8 @@ def get_packages(filename):
 
 def build(src, dest, version):
     print('building version',version)
-    del os.environ['PYTHONPATH']
+    if 'PYTHONPATH' in os.environ:
+        del os.environ['PYTHONPATH']
 
     srootbase = os.path.join(dest,version)
     copy_src(os.path.join(src,version), srootbase)
