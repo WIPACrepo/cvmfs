@@ -205,7 +205,7 @@ def build(src, dest, version):
                        os.path.join(sroot,path))
 
     # set up spack
-    spack_path = os.path.join(sroot, 'spack')
+    spack_path = os.path.join(srootbase, 'spack')
     if not os.path.exists(spack_path):
         url = 'https://github.com/spack/spack.git'
         run_cmd(['git', 'clone', url, spack_path])
