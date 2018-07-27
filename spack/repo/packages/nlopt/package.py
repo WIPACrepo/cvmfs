@@ -25,7 +25,7 @@
 from spack import *
 
 
-class Nlopt(CMakePackage):
+class Nlopt(AutotoolsPackage):
     """NLopt is a free/open-source library for nonlinear optimization,
     providing a common interface for a number of different free optimization
     routines available online as well as original implementations of various
@@ -34,10 +34,11 @@ class Nlopt(CMakePackage):
     homepage = "https://nlopt.readthedocs.io"
     url      = "https://github.com/stevengj/nlopt/releases/download/nlopt-2.4.2/nlopt-2.4.2.tar.gz"
 
-    version('develop', git='https://github.com/stevengj/nlopt.git', branch='master')
     version('2.4.2', 'd0b8f139a4acf29b76dbae69ade8ac54')
 
-    variant('shared', default=True, description='Enables the build of shared libraries')
+    variant('static', default=True, description='Build static libraries')
+    variant('shared', default=True, description='Build shared libraries')
+    variant('pic', default=True, description='Build PIC libraries')
     variant('python', default=True, description='Build python wrappers')
     variant('guile',  default=False, description='Enable Guile support')
     variant('octave', default=False, description='Enable GNU Octave support')
@@ -46,7 +47,6 @@ class Nlopt(CMakePackage):
     # Note: matlab is licenced - spack does not download automatically
     variant("matlab", default=False, description="Build the Matlab bindings.")
 
-    depends_on('cmake@3.0:', type='build', when='@develop')
     depends_on('python', when='+python')
     depends_on('py-numpy', when='+python', type=('build', 'run'))
     depends_on('swig', when='+python')
@@ -54,27 +54,48 @@ class Nlopt(CMakePackage):
     depends_on('octave', when='+octave')
     depends_on('matlab', when='+matlab')
 
-    def cmake_args(self):
-        # Add arguments other than
-        # CMAKE_INSTALL_PREFIX and CMAKE_BUILD_TYPE
+    def configure_args(self):
         spec = self.spec
         args = []
 
-        # Specify on command line to alter defaults:
-        # eg: spack install nlopt@develop +guile -octave +cxx
+        if '+shared' in spec:
+            args.append('--enable-shared')
+        else:
+            args.append('--disable-shared')
 
-        # Spack should locate python by default - but to point to a build
-        if '+python' in spec:
-            args.append("-DPYTHON_EXECUTABLE=%s" % spec['python'].command.path)
+        if '+static' in spec:
+            args.append('--enable-static')
+        else:
+            args.append('--disable-static')
 
-        # On is default
-        if '-shared' in spec:
-            args.append('-DBUILD_SHARED_LIBS:Bool=OFF')
-
+        if '+pic' in spec:
+            args.append('--with-pic')
+        else:
+            args.append('--without-pic')
+            
         if '+cxx' in spec:
-            args.append('-DNLOPT_CXX:BOOL=ON')
+            args.append('--with-cxx')
+        else:
+            args.append('--without-cxx')
+
+        if '+python' in spec:
+            args.append('--with-python')
+        else:
+            args.append('--without-python')
+
+        if '+guile' in spec:
+            args.append('--with-guile')
+        else:
+            args.append('--without-guile')
+
+        if '+octave' in spec:
+            args.append('--with-octave')
+        else:
+            args.append('--without-octave')
 
         if '+matlab' in spec:
-            args.append("-DMatlab_ROOT_DIR=%s" % spec['matlab'].command.path)
+            args.append('--with-matlab')
+        else:
+            args.append('--without-matlab')
 
         return args
