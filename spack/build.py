@@ -233,7 +233,7 @@ def build(src, dest, version):
         if os.path.exists(path):
             packages = get_packages(path)
             for name, package in packages:
-                if 'gcc' in name:
+                if 'gcc' in name or 'llvm' in name:
                     compiler_package = package.split()[0]
             if not compiler_package:
                 raise Exception('could not find compiler package name')
@@ -249,7 +249,7 @@ def build(src, dest, version):
         
         # install packages
         packages = get_packages(os.path.join(os.path.dirname(__file__), version))
-        cmd = [spack_bin, 'install', '-y', '--no-checksum']
+        cmd = [spack_bin, 'install', '-y', '-v', '--no-checksum']
         if 'CPUS' in os.environ:
             cmd.extend(['-j', os.environ['CPUS']])
         for name, package in packages:
