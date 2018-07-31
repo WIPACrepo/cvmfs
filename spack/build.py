@@ -10,8 +10,8 @@ import subprocess
 
 def myprint(*args,**kwargs):
     """Flush the print immediately, so it syncs with subprocess stdout"""
-    kwargs['flush'] = True
     print(*args,**kwargs)
+    sys.stdout.flush()
 
 def get_sroot(dir_name):
     """Get the SROOT from dir/setup.sh"""
