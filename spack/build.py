@@ -245,7 +245,7 @@ def build(src, dest, version):
                 raise Exception('could not find compiler package name')
             disable_compiler(spack_path, compiler_package)
 
-            cmd = [spack_bin, 'install', '-y']
+            cmd = [spack_bin, 'install', '-y', '-v']
             if 'CPUS' in os.environ:
                 cmd.extend(['-j', os.environ['CPUS']])
             for name, package in packages:
