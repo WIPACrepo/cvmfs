@@ -8,6 +8,11 @@ import shutil
 import tempfile
 import subprocess
 
+def myprint(*args,**kwargs):
+    """Flush the print immediately, so it syncs with subprocess stdout"""
+    kwargs['flush'] = True
+    print(*args,**kwargs)
+
 def get_sroot(dir_name):
     """Get the SROOT from dir/setup.sh"""
     p = subprocess.Popen(os.path.join(dir_name,'setup.sh'),
@@ -16,7 +21,7 @@ def get_sroot(dir_name):
     output = p.communicate()[0]
     for line in output.split(';'):
         line = line.strip()
-        print(line)
+        myprint(line)
         if line and line.startswith('export'):
             parts = line.split('=',1)
             name = parts[0].replace('export ','').strip()
@@ -42,7 +47,7 @@ def copy_src(src,dest):
 
 def run_cmd(*args, **kwargs):
     """print and run a subprocess command"""
-    print('cmd:',*args)
+    myprint('cmd:',*args)
     subprocess.check_call(*args, **kwargs)
 
 def disable_compiler(spack_path, compiler):
@@ -53,7 +58,7 @@ def disable_compiler(spack_path, compiler):
         spack_path (str): path to spack
         compiler (str): name of compiler package
     """
-    print('disable_compiler',compiler)
+    myprint('disable_compiler',compiler)
     spack_bin = os.path.join(spack_path,'bin','spack')
 
     # get arch
@@ -111,7 +116,7 @@ def update_compiler(spack_path, compiler):
         spack_path (str): path to spack
         compiler (str): name of compiler package
     """
-    print('update_compiler',compiler)
+    myprint('update_compiler',compiler)
     spack_bin = os.path.join(spack_path,'bin','spack')
 
     # get arch
@@ -183,7 +188,7 @@ def get_packages(filename):
     return ret
 
 def build(src, dest, version):
-    print('building version',version)
+    myprint('building version',version)
     if 'PYTHONPATH' in os.environ:
         del os.environ['PYTHONPATH']
 
@@ -243,7 +248,7 @@ def build(src, dest, version):
             if 'CPUS' in os.environ:
                 cmd.extend(['-j', os.environ['CPUS']])
             for name, package in packages:
-                print('installing', name)
+                myprint('installing', name)
                 run_cmd(cmd+package.split())
             update_compiler(spack_path, compiler_package)
         
@@ -253,7 +258,7 @@ def build(src, dest, version):
         if 'CPUS' in os.environ:
             cmd.extend(['-j', os.environ['CPUS']])
         for name, package in packages:
-            print('installing', name)
+            myprint('installing', name)
             run_cmd(cmd+package.split())
 
         # set up view
@@ -261,7 +266,7 @@ def build(src, dest, version):
             run_cmd([spack_bin, 'view', '-d', 'false', 'soft', '-i', sroot, compiler_package])
         cmd = [spack_bin, 'view', 'soft', '-i', sroot]
         for name, package in packages:
-            print('adding', name, 'to view')
+            myprint('adding', name, 'to view')
             view_cmd = cmd+package.split()[:1]
             if compiler_package:
                 view_cmd[-1] += '%'+compiler_package+'spack'
