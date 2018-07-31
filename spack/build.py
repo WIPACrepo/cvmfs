@@ -3,6 +3,7 @@ Build cvmfs versions >=v4 with spack.
 """
 from __future__ import print_function
 
+import sys
 import os
 import shutil
 import tempfile
