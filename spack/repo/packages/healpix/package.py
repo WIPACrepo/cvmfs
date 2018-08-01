@@ -103,8 +103,9 @@ Cflags: -I${{prefix}}/include -fPIC
 
             cc = Executable(self.compiler.cc)
             cmd = ['-shared','-o','auto/lib/libhealpix_cxx.so',
+                   '-L'+spec['cfitsio'].prefix.lib,
                    '-Wl,--no-as-needed', '-lcfitsio',
-                  '-Wl,--as-needed', '-Wl,--whole-archive']
+                   '-Wl,--as-needed', '-Wl,--whole-archive']
             cmd += glob.glob('auto/lib/*.a')
             cmd += ['-Wl,--no-whole-archive']
             cc(*cmd)
