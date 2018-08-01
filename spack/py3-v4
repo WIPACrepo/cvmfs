@@ -41,7 +41,7 @@ boost@1.67.0 date_time=True numpy=True python=True ^python@3.6.5+optimizations ^
 cfitsio@3.420
 fftw@3.3.7 mpi=False simd=sse2
 cdk@5.0-20180306
-gnuplot@5.2.2 ^python@3.6.5+optimizations
+gnuplot@5.2.2 ^python@3.6.5+optimizations ^glib@2.55.1
 hdf5@1.10.2 cxx=True hl=True mpi=False
 nlopt@2.4.2 cxx=True python=False
 
