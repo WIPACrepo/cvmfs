@@ -105,7 +105,11 @@ def v2(dir_name, url, debug=False):
 
     tools['globus']['6.0.1506371041'](dir_name)
     tools['gsoap']['2.8.55'](dir_name)
-    tools['voms']['2.0.14'](dir_name)
+    # need OpenSSL 1.1 support for Ubuntu 18+
+    if 'Ubuntu_18' in os.environ['OS_ARCH']:
+        tools['voms']['2.1.0-rc0'](dir_name)
+    else:
+        tools['voms']['2.0.14'](dir_name)
     tools['uberftp']['master'](dir_name)
 
     if url.startswith('git+git'):
