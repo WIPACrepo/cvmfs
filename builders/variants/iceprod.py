@@ -145,6 +145,9 @@ def build(src,dest,version=None,**build_kwargs):
 
     # build releases
     for tag in sorted(releases, key=LooseVersion):
+        if 'Ubuntu_18' in os.environ['OS_ARCH'] and (
+            tag.startswith('v2.1') or tag.startswith('v2.2') or tag.startswith('v2.3')):
+            continue # skip old versions for Ubuntu 18
         url = releases[tag]
         base_dir_name = os.path.join(os.path.join(dest,'iceprod'),tag)
         build_instance(base_env, url, src, base_dir_name, **build_kwargs)
