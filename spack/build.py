@@ -265,6 +265,8 @@ def build(src, dest, version):
         # set up view
         if compiler_package:
             run_cmd([spack_bin, 'view', '-d', 'false', 'soft', '-i', sroot, compiler_package])
+            if not os.path.exists(os.path.join(sroot,'bin','cc')):
+                run_cmd(['ln','-s','gcc','cc'], cwd=os.path.join(sroot,'bin'))
         cmd = [spack_bin, 'view', 'soft', '-i', sroot]
         for name, package in packages:
             myprint('adding', name, 'to view')
