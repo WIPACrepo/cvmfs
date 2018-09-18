@@ -53,6 +53,7 @@ class PyIpython(PythonPackage):
     depends_on('py-traitlets@4.2:',             type=('build', 'run'))
     depends_on('py-decorator',                  type=('build', 'run'))
     depends_on('py-pexpect',                    type=('build', 'run'))
+    depends_on('py-backcall',                   type=('build', 'run'))
 
     depends_on('py-appnope', type=('build', 'run'),
                     when=sys.platform == 'darwin' and
