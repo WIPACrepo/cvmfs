@@ -143,6 +143,10 @@ else
 	# Fetch and unpack it if needed
 	if [ ! -e $(basename $TARBALL) ]; then
 		urlcopy $TARBALL .
+		if [ ! -e $(basename $TARBALL) ]; then
+		    echo "Failed to download $TARBALL" 1>&2
+		    exit 1
+		fi
 	fi
 	# Discover base directory name
 	build_dir=$(tar tzf $(basename $TARBALL) 2>/dev/null | head -n1 | cut -d/ -f1)
