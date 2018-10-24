@@ -57,7 +57,9 @@ case $DISTRIB in
         ;;
     "linuxmint")
         DISTRIB="Ubuntu"
-        if echo $VERSION | grep -q '18\.\?'; then
+        if echo $VERSION | grep -q '19\.\?'; then
+            VERSION="18.04"
+        elif echo $VERSION | grep -q '18\.\?'; then
             VERSION="16.04"
         elif echo $VERSION | grep -q '17\.\?'; then
             VERSION="14.04"
