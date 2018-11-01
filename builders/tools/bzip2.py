@@ -14,7 +14,7 @@ def install(dir_name,version=None):
         try:
             tmp_dir = tempfile.mkdtemp()
             path = os.path.join(tmp_dir,name)
-            url = os.path.join('http://www.bzip.org',str(version),name)
+            url = os.path.join('https://web.archive.org/web/20140722223512/http://www.bzip.org',str(version),name)
             wget(url,path)
             unpack(path,tmp_dir)
             bzip2_dir = os.path.join(tmp_dir,'bzip2-'+version)
