@@ -36,7 +36,7 @@ suite-sparse@5.2.0 ^openblas@0.3.0 cpu_target=SSE_GENERIC virtual_machine=True
 
 # core libraries
 py-numpy@1.14.3 ^python@3.6.5+optimizations ^openblas@0.3.0 cpu_target=SSE_GENERIC virtual_machine=True
-py-scipy@1.1.0 ^python@3.6.5+optimizations ^openblas@0.3.0 cpu_target=SSE_GENERIC virtual_machine=True
+py-scipy@1.1.0 ^py-numpy@1.14.3 ^python@3.6.5+optimizations ^openblas@0.3.0 cpu_target=SSE_GENERIC virtual_machine=True
 boost@1.67.0 date_time=True numpy=True python=True ^python@3.6.5+optimizations ^openblas@0.3.0 cpu_target=SSE_GENERIC virtual_machine=True
 node-js@8.12.0 ^python@3.6.5+optimizations
 npm@3.10.9 ^node-js@8.12.0 ^python@3.6.5+optimizations
@@ -52,11 +52,11 @@ nlopt@2.4.2 cxx=True python=False
 # physics applications
 erfa@1.4.0
 pal@develop
-wcslib@5.18 cfitsio=True ^cfitsio@3.420
+wcslib@5.20 cfitsio=True ^cfitsio@3.420
 healpix@3.31 ^cfitsio@3.420
 #pythia
 #root
-geant4@10.04
+geant4@10.04 threads=False
 #genie
 
 # extra python packages
@@ -73,8 +73,9 @@ py-urllib3@1.20 ^python@3.6.5+optimizations
 py-requests@2.19.1 ^python@3.6.5+optimizations
 py-sphinx@1.7.9 ^python@3.6.5+optimizations ^py-requests@2.19.1
 py-h5py@2.7.1 mpi=False ^python@3.6.5+optimizations ^py-numpy@1.14.3 ^openblas@0.3.0 cpu_target=SSE_GENERIC virtual_machine=True ^hdf5@1.10.2+cxx+hl~mpi ^py-cython@0.28.5
-py-astropy@3.0.4 ^python@3.6.5+optimizations ^py-numpy@1.14.3 ^openblas@0.3.0 cpu_target=SSE_GENERIC virtual_machine=True ^cfitsio@3.420 ^py-scipy@1.1.0 ^py-matplotlib@2.2.3~tk+ipython ^py-h5py@2.7.1~mpi ^hdf5@1.10.2+cxx+hl~mpi ^py-cython@0.28.5 ^cmake@3.11.4 ^py-tornado@5.1.1 ^py-pillow@5.2.0 ^py-ipython@6.5.0 ^py-numexpr@2.6.8 ^erfa@1.4.0 ^wcslib@5.18+cfitsio
-py-healpy@1.11.0 ^python@3.6.5+optimizations ^py-numpy@1.14.3 ^openblas@0.3.0 cpu_target=SSE_GENERIC virtual_machine=True ^py-scipy@1.1.0 ^healpix@3.31 ^cfitsio@3.420 ^py-matplotlib@2.2.3~tk+ipython ^py-h5py@2.7.1~mpi ^hdf5@1.10.2+cxx+hl~mpi ^py-cython@0.28.5 ^cmake@3.11.4 ^py-tornado@5.1.1 ^py-pillow@5.2.0 ^py-ipython@6.5.0  ^py-numexpr@2.6.8 ^erfa@1.4.0 ^wcslib@5.18+cfitsio
+py-scikit-image@0.12.3 ^python@3.6.5+optimizations  ^py-numpy@1.14.3 ^openblas@0.3.0 cpu_target=SSE_GENERIC virtual_machine=True ^py-scipy@1.1.0 ^py-matplotlib@2.2.3 tk=False ipython=True ^cmake@3.11.4 ^py-tornado@5.1.1 ^py-pillow@5.2.0 ^py-ipython@6.5.0 ^py-numexpr@2.6.8 
+py-astropy@3.0.4 ^python@3.6.5+optimizations ^py-numpy@1.14.3 ^openblas@0.3.0 cpu_target=SSE_GENERIC virtual_machine=True ^cfitsio@3.420 ^py-scipy@1.1.0 ^py-matplotlib@2.2.3~tk+ipython ^py-h5py@2.7.1~mpi ^hdf5@1.10.2+cxx+hl~mpi ^py-cython@0.28.5 ^cmake@3.11.4 ^py-tornado@5.1.1 ^py-pillow@5.2.0 ^py-ipython@6.5.0 ^py-numexpr@2.6.8 ^erfa@1.4.0 ^wcslib@5.20+cfitsio ^py-scikit-image@0.12.3
+py-healpy@1.11.0 ^python@3.6.5+optimizations ^py-numpy@1.14.3 ^openblas@0.3.0 cpu_target=SSE_GENERIC virtual_machine=True ^py-scipy@1.1.0 ^healpix@3.31 ^cfitsio@3.420 ^py-matplotlib@2.2.3~tk+ipython ^py-h5py@2.7.1~mpi ^hdf5@1.10.2+cxx+hl~mpi ^py-cython@0.28.5 ^cmake@3.11.4 ^py-tornado@5.1.1 ^py-pillow@5.2.0 ^py-ipython@6.5.0  ^py-numexpr@2.6.8 ^erfa@1.4.0 ^wcslib@5.20+cfitsio ^py-scikit-image@0.12.3
 py-spectrum@0.7.4 ^python@3.6.5+optimizations ^py-numpy@1.14.3 ^openblas@0.3.0 cpu_target=SSE_GENERIC virtual_machine=True ^py-scipy@1.1.0 ^py-matplotlib@2.2.3~tk+ipython ^py-tornado@5.1.1 ^py-pillow@5.2.0 ^py-ipython@6.5.0 ^cmake@3.11.4
 py-urwid@1.3.1 ^python@3.6.5+optimizations
 py-jsonschema@2.6.0 ^python@3.6.5+optimizations
