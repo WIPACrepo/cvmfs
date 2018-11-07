@@ -29,7 +29,10 @@ class PyJupyterNotebook(PythonPackage):
     """Jupyter Interactive Notebook"""
 
     homepage = "https://github.com/jupyter/notebook"
-    url      = "https://github.com/jupyter/notebook/archive/4.2.3.tar.gz"
+    #url      = "https://github.com/jupyter/notebook/archive/4.2.3.tar.gz"
+    url = "https://files.pythonhosted.org/packages/ac/50/4e8fc418c6b4beee3b0c39d38f82a1684bf5c4c9a216cc017e8a498686d6/notebook-5.5.0.tar.gz"
+
+    version('5.5.0', sha256='fa915c231e64a30d19cc2c70ccab6444cbaa93e44e92b5f8233dd9147ad0e664')
 
     version('4.2.3', '5c6b0b1303adacd8972c4db21eda3e98')
     version('4.2.2', '7f9717ae4fed930d187a44c0707b6379')
@@ -45,8 +48,8 @@ class PyJupyterNotebook(PythonPackage):
     variant('terminal', default=False, description="Enable terminal functionality")
 
     depends_on('python@2.7:2.8,3.3:')
-    depends_on('npm', type='build')
-    depends_on('node-js', type=('build', 'run'))
+    #depends_on('npm', type='build')
+    #depends_on('node-js', type=('build', 'run'))
     depends_on('py-jinja2', type=('build', 'run'))
     depends_on('py-tornado@4:', type=('build', 'run'))
     depends_on('py-ipython-genutils', type=('build', 'run'))
