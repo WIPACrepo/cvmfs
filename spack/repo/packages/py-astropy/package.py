@@ -64,7 +64,7 @@ class PyAstropy(PythonPackage):
 
     @run_before('build')
     def set_build_deps(self):
-        if spec.version >= Version('3.0.0'):
+        if self.spec.version >= Version('3.0.0'):
             lib_dir = self.spec['wcslib'].prefix.lib+':'+self.spec['erfa'].prefix.lib
             if 'LIBRARY_PATH' in env:
                 lib_dir += ':'+env['LIBRARY_PATH']
