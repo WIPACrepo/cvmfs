@@ -62,6 +62,14 @@ class PyAstropy(PythonPackage):
     depends_on('wcslib', when='@3.0.0:')
     depends_on('erfa', when='@3.0.0:')
 
+    @run_before('build')
+    def set_build_deps(self):
+        if spec.version >= Version('3.0.0'):
+            lib_dir = self.spec['wcslib'].prefix.lib+':'+self.spec['erfa'].prefix.lib
+            if 'LIBRARY_PATH' in env:
+                lib_dir += ':'+env['LIBRARY_PATH']
+            env['LIBRARY_PATH'] = lib_dir
+
     def build_args(self, spec, prefix):
         args = ['--use-system-cfitsio', '--use-system-expat']
         if spec.version >= Version('3.0.0'):
