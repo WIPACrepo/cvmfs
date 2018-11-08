@@ -38,6 +38,7 @@ suite-sparse@5.2.0 ^openblas@0.3.0 cpu_target=SSE_GENERIC virtual_machine=True
 py-numpy@1.14.3 ^python@3.6.5+optimizations ^openblas@0.3.0 cpu_target=SSE_GENERIC virtual_machine=True
 py-scipy@1.1.0 ^py-numpy@1.14.3 ^python@3.6.5+optimizations ^openblas@0.3.0 cpu_target=SSE_GENERIC virtual_machine=True
 boost@1.67.0 date_time=True numpy=True python=True ^python@3.6.5+optimizations ^openblas@0.3.0 cpu_target=SSE_GENERIC virtual_machine=True
+cppzmq@4.3.0 ^zeromq@4.2.5 ^cmake@3.11.4
 
 # physics libraries
 cfitsio@3.420
