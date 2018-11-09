@@ -26,7 +26,7 @@ wget@1.19.1
 globus-toolkit@6.0.1535473965 gram5=False myproxy=False
 gsoap@2.8.55
 voms@2.0.14 ^gsoap@2.8.55
-uberftp@2_8
+uberftp@2_8 ^globus-toolkit@6.0.1535473965 gram5=False myproxy=False
 
 # numeric libraries
 gsl@2.4
