@@ -34,7 +34,8 @@ class Healpix(Package):
     homepage = "http://healpix.sourceforge.net/"
 
     def url_for_version(self, version):
-        readme_url = "http://downloads.sourceforge.net/project/healpix/Healpix_{}/README".format(version)
+        base_url = 'https://master.dl.sourceforge.net/project/healpix/Healpix_{}/'.format(version)
+        readme_url = base_url+'README'
         response = web._urlopen(readme_url)
         readme = response.read().decode('utf-8')
         name = None
@@ -44,8 +45,7 @@ class Healpix(Package):
                 break
         else:
             raise Exception('cannot find version')
-        url = "http://downloads.sourceforge.net/project/healpix/Healpix_{}/{}"
-        return url.format(version, name)
+        return base_url+name
 
     version('3.31', 'c0dc75e57f237b634fec97df55997918')
 
