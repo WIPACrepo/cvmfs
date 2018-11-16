@@ -8,6 +8,7 @@ import os
 import shutil
 import tempfile
 import subprocess
+from collections import OrderedDict
 
 def myprint(*args,**kwargs):
     """Flush the print immediately, so it syncs with subprocess stdout"""
@@ -178,14 +179,107 @@ def get_packages(filename):
     Returns:
         list: [(package name, install string)]
     """
-    ret = []
+    ret = OrderedDict()
     with open(filename) as f:
         for line in f.read().split('\n'):
             line = line.strip()
             if (not line) or line.startswith('#'):
                 continue
             name = line.split('@',1)[0]
-            ret.append((name, line))
+            ret[name] = line
+    return ret
+
+def get_dependencies(spack_path, package, packages):
+    """
+    Get the correct versions for all dependencies.
+
+    If we have the package in our list, pin to that version.
+    Otherwise, let spack pick.
+
+    Args:
+        spack_path (str): path to spack
+        package (str): the package to check
+        packages (dict): all installed packages
+    Returns:
+        list: [dependencies]
+    """
+    spack_bin = os.path.join(spack_path,'bin','spack')
+    cmd = [spack_bin, 'find', '--show-full-compiler', '-v']
+    p = subprocess.Popen(cmd,
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE)
+    output = p.communicate()[0]
+    installed_packages = {}
+    for line in output.split('\n'):
+        line = line.strip()
+        if (not line) or line.startswith('--') or line.startswith('==>'):
+            continue
+        parts = line.split()
+        # test for our compiler
+        if 'spack' not in parts[0].split('%',1)[-1]:
+            continue
+        name = parts[0].split('@',1)[0]
+        parts2 = [x for x in parts if not x.endswith('=')]
+        installed_packages[name] = ' '.join(parts2)
+
+    dependencies = set()
+    ret = []
+    success = False
+    while True:
+        cmd = [spack_bin, 'spec']+package.split()+ret
+        print(cmd)
+        p = subprocess.Popen(cmd,
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE)
+        output,error = p.communicate()
+        success = p.returncode == 0
+
+        if (not success) and 'while trying to concretize' in error:
+            output = error.split('while trying to concretize',1)[-1]
+            success = True
+        if success:
+            new_deps = set()
+            for line in output.split('\n'):
+                line = line.strip()
+                if line.startswith('^'):
+                    dep = line.split('@', 1)[0].lstrip('^')
+                    print('dep:',dep)
+                    if dep in packages:
+                        print('   found', packages[dep])
+                        new_deps.add(dep)
+                    elif dep in installed_packages:
+                        print('   installed', installed_packages[dep])
+                        new_deps.add(dep)
+            if new_deps == dependencies:
+                break
+            dependencies = new_deps
+        else:
+            for line in error.split('\n'):
+                if line.startswith('==> Error:'):
+                    for d in line.split('depend on')[-1].replace(', or ',',').split(','):
+                        d = d.strip()
+                        if d in dependencies:
+                            dependencies.remove(d)
+                        else:
+                            print(line)
+                            raise Exception('bad dependencies')
+                    break
+            else:
+                print(output)
+                print(error)
+                raise Exception('bad dependencies')
+
+        ret = []
+        for d in dependencies:
+            if d in packages:
+                parts = packages[d].split()
+            elif d in installed_packages:
+                parts = installed_packages[d].split()
+            else:
+                raise Exception('bad dep: '+d)
+            parts[0] = '^'+parts[0]
+            ret.extend(parts)
+    
     return ret
 
 def build(src, dest, version):
@@ -238,7 +332,7 @@ def build(src, dest, version):
         path = os.path.join(os.path.dirname(__file__), version+'-compiler')
         if os.path.exists(path):
             packages = get_packages(path)
-            for name, package in packages:
+            for name, package in packages.items():
                 if 'gcc' in name or 'llvm' in name:
                     compiler_package = package.split()[0]
             if not compiler_package:
@@ -248,7 +342,7 @@ def build(src, dest, version):
             cmd = [spack_bin, 'install', '-y', '-v']
             if 'CPUS' in os.environ:
                 cmd.extend(['-j', os.environ['CPUS']])
-            for name, package in packages:
+            for name, package in packages.items():
                 myprint('installing', name)
                 run_cmd(cmd+package.split())
             update_compiler(spack_path, compiler_package)
@@ -258,9 +352,10 @@ def build(src, dest, version):
         cmd = [spack_bin, 'install', '-y', '-v', '--no-checksum']
         if 'CPUS' in os.environ:
             cmd.extend(['-j', os.environ['CPUS']])
-        for name, package in packages:
+        for name, package in packages.items():
             myprint('installing', name)
-            run_cmd(cmd+package.split())
+            deps = get_dependencies(spack_path, package, packages)
+            run_cmd(cmd+package.split()+deps)
 
         # set up view
         if compiler_package:
@@ -268,7 +363,7 @@ def build(src, dest, version):
             if not os.path.exists(os.path.join(sroot,'bin','cc')):
                 run_cmd(['ln','-s','gcc','cc'], cwd=os.path.join(sroot,'bin'))
         cmd = [spack_bin, 'view', 'soft', '-i', sroot]
-        for name, package in packages:
+        for name, package in packages.items():
             myprint('adding', name, 'to view')
             view_cmd = cmd+package.split()[:1]
             if compiler_package:
