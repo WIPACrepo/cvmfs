@@ -37,6 +37,7 @@ class Genie(AutotoolsPackage):
     version('3_00_00', sha256='3953c7d9f1f832dd32dfbc0b9260be59431206c204aec6ab0aa68c01176f2ae6')
 
     patch('compiler.patch', when='@3_00_00')
+    patch('install.patch', when='@3_00_00')
 
     variant('lhapdf5', default=True,
         description='Use the LHAPDF5 parton density function library')
@@ -94,7 +95,7 @@ class Genie(AutotoolsPackage):
 
         return args
 
-    @run_after('install')
-    def install_extra(self, *args, **kwargs):
-        ins = which('install')
-        ins('-D', 'src/make/Make.config', os.path.join(prefix, 'src/make/Make.config'))
+#    @run_after('install')
+#    def install_extra(self, *args, **kwargs):
+#        ins = which('install')
+#        ins('-D', 'src/make/Make.config', os.path.join(prefix, 'src/make/Make.config'))
