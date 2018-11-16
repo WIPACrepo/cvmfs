@@ -40,6 +40,7 @@ py-numpy@1.14.3
 py-scipy@1.1.0
 boost@1.67.0 date_time=True numpy=True python=True
 cppzmq@4.3.0
+glib@2.56.3
 
 # physics libraries
 cfitsio@3.420
