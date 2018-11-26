@@ -227,6 +227,11 @@ VARS=$(modifyList "$VARS" "GCC_VERSION")
 ROOTSYS=$SROOT
 VARS=$(modifyList "$VARS" "ROOTSYS")
 
+# GENIE specific bits
+LHAPDF_DATA_PATH="$I3_DATA/lhapdfsets/5.9.1"
+GENIE=$SROOT
+VARS=$(modifyList "$VARS" "LHAPDF_DATA_PATH GENIE")
+
 # GotoBLAS
 GOTO_NUM_THREADS=1
 VARS=$(modifyList "$VARS" "GOTO_NUM_THREADS")
