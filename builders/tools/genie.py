@@ -102,7 +102,7 @@ def install(dir_name,version=None,data_dir=None):
             if subprocess.call(['make','install'],cwd=genie_dir,env=env):
                 raise Exception('genie failed to install')
         finally:
-            pass#shutil.rmtree(tmp_dir)
+            shutil.rmtree(tmp_dir)
 
 def versions():
     return version_dict(install)
