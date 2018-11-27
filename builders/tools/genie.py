@@ -76,15 +76,15 @@ def install(dir_name,version=None,data_dir=None):
                 raise Exception('genie install could not be patched')
             
             options = [
+                '--enable-rwght',
                 '--with-pythia6-lib={}'.format(os.path.join(dir_name,'lib')),
                 #'--with-libxml2-inc={}'.format(os.path.join(dir_name,'include')),
                 #'--with-libxml2-lib={}'.format(os.path.join(dir_name,'lib')),
                 '--with-log4cpp-inc={}'.format(os.path.join(dir_name,'include')),
                 '--with-log4cpp-lib={}'.format(os.path.join(dir_name,'lib')),
-                '--enable-lhapdf5',
-                '--with-lhapdf5-inc={}'.format(os.path.join(dir_name,'include')),
-                '--with-lhapdf5-lib={}'.format(os.path.join(dir_name,'lib')),
-                '--disable-lhapdf6',
+                '--enable-lhapdf',
+                '--with-lhapdf-inc={}'.format(os.path.join(dir_name,'include')),
+                '--with-lhapdf-lib={}'.format(os.path.join(dir_name,'lib')),
             ]
             env = dict(os.environ)
             env['GENIE'] = genie_dir
