@@ -355,7 +355,7 @@ if ( [ -z ${tmp_ocl} ] || [ ${found_icd} -eq 0 ] ); then
     fi
 
     if [ $_version -eq 2 ]; then
-        if [ "${OPENCL_VENDOR_PATH}" = "/etc/OpenCL/vendors" -a -d ${tmp_icl} ]
+        if [ "${OPENCL_VENDOR_PATH}" = "/etc/OpenCL/vendors" -a -d ${tmp_icd} ]
         then
             # copy all ICD files into a single directory
             OPENCL_VENDOR_PATH=`mktemp -d 2>/dev/null || mktemp -d -t 'vendortmp'`
