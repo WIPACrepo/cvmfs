@@ -36,7 +36,7 @@ def build(src,dest,svn_up=None,svn_only=None,nightly=False,**build_kwargs):
 
     tools['i3_metaproject']['icerec']['V05-02-00'](dir_name,**kwargs)
 
-    if nightly:
+    #if nightly:
         # trunks
-        tools['i3_metaproject']['combo']['stable'](dir_name,**kwargs)
+        #tools['i3_metaproject']['combo']['stable'](dir_name,**kwargs)
 
