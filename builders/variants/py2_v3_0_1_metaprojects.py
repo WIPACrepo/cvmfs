@@ -28,7 +28,6 @@ def build(src,dest,svn_up=None,svn_only=None,nightly=False,**build_kwargs):
         kwargs['svn_only'] = svn_only
 
     # releases
-    tools['i3_metaproject']['simulation']['V05-02-01-RC1'](dir_name,**kwargs)
     tools['i3_metaproject']['simulation']['V06-00-03'](dir_name,**kwargs)
     tools['i3_metaproject']['simulation']['V06-01-00-RC1'](dir_name,**kwargs)
     tools['i3_metaproject']['simulation']['V06-01-00-RC2'](dir_name,**kwargs)
@@ -36,6 +35,7 @@ def build(src,dest,svn_up=None,svn_only=None,nightly=False,**build_kwargs):
     tools['i3_metaproject']['simulation']['V06-01-00-RC4'](dir_name,**kwargs)
 
     tools['i3_metaproject']['icerec']['V05-02-00'](dir_name,**kwargs)
+    tools['i3_metaproject']['icerec']['V05-02-01-RC1'](dir_name,**kwargs)
 
     #if nightly:
         # trunks
