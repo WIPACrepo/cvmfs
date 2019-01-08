@@ -41,11 +41,13 @@ compiler_patch = """
 install_patch = """
 --- a/Makefile
 +++ b/Makefile
-@@ -417,7 +417,7 @@
+@@ -417,7 +417,9 @@
  	cd Utils &&                  $(MAKE) install && cd .. && \\
  	cd VLE &&                    $(MAKE) install && cd .. && \\
  	cd VHE &&                    $(MAKE) install && cd .. && \\
 -	cd ${GENIE}
++	cp -r ${GENIE}/data ${GENIE_INSTALLATION_PATH}/
++	cp -r ${GENIE}/config ${GENIE_INSTALLATION_PATH}/
 +	install -D ${GENIE}/src/make/Make.config_no_paths ${GENIE_INSTALLATION_PATH}/src/make/Make.config_no_paths
  
  purge: FORCE
