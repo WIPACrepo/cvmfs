@@ -309,6 +309,7 @@ def build(src, dest, version):
     if not os.path.exists(spack_path):
         url = 'https://github.com/spack/spack.git'
         run_cmd(['git', 'clone', url, spack_path])
+        run_cmd(['git', 'checkout', 'tags/v0.12.0'], cwd=spack_path)
         
     os.environ['SPACK_ROOT'] = spack_path
     spack_bin = os.path.join(spack_path,'bin','spack')
