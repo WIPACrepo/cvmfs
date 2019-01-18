@@ -55,7 +55,7 @@ def python_packages(dir_name):
 def build(src,dest,**build_kwargs):
     """The main builder"""
     # make sure the base dir is there
-    srootbase = os.path.join(dest,'py2-v3.1.0')
+    srootbase = os.path.join(dest,'py2-v3.1.1')
     copy_src(os.path.join(src,'py2-v3'),srootbase)
 
     orig_env = os.environ.copy()
