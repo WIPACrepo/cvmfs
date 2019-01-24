@@ -7,7 +7,7 @@
 DIR=$(echo "${0%/*}")
 ICEPRODBASE=$(cd "$DIR" && echo "$(pwd -L)")
 
-. $ICEPRODBASE/os_arch.sh
+. $ICEPRODBASE/os_arch.sh >/dev/null
 
 ICEPRODROOT=$ICEPRODBASE/$OS_ARCH
 

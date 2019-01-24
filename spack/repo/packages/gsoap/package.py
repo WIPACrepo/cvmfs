@@ -33,8 +33,12 @@ class Gsoap(AutotoolsPackage):
     url      = "http://downloads.sourceforge.net/project/gsoap2/gsoap-2.8/gsoap_2.8.55.zip"
 
     def url_for_version(self, version):
-        url = "http://downloads.sourceforge.net/project/gsoap2/gsoap-{}/gsoap_{}.zip"
-        return url.format(version.up_to(2), version)
+        if version < Version('2.8.75'):
+            url = "http://downloads.sourceforge.net/project/gsoap2/oldreleases/gsoap_{}.zip"
+            return url.format(version)
+        else:
+            url = "http://downloads.sourceforge.net/project/gsoap2/gsoap-{}/gsoap_{}.zip"
+            return url.format(version.up_to(2), version)
 
     version('2.8.68', '6606df5a579a68cef671b233e5d8f73c')
     version('2.8.67', '38712d80ea66e036f2c45fa6171b5783')

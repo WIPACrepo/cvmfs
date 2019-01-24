@@ -1,5 +1,6 @@
 """
 Build cvmfs versions >=v4 with spack.
+Or IceProd versions >=v2.5.0.
 """
 from __future__ import print_function
 
@@ -28,7 +29,7 @@ def get_sroot(dir_name):
             parts = line.split('=',1)
             name = parts[0].replace('export ','').strip()
             value = parts[1].strip(' "')
-            if name == 'SROOT':
+            if name in ('SROOT','ICEPRODROOT'):
                 return value
     raise Exception('could not find SROOT')
 
@@ -287,8 +288,13 @@ def build(src, dest, version):
     if 'PYTHONPATH' in os.environ:
         del os.environ['PYTHONPATH']
 
-    srootbase = os.path.join(dest,version)
-    copy_src(os.path.join(src,version), srootbase)
+    version = version.split('/') if '/' in version else [version]
+
+    srootbase = os.path.join(dest,*version)
+    if version[0] == 'iceprod':
+        copy_src(os.path.join(src,'iceprod','all'), srootbase)
+    else:
+        copy_src(os.path.join(src,*version), srootbase)
     sroot = get_sroot(srootbase)
     if not os.path.isdir(sroot):
         os.makedirs(sroot)
@@ -330,7 +336,7 @@ def build(src, dest, version):
     try:
         # setup compiler
         compiler_package = ''
-        path = os.path.join(os.path.dirname(__file__), version+'-compiler')
+        path = os.path.join(os.path.dirname(__file__), *version)+'-compiler'
         if os.path.exists(path):
             packages = get_packages(path)
             for name, package in packages.items():
@@ -349,7 +355,7 @@ def build(src, dest, version):
             update_compiler(spack_path, compiler_package)
         
         # install packages
-        packages = get_packages(os.path.join(os.path.dirname(__file__), version))
+        packages = get_packages(os.path.join(os.path.dirname(__file__), *version))
         cmd = [spack_bin, 'install', '-y', '-v', '--no-checksum']
         if 'CPUS' in os.environ:
             cmd.extend(['-j', os.environ['CPUS']])
