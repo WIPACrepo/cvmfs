@@ -283,6 +283,23 @@ def get_dependencies(spack_path, package, packages):
     
     return ret
 
+def is_installed(spack_path, package):
+    """Check if a package is installed"""
+    spack_bin = os.path.join(spack_path,'bin','spack')
+    cmd = [spack_bin, 'find', package]
+    p = subprocess.Popen(cmd,
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE)
+    output = p.communicate()[0]
+    name = package.split('@')[0]
+    for line in output.split('\n'):
+        line = line.strip()
+        if (not line) or line.startswith('--') or line.startswith('==>'):
+            continue
+        if name in line:
+            return True
+    return False
+
 def uninstall(spack_path, sroot, package):
     """Uninstall package and remove from view"""
     spack_bin = os.path.join(spack_path, 'bin', 'spack')
@@ -371,8 +388,12 @@ def build(src, dest, version):
         for name, package in packages.items():
             myprint('installing', name)
             main_pkg = package.split()[0]
-            if '@develop' in main_pkg:
+            installed = is_installed(spack_path, main_pkg)
+            if '@develop' in main_pkg and installed:
                 uninstall(spack_path, sroot, main_pkg)
+            elif installed:
+                myprint(name, 'already installed')
+                continue
             deps = get_dependencies(spack_path, package, packages)
             run_cmd(cmd+package.split()+deps)
 
