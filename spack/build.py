@@ -283,6 +283,15 @@ def get_dependencies(spack_path, package, packages):
     
     return ret
 
+def uninstall(spack_path, sroot, package):
+    """Uninstall package and remove from view"""
+    spack_bin = os.path.join(spack_path, 'bin', 'spack')
+    cmd = [spack_bin, 'view', '-v', '-d', 'false', 'rm',
+           '--no-remove-dependents', sroot, package]
+    run_cmd(cmd)
+    cmd = [spack_bin, 'uninstall', '-y', '-f', '-a', package]
+    run_cmd(cmd)
+
 def build(src, dest, version):
     myprint('building version',version)
     if 'PYTHONPATH' in os.environ:
@@ -361,6 +370,9 @@ def build(src, dest, version):
             cmd.extend(['-j', os.environ['CPUS']])
         for name, package in packages.items():
             myprint('installing', name)
+            main_pkg = package.split()[0]
+            if '@develop' in main_pkg:
+                uninstall(spack_path, sroot, main_pkg)
             deps = get_dependencies(spack_path, package, packages)
             run_cmd(cmd+package.split()+deps)
 

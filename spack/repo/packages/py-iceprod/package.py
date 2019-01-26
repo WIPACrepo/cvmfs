@@ -33,11 +33,13 @@ class PyIceprod(PythonPackage):
     keeping a history of the entire job lifecycle."""
     homepage = "https://github.com/WIPACrepo/iceprod/"
     url      = "https://github.com/WIPACrepo/iceprod/archive/v2.5.0.tar.gz"
+    git      = "https://github.com/WIPACrepo/iceprod.git"
 
     def url_for_version(self, version):
         url = "https://github.com/WIPACrepo/iceprod/archive/v{0}.tar.gz"
         return url.format(version)
 
+    version('develop', branch='master')
     version('2.5.0', sha256='ac548773db2989d69a2789326101f26bbafba29d0d70359a777fd4fc36c1d998')
 
     depends_on('py-setuptools', type='build')
