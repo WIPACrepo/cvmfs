@@ -83,6 +83,11 @@ if [ -d ${tmp_cert} ]; then
     X509_CERT_DIR=${tmp_cert}
     VARS="$VARS X509_CERT_DIR"
 fi
+tmp_userconf=${SROOT}/etc/vomses
+if [ -e ${tmp_userconf} ]; then
+    VOMS_USERCONF=${tmp_cert}
+    VARS="$VARS VOMS_USERCONF"
+fi
 
 # export fully-qualified X509 user proxy environment variable
 if [ ! -z "$X509_USER_PROXY" ]; then
