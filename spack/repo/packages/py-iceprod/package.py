@@ -53,7 +53,7 @@ class PyIceprod(PythonPackage):
     depends_on('py-jsonschema', type=('build', 'run'))
     depends_on('py-ldap3', type=('build', 'run'))
     depends_on('py-pyopenssl', type=('build', 'run'))
-    depends_on('py-mongo@3.7.2:', type=('build', 'run'))
+    depends_on('py-mongo@3.7.1:', type=('build', 'run'))
     depends_on('py-motor', type=('build', 'run'))
     depends_on('py-pyasn1', type=('build', 'run'))
     depends_on('py-pyjwt', type=('build', 'run'))
