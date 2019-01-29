@@ -322,6 +322,9 @@ def build(src, dest, version):
     else:
         copy_src(os.path.join(src,*version), srootbase)
     sroot = get_sroot(srootbase)
+    #if version == ['iceprod','master']:
+    #    myprint('iceprod/master - deleting sroot')
+    #    shutil.rmtree(sroot)
     if not os.path.isdir(sroot):
         os.makedirs(sroot)
 
@@ -412,7 +415,7 @@ def build(src, dest, version):
 
     finally:
         # cleanup
-        pass#run_cmd([spack_bin,'clean','-s','-d'])
+        run_cmd([spack_bin,'clean','-s','-d'])
 
 if __name__ == '__main__':
     from optparse import OptionParser

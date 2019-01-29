@@ -50,6 +50,7 @@ class PyIceprod(PythonPackage):
     depends_on('py-coverage', type=('build', 'run'))
     depends_on('py-cryptography', type=('build', 'run'))
     depends_on('py-htcondor', type=('build', 'run'))
+    depends_on('py-psutil', type=('build', 'run'))
     depends_on('py-jsonschema', type=('build', 'run'))
     depends_on('py-ldap3', type=('build', 'run'))
     depends_on('py-pyopenssl', type=('build', 'run'))
