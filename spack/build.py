@@ -257,7 +257,7 @@ def get_dependencies(spack_path, package, packages):
         else:
             for line in error.split('\n'):
                 if line.startswith('==> Error:'):
-                    for d in line.split('depend on')[-1].replace(', or ',',').split(','):
+                    for d in line.split('depend on')[-1].replace(', or ',',').replace(' or ',',').split(','):
                         d = d.strip()
                         if d in dependencies:
                             dependencies.remove(d)
