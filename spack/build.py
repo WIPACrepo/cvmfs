@@ -16,12 +16,24 @@ def myprint(*args,**kwargs):
     print(*args,**kwargs)
     sys.stdout.flush()
 
+def run_cmd(*args, **kwargs):
+    """print and run a subprocess command"""
+    myprint('cmd:',*args)
+    subprocess.check_call(*args, **kwargs)
+
+def run_cmd_output(*args, **kwargs):
+    """print and run a subprocess command, with output"""
+    myprint('cmd:',*args)
+    p = subprocess.Popen(*args,
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE,
+                         **kwargs)
+    output,error = p.communicate()
+    return (p.returncode, output.decode('utf-8'), error.decode('utf-8'))
+
 def get_sroot(dir_name):
     """Get the SROOT from dir/setup.sh"""
-    p = subprocess.Popen(os.path.join(dir_name,'setup.sh'),
-                         shell=True, stdout=subprocess.PIPE,
-                         stderr=subprocess.PIPE)
-    output = p.communicate()[0]
+    code,output,error = run_cmd_output(os.path.join(dir_name,'setup.sh'), shell=True)
     for line in output.split(';'):
         line = line.strip()
         myprint(line)
@@ -48,11 +60,6 @@ def copy_src(src,dest):
         else:
             shutil.copy2(path,dest)
 
-def run_cmd(*args, **kwargs):
-    """print and run a subprocess command"""
-    myprint('cmd:',*args)
-    subprocess.check_call(*args, **kwargs)
-
 def disable_compiler(spack_path, compiler):
     """
     Disable the compiler config for spack.
@@ -65,10 +72,7 @@ def disable_compiler(spack_path, compiler):
     spack_bin = os.path.join(spack_path,'bin','spack')
 
     # get arch
-    p = subprocess.Popen([spack_bin, 'arch'],
-                         stdout=subprocess.PIPE,
-                         stderr=subprocess.PIPE)
-    output = p.communicate()[0]
+    code,output,error = run_cmd_output([spack_bin, 'arch'])
     spack_arch = output.strip(' \n')
     platform = spack_arch.split('-')[1]
 
@@ -123,18 +127,12 @@ def update_compiler(spack_path, compiler):
     spack_bin = os.path.join(spack_path,'bin','spack')
 
     # get arch
-    p = subprocess.Popen([spack_bin, 'arch'],
-                         stdout=subprocess.PIPE,
-                         stderr=subprocess.PIPE)
-    output = p.communicate()[0]
+    code,output,error = run_cmd_output([spack_bin, 'arch'])
     spack_arch = output.strip(' \n')
     platform = spack_arch.split('-')[1]
 
     # get compiler
-    p = subprocess.Popen([spack_bin, 'location', '-i', compiler],
-                         stdout=subprocess.PIPE,
-                         stderr=subprocess.PIPE)
-    output = p.communicate()[0]
+    code,output,error = run_cmd_output([spack_bin, 'location', '-i', compiler])
     loc = output.strip(' \n')
     if (not loc) or not os.path.exists(loc):
         raise Exception('cannot find compiler '+compiler)
@@ -206,10 +204,7 @@ def get_dependencies(spack_path, package, packages):
     """
     spack_bin = os.path.join(spack_path,'bin','spack')
     cmd = [spack_bin, 'find', '--show-full-compiler', '-v']
-    p = subprocess.Popen(cmd,
-                         stdout=subprocess.PIPE,
-                         stderr=subprocess.PIPE)
-    output = p.communicate()[0]
+    code,output,error = run_cmd_output(cmd)
     installed_packages = {}
     for line in output.split('\n'):
         line = line.strip()
@@ -228,12 +223,8 @@ def get_dependencies(spack_path, package, packages):
     success = False
     while True:
         cmd = [spack_bin, 'spec']+package.split()+ret
-        print(cmd)
-        p = subprocess.Popen(cmd,
-                             stdout=subprocess.PIPE,
-                             stderr=subprocess.PIPE)
-        output,error = p.communicate()
-        success = p.returncode == 0
+        code,output,error = run_cmd_output(cmd)
+        success = code == 0
 
         if (not success) and 'while trying to concretize' in error:
             output = error.split('while trying to concretize',1)[-1]
@@ -287,10 +278,7 @@ def is_installed(spack_path, package):
     """Check if a package is installed"""
     spack_bin = os.path.join(spack_path,'bin','spack')
     cmd = [spack_bin, 'find', package]
-    p = subprocess.Popen(cmd,
-                         stdout=subprocess.PIPE,
-                         stderr=subprocess.PIPE)
-    output = p.communicate()[0]
+    code,output,error = run_cmd_output(cmd)
     name = package.split('@')[0]
     for line in output.split('\n'):
         line = line.strip()
