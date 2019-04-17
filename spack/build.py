@@ -307,6 +307,8 @@ def build(src, dest, version):
     srootbase = os.path.join(dest,*version)
     if version[0] == 'iceprod':
         copy_src(os.path.join(src,'iceprod','all'), srootbase)
+    elif '.' in version[0] and not os.path.exists(os.path.join(src,*version)):
+        copy_src(os.path.join(src,version[0].split('.')[0],*version[1:]), srootbase)
     else:
         copy_src(os.path.join(src,*version), srootbase)
     sroot = get_sroot(srootbase)
