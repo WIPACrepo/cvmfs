@@ -35,7 +35,7 @@ class Log4cpp(AutotoolsPackage):
     url      = "http://downloads.sourceforge.net/project/log4cpp/log4cpp-1.1.x (new)/log4cpp-1.1/log4cpp-1.1.3.tar.gz"
 
     def url_for_version(self, version):
-        url = "http://downloads.sourceforge.net/project/log4cpp/log4cpp-1.1.x (new)/log4cpp-1.1/log4cpp-{0}.tar.gz"
+        url = "http://versaweb.dl.sourceforge.net/project/log4cpp/log4cpp-1.1.x (new)/log4cpp-1.1/log4cpp-{0}.tar.gz"
         return url.format(version)
 
     version('1.1.3', 'b9e2cee932da987212f2c74b767b4d8b')
