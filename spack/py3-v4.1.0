@@ -61,6 +61,7 @@ root@6.14.02~davix~examples+fftw+fits~gdml~opengl+pythia6~tbb~tiff~unuran~vdt~x
 geant4@10.04 threads=False
 lhapdf5@5.9.1
 genie@3_00_00
+genie-reweight@1_00_00
 
 # extra python packages
 py-ipython@6.5.0
