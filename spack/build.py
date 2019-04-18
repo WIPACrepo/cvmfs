@@ -226,40 +226,58 @@ def get_dependencies(spack_path, package, packages):
         code,output,error = run_cmd_output(cmd)
         success = code == 0
 
-        if (not success) and 'while trying to concretize' in error:
-            output = error.split('while trying to concretize',1)[-1]
-            success = True
-        if success:
-            new_deps = set()
-            for line in output.split('\n'):
+        if (not success) and 'while trying to concretize the partial spec:' in error:
+            for line in error.rsplit('partial spec:',1)[-1].split('\n'):
                 line = line.strip()
-                if line.startswith('^'):
-                    dep = line.split('@', 1)[0].lstrip('^')
-                    print('dep:',dep)
+                if line and '@' in line:
+                    dep = line.split('@', 1)[0]
                     if dep in packages:
                         print('   found', packages[dep])
-                        new_deps.add(dep)
+                        dependencies.add(dep)
+                        break
                     elif dep in installed_packages:
                         print('   installed', installed_packages[dep])
-                        new_deps.add(dep)
-            if new_deps == dependencies:
-                break
-            dependencies = new_deps
-        else:
-            for line in error.split('\n'):
-                if line.startswith('==> Error:'):
-                    for d in line.split('depend on')[-1].replace(', or ',',').replace(' or ',',').split(','):
-                        d = d.strip()
-                        if d in dependencies:
-                            dependencies.remove(d)
-                        else:
-                            print(line)
-                            raise Exception('bad dependencies')
-                    break
+                        dependencies.add(dep)
+                        break
             else:
                 print(output)
                 print(error)
                 raise Exception('bad dependencies')
+        else:
+            if (not success) and 'while trying to concretize' in error:
+                output = error.split('while trying to concretize',1)[-1]
+                success = True
+            if success:
+                new_deps = set()
+                for line in output.split('\n'):
+                    line = line.strip()
+                    if line.startswith('^'):
+                        dep = line.split('@', 1)[0].lstrip('^')
+                        print('dep:',dep)
+                        if dep in packages:
+                            print('   found', packages[dep])
+                            new_deps.add(dep)
+                        elif dep in installed_packages:
+                            print('   installed', installed_packages[dep])
+                            new_deps.add(dep)
+                if new_deps == dependencies:
+                    break
+                dependencies = new_deps
+            else:
+                for line in error.split('\n'):
+                    if line.startswith('==> Error:'):
+                        for d in line.split('depend on')[-1].replace(', or ',',').replace(' or ',',').split(','):
+                            d = d.strip()
+                            if d in dependencies:
+                                dependencies.remove(d)
+                            else:
+                                print(line)
+                                raise Exception('bad dependencies')
+                        break
+                else:
+                    print(output)
+                    print(error)
+                    raise Exception('bad dependencies')
 
         ret = []
         for d in dependencies:
