@@ -29,7 +29,7 @@ class Cdk(AutotoolsPackage):
     """A library of curses widgets which can be linked into your application."""
 
     homepage = "http://invisible-island.net/cdk/"
-    url      = "ftp://ftp.invisible-island.net/cdk/cdk-5.0-20160131.tgz"
+    url      = "ftp://ftp.invisible-island.net/pub/cdk/cdk-5.0-20160131.tgz"
 
     version('5.0-20180306', '3b52823d8a78c6d27d4be8839edd279e')
     version('5.0-20171209', 'df6e786fc0b1faa8e518f80121c941c9')
