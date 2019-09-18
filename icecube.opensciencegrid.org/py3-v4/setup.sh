@@ -34,7 +34,7 @@ sroot_lib=$SROOT/lib
 if [ "" = "$LD_LIBRARY_PATH" ]; then
     LD_LIBRARY_PATH="$sroot_lib"
 else
-    LD_LIBRARY_PATH="$sroot_bin:$LD_LIBRARY_PATH"
+    LD_LIBRARY_PATH="$sroot_lib:$LD_LIBRARY_PATH"
 fi
 
 # initialize I3_DATA variable
