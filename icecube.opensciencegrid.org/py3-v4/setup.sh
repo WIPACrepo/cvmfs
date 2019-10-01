@@ -58,8 +58,8 @@ if [ -d ${sroot_pcfg} ]; then
         PKG_CONFIG_PATH="$sroot_pcfg"
     else
         PKG_CONFIG_PATH="$sroot_pcfg:$PKG_CONFIG_PATH"
-        VARS="$VARS PKG_CONFIG_PATH"
     fi
+    VARS="$VARS PKG_CONFIG_PATH"
 fi
 
 # ROOT specific bits
