@@ -28,7 +28,7 @@ def build(src,dest,svn_up=None,svn_only=None,nightly=False,**build_kwargs):
         kwargs['svn_only'] = svn_only
 
     # releases
-    tools['i3_metaproject']['simulation']['V06-01-02-RC2'](dir_name,**kwargs)
+    #tools['i3_metaproject']['simulation']['V06-01-02-RC2'](dir_name,**kwargs)
 
     tools['i3_metaproject']['icerec']['V05-02-05'](dir_name,**kwargs)
 

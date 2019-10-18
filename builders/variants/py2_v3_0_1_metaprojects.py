@@ -35,6 +35,7 @@ def build(src,dest,svn_up=None,svn_only=None,nightly=False,**build_kwargs):
     tools['i3_metaproject']['simulation']['V06-01-00-RC4'](dir_name,**kwargs)
     tools['i3_metaproject']['simulation']['V06-01-00'](dir_name,**kwargs)
     tools['i3_metaproject']['simulation']['V06-01-01'](dir_name,**kwargs)
+    tools['i3_metaproject']['simulation']['V06-01-02-RC2'](dir_name,**kwargs)
 
     tools['i3_metaproject']['icerec']['V05-02-00'](dir_name,**kwargs)
     tools['i3_metaproject']['icerec']['V05-02-01-RC1'](dir_name,**kwargs)
