@@ -376,11 +376,10 @@ if [ -z ${tmp_ftn} ]; then
 fi
 
 # dump the final list of environment variables
-CUR_SHELL=`readlink "/proc/$$/exe"|awk -F'/' '{print $NF}'`
 for name in ${VARS}
 do
   eval VALUE=\$$name
-  case ${CUR_SHELL} in
+  case ${SHELL##*/} in
         tcsh)
             echo 'setenv '$name' '\"$VALUE\"' ;' ;;
         csh)

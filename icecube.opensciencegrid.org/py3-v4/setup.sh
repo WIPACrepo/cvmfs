@@ -30,7 +30,7 @@ else
 fi
 
 # prepend the standard library directory to the user's LD_LIBRARY_PATH
-sroot_lib=$SROOT/lib
+sroot_lib="$SROOT/lib:$SROOT/lib64"
 if [ "" = "$LD_LIBRARY_PATH" ]; then
     LD_LIBRARY_PATH="$sroot_lib"
 else
@@ -128,11 +128,10 @@ if [ "" != "${tmp}" ]; then
 fi
 
 # dump the final list of environment variables
-CUR_SHELL=`readlink "/proc/$$/exe"|awk -F'/' '{print $NF}'`
 for name in ${VARS}
 do
   eval VALUE=\$$name
-  case ${CUR_SHELL} in
+  case ${SHELL##*/} in
         tcsh)
             echo 'setenv '$name' '\"$VALUE\"' ;' ;;
         csh)
