@@ -33,6 +33,8 @@
 # #!/bin/sh /cvmfs/icecube.opensciencegrid.org/py2-v2/icetray-start
 # #METAPROJECT /data/user/you/metaprojects/icerec.VXX-YY-ZZ/build
 
+set -f
+
 DIR=$(echo "${0%/*}")
 SROOTBASE=$(cd "$DIR" && echo "$(pwd -L)")
 
