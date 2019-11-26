@@ -323,13 +323,19 @@ def build(src, dest, version):
     version = version.split('/') if '/' in version else [version]
 
     srootbase = os.path.join(dest,*version)
-    if version[0] == 'iceprod':
-        copy_src(os.path.join(src,'iceprod','all'), srootbase)
-    elif '.' in version[0] and not os.path.exists(os.path.join(src,*version)):
-        copy_src(os.path.join(src,version[0].split('.')[0],*version[1:]), srootbase)
-    else:
-        copy_src(os.path.join(src,*version), srootbase)
-    sroot = get_sroot(srootbase)
+    try:
+        sroot = get_sroot(srootbase)
+    except Exception:
+        sroot = None
+    if sroot == 'RHEL_7_x86_64' or not sroot:
+        if version[0] == 'iceprod':
+            copy_src(os.path.join(src,'iceprod','all'), srootbase)
+        elif '.' in version[0] and not os.path.exists(os.path.join(src,*version)):
+            copy_src(os.path.join(src,version[0].split('.')[0],*version[1:]), srootbase)
+        else:
+            copy_src(os.path.join(src,*version), srootbase)
+    if not sroot:
+        sroot = get_sroot(srootbase)
     #if version == ['iceprod','master']:
     #    myprint('iceprod/master - deleting sroot')
     #    shutil.rmtree(sroot)
