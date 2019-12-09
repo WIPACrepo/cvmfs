@@ -431,15 +431,116 @@ def build(src, dest, version):
         # cleanup
         run_cmd([spack_bin,'clean','-s','-d'])
 
+def num_cpus():
+    ret = 1
+    try:
+        ret = int(os.environ['CPUS'])
+    except Exception:
+        pass
+    return ret
+
+def svn_download(url, dest):
+    """
+    SVN download of a url to a dest.
+
+    Handle parallel requests with a "lockfile".
+    """
+    lockdir = dest+'.lock'
+    waiter = False
+    try:
+        os.makedirs(lockdir)
+    except OSError:
+        waiter = True
+    else:
+        def handle_exit():
+            if os.path.exists(lockdir):
+                os.removedirs(lockdir)
+        atexit.register(handle_exit)
+        signal.signal(signal.SIGTERM, handle_exit)
+        signal.signal(signal.SIGINT, handle_exit)
+
+        # now do download
+        if os.path.exists(dest):
+            shutil.rmtree(dest)
+        run_cmd(['svn', 'co', url, dest, '--username', 'icecube',
+                 '--password', 'skua', '--no-auth-cache', '--non-interactive'])
+        os.rmdir(lockdir)
+
+    if waiter:
+        for _ in range(1000):
+            if not os.path.exists(lockdir):
+                break
+            time.sleep(1)
+        else:
+            raise Exception('timeout waiting for svn download')
+
+    if not os.path.exists(dest):
+        raise Exception('download failed')
+
+def build_meta(dest, version, svn_only=False):
+    srootbase = os.path.join(dest,*version)
+    try:
+        sroot = get_sroot(srootbase)
+    except Exception:
+        sroot = None
+
+    metaprojects = get_packages(os.path.join(os.path.dirname(__file__), version))
+    for meta_name in metaprojects:
+        myprint('working on', meta_name)
+        meta,name = meta_name.split('/',1)
+
+        src_dir = os.path.join(srootbase, 'metaprojects', meta_name)
+        install_dir = os.path.join(sroot, 'metaprojects', meta_name)
+
+        trunk = False
+        if 'RC' in name:
+            src_url = 'http://code.icecube.wisc.edu/svn/meta-projects/%s/candidates/%s'%(meta,name)
+        elif name not in ('trunk', 'stable'):
+            src_url = 'http://code.icecube.wisc.edu/svn/meta-projects/%s/releases/%s'%(meta,name)
+            trunk = True
+        else:
+            src_url = 'http://code.icecube.wisc.edu/svn/meta-projects/%s/%s'%(meta,name)
+
+        if (not trunk) and os.path.exists(install_dir):
+            myprint('   skipping build of', meta_name, ' - already built')
+            continue
+
+        svn_download(src_url, src_dir)
+        if svn_only:
+            myprint('   svn only, so skipping build of', meta_name)
+            continue
+
+        build_dir = tempfile.mkdtemp(dir=os.getcwd())
+        try:
+            cmd = ['cmake', '-DCMAKE_BUILD_TYPE=Release',
+                   '-DINSTALL_TOOL_LIBS=OFF',
+                   '-DCMAKE_INSTALL_PREFIX='+instalL_dir,
+                   src_dir]
+            run_cmd(cmd, cwd=build_dir)
+
+            cmd = ['make', '-j', str(num_cpus())]
+            run_cmd(cmd, cwd=build_dir)
+
+            if trunk and os.path.exists(install_dir):
+                shutil.rmtree(install_dir)
+            cmd = ['make', 'install']
+            run_cmd(cmd, cwd=build_dir)
+        finally:
+            shutil.rmtree(build_dir)
+
 if __name__ == '__main__':
     from optparse import OptionParser
 
     parser = OptionParser(usage="%prog [options] versions")
     parser.add_option("--src", help="base source path")
     parser.add_option("--dest", help="base dest path")
+    parser.add_option("--svnonly", action='store_true', help="metaproject svn only")
     (options, args) = parser.parse_args()
     if not args:
         parser.error("need to specify a version")
 
     for version in args:
-        build(options.src, options.dest, version)
+        if version.endswith('-metaproject'):
+            build_meta(options.dest, version, svn_only=options.svnonly)
+        else:
+            build(options.src, options.dest, version)
