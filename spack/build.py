@@ -37,7 +37,7 @@ def run_cmd_output(*args, **kwargs):
 def run_cmd_sroot(args, srootbase, **kwargs):
     """print and run a subprocess command, inside an sroot environment."""
     myprint('cmd:',args)
-    cmd = 'eval $('+os.path.join(srootbase,'setup.sh) ; '
+    cmd = 'eval $('+os.path.join(srootbase,'setup.sh')+') ; '
     cmd += ' '.join(args)
     subprocess.check_call(cmd, shell=True, **kwargs)
 
