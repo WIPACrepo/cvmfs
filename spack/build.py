@@ -34,6 +34,13 @@ def run_cmd_output(*args, **kwargs):
     output,error = p.communicate()
     return (p.returncode, output.decode('utf-8'), error.decode('utf-8'))
 
+def run_cmd_sroot(args, srootbase, **kwargs):
+    """print and run a subprocess command, inside an sroot environment."""
+    myprint('cmd:',args)
+    cmd = 'eval $('+os.path.join(srootbase,'setup.sh) ; '
+    cmd += ' '.join(args)
+    subprocess.check_call(cmd, shell=True, **kwargs)
+
 def get_sroot(dir_name):
     """Get the SROOT from dir/setup.sh"""
     code,output,error = run_cmd_output(os.path.join(dir_name,'setup.sh'), shell=True)
@@ -494,15 +501,15 @@ def build_meta(dest, version, svn_only=False):
                    '-DINSTALL_TOOL_LIBS=OFF',
                    '-DCMAKE_INSTALL_PREFIX='+install_dir,
                    src_dir]
-            run_cmd(cmd, cwd=build_dir)
+            run_cmd_sroot(cmd, srootbase, cwd=build_dir)
 
             cmd = ['make', '-j', str(num_cpus())]
-            run_cmd(cmd, cwd=build_dir)
+            run_cmd_sroot(cmd, srootbase, cwd=build_dir)
 
             if trunk and os.path.exists(install_dir):
                 shutil.rmtree(install_dir)
             cmd = ['make', 'install']
-            run_cmd(cmd, cwd=build_dir)
+            run_cmd_sroot(cmd, srootbase, cwd=build_dir)
         finally:
             shutil.rmtree(build_dir)
 
