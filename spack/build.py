@@ -442,40 +442,46 @@ def num_cpus():
         pass
     return ret
 
-def svn_download(url, dest):
+def svn_download(url, dest, svn_only=False):
     """
     SVN download of a url to a dest.
 
     Handle parallel requests with a "lockfile".
     """
-    lockdir = dest+'.lock'
-    waiter = False
-    try:
-        os.makedirs(lockdir)
-    except OSError:
-        waiter = True
-    else:
-        def handle_exit():
-            if os.path.exists(lockdir):
-                os.removedirs(lockdir)
-        atexit.register(handle_exit)
-        signal.signal(signal.SIGTERM, handle_exit)
-        signal.signal(signal.SIGINT, handle_exit)
-
-        # now do download
+    if svn_only:
         if os.path.exists(dest):
             shutil.rmtree(dest)
         run_cmd(['svn', 'co', url, dest, '--username', 'icecube',
                  '--password', 'skua', '--no-auth-cache', '--non-interactive'])
-        os.rmdir(lockdir)
-
-    if waiter:
-        for _ in range(1000):
-            if not os.path.exists(lockdir):
-                break
-            time.sleep(1)
+    else:
+        lockdir = dest+'.lock'
+        waiter = False
+        try:
+            os.makedirs(lockdir)
+        except OSError:
+            waiter = True
         else:
-            raise Exception('timeout waiting for svn download')
+            def handle_exit():
+                if os.path.exists(lockdir):
+                    os.removedirs(lockdir)
+            atexit.register(handle_exit)
+            signal.signal(signal.SIGTERM, handle_exit)
+            signal.signal(signal.SIGINT, handle_exit)
+
+            # now do download
+            if os.path.exists(dest):
+                shutil.rmtree(dest)
+            run_cmd(['svn', 'co', url, dest, '--username', 'icecube',
+                     '--password', 'skua', '--no-auth-cache', '--non-interactive'])
+            os.rmdir(lockdir)
+
+        if waiter:
+            for _ in range(1000):
+                if not os.path.exists(lockdir):
+                    break
+                time.sleep(1)
+            else:
+                raise Exception('timeout waiting for svn download')
 
     if not os.path.exists(dest):
         raise Exception('download failed')
@@ -505,7 +511,7 @@ def build_meta(dest, version, svn_only=False):
             myprint('   skipping build of', meta_name, ' - already built')
             continue
 
-        svn_download(src_url, src_dir)
+        svn_download(src_url, src_dir, svn_only=svn_only)
         if svn_only:
             myprint('   svn only, so skipping build of', meta_name)
             continue
