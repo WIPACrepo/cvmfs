@@ -478,11 +478,8 @@ def svn_download(url, dest):
         raise Exception('download failed')
 
 def build_meta(dest, version, svn_only=False):
-    srootbase = os.path.join(dest,*version)
-    try:
-        sroot = get_sroot(srootbase)
-    except Exception:
-        sroot = None
+    srootbase = os.path.join(dest,version)
+    sroot = get_sroot(srootbase)
 
     metaprojects = get_packages(os.path.join(os.path.dirname(__file__), version))
     for meta_name in metaprojects:
