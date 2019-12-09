@@ -492,7 +492,7 @@ def build_meta(dest, version, svn_only=False):
         try:
             cmd = ['cmake', '-DCMAKE_BUILD_TYPE=Release',
                    '-DINSTALL_TOOL_LIBS=OFF',
-                   '-DCMAKE_INSTALL_PREFIX='+instalL_dir,
+                   '-DCMAKE_INSTALL_PREFIX='+install_dir,
                    src_dir]
             run_cmd(cmd, cwd=build_dir)
 
