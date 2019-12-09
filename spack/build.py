@@ -445,43 +445,15 @@ def num_cpus():
 def svn_download(url, dest, svn_only=False):
     """
     SVN download of a url to a dest.
-
-    Handle parallel requests with a "lockfile".
     """
     if svn_only:
+        print("   downloading", url, "to", dest)
         if os.path.exists(dest):
             shutil.rmtree(dest)
         run_cmd(['svn', 'co', url, dest, '--username', 'icecube',
                  '--password', 'skua', '--no-auth-cache', '--non-interactive'])
     else:
-        lockdir = dest+'.lock'
-        waiter = False
-        try:
-            os.makedirs(lockdir)
-        except OSError:
-            waiter = True
-        else:
-            def handle_exit():
-                if os.path.exists(lockdir):
-                    os.removedirs(lockdir)
-            atexit.register(handle_exit)
-            signal.signal(signal.SIGTERM, handle_exit)
-            signal.signal(signal.SIGINT, handle_exit)
-
-            # now do download
-            if os.path.exists(dest):
-                shutil.rmtree(dest)
-            run_cmd(['svn', 'co', url, dest, '--username', 'icecube',
-                     '--password', 'skua', '--no-auth-cache', '--non-interactive'])
-            os.rmdir(lockdir)
-
-        if waiter:
-            for _ in range(1000):
-                if not os.path.exists(lockdir):
-                    break
-                time.sleep(1)
-            else:
-                raise Exception('timeout waiting for svn download')
+        print("   skipping download")
 
     if not os.path.exists(dest):
         raise Exception('download failed')
