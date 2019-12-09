@@ -9,6 +9,8 @@ import os
 import shutil
 import tempfile
 import subprocess
+import atexit
+import signal
 from collections import OrderedDict
 
 def myprint(*args,**kwargs):
