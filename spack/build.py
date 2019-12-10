@@ -449,18 +449,15 @@ def num_cpus():
         pass
     return ret
 
-def svn_download(url, dest, svn_only=False):
+def svn_download(url, dest):
     """
     SVN download of a url to a dest.
     """
-    if svn_only:
-        print("   downloading", url, "to", dest)
-        if os.path.exists(dest):
-            shutil.rmtree(dest)
-        run_cmd(['svn', 'co', url, dest, '--username', 'icecube',
-                 '--password', 'skua', '--no-auth-cache', '--non-interactive'])
-    else:
-        print("   skipping download")
+    print("   downloading", url, "to", dest)
+    if os.path.exists(dest):
+        shutil.rmtree(dest)
+    run_cmd(['svn', 'co', url, dest, '--username', 'icecube',
+             '--password', 'skua', '--no-auth-cache', '--non-interactive'])
 
     if not os.path.exists(dest):
         raise Exception('download failed')
@@ -474,7 +471,6 @@ def build_meta(dest, version, svn_only=False):
         myprint('working on', meta_name)
         meta,name = meta_name.split('/',1)
 
-        src_dir = os.path.join(srootbase, 'metaprojects', meta_name)
         install_dir = os.path.join(sroot, 'metaprojects', meta_name)
 
         trunk = False
@@ -486,17 +482,21 @@ def build_meta(dest, version, svn_only=False):
             src_url = 'http://code.icecube.wisc.edu/svn/meta-projects/%s/%s'%(meta,name)
             trunk = True
 
+        if svn_only:
+            src_dir = os.path.join(srootbase, 'metaprojects', meta_name)
+            svn_download(src_url, src_dir)
+            myprint('   svn only, so skipping build of', meta_name)
+            continue
+
         if (not trunk) and os.path.exists(install_dir):
             myprint('   skipping build of', meta_name, ' - already built')
             continue
 
-        svn_download(src_url, src_dir, svn_only=svn_only)
-        if svn_only:
-            myprint('   svn only, so skipping build of', meta_name)
-            continue
-
+        src_dir = tempfile.mkdtemp(dir=os.getcwd())
         build_dir = tempfile.mkdtemp(dir=os.getcwd())
         try:
+            svn_download(src_url, src_dir)
+
             cmd = ['cmake', '-DCMAKE_BUILD_TYPE=Release',
                    '-DINSTALL_TOOL_LIBS=OFF',
                    '-DCMAKE_INSTALL_PREFIX='+install_dir,
@@ -512,6 +512,7 @@ def build_meta(dest, version, svn_only=False):
             run_cmd_sroot(cmd, srootbase, cwd=build_dir)
         finally:
             shutil.rmtree(build_dir)
+            shutil.rmtree(src_dir)
 
 if __name__ == '__main__':
     from optparse import OptionParser
