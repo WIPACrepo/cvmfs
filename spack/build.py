@@ -482,9 +482,9 @@ def build_meta(dest, version, svn_only=False):
             src_url = 'http://code.icecube.wisc.edu/svn/meta-projects/%s/candidates/%s'%(meta,name)
         elif name not in ('trunk', 'stable'):
             src_url = 'http://code.icecube.wisc.edu/svn/meta-projects/%s/releases/%s'%(meta,name)
-            trunk = True
         else:
             src_url = 'http://code.icecube.wisc.edu/svn/meta-projects/%s/%s'%(meta,name)
+            trunk = True
 
         if (not trunk) and os.path.exists(install_dir):
             myprint('   skipping build of', meta_name, ' - already built')
