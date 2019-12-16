@@ -1,1 +1,1 @@
-gcc@7.4.0 binutils=True piclibs=True strip=True
+gcc@9.2.0 binutils=True piclibs=True strip=True 

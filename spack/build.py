@@ -57,6 +57,7 @@ def get_sroot(dir_name):
 
 def copy_src(src,dest):
     """Copy anything from src to dest"""
+    print("copy_src")
     try:
         os.makedirs(dest)
     except Exception:
@@ -213,7 +214,7 @@ def get_dependencies(spack_path, package, packages):
         list: [dependencies]
     """
     spack_bin = os.path.join(spack_path,'bin','spack')
-    cmd = [spack_bin, 'find', '--show-full-compiler', '-v']
+    cmd = [spack_bin, 'find', '--show-full-compiler', '-lv']
     code,output,error = run_cmd_output(cmd)
     installed_packages = {}
     for line in output.split('\n'):
@@ -222,11 +223,11 @@ def get_dependencies(spack_path, package, packages):
             continue
         parts = line.split()
         # test for our compiler
-        if 'spack' not in parts[0].split('%',1)[-1]:
+        if 'spack' not in parts[1].split('%',1)[-1]:
             continue
-        name = parts[0].split('@',1)[0]
-        parts2 = [x for x in parts if not x.endswith('=')]
-        installed_packages[name] = ' '.join(parts2)
+        name = parts[1].split('@',1)[0]
+        hash = parts[0]
+        installed_packages[name] = name+'/'+hash
 
     dependencies = set()
     ret = []
@@ -291,10 +292,10 @@ def get_dependencies(spack_path, package, packages):
 
         ret = []
         for d in dependencies:
-            if d in packages:
-                parts = packages[d].split()
-            elif d in installed_packages:
+            if d in installed_packages:
                 parts = installed_packages[d].split()
+            elif d in packages:
+                parts = packages[d].split()
             else:
                 raise Exception('bad dep: '+d)
             parts[0] = '^'+parts[0]
@@ -304,15 +305,21 @@ def get_dependencies(spack_path, package, packages):
 
 def is_installed(spack_path, package):
     """Check if a package is installed"""
-    spack_bin = os.path.join(spack_path,'bin','spack')
-    cmd = [spack_bin, 'find', package]
-    code,output,error = run_cmd_output(cmd)
     name = package.split('@')[0]
+    spack_bin = os.path.join(spack_path,'bin','spack')
+    cmd = [spack_bin, 'find', '--show-full-compiler', '-v']
+    code,output,error = run_cmd_output(cmd)
+    installed_packages = {}
     for line in output.split('\n'):
         line = line.strip()
         if (not line) or line.startswith('--') or line.startswith('==>'):
             continue
-        if name in line:
+        parts = line.split()
+        # test for our compiler
+        if 'spack' not in parts[0].split('%',1)[-1]:
+            continue
+        pkg_name = parts[0].split('@',1)[0]
+        if name == pkg_name:
             return True
     return False
 
@@ -337,7 +344,7 @@ def build(src, dest, version):
         sroot = get_sroot(srootbase)
     except Exception:
         sroot = None
-    if sroot == 'RHEL_7_x86_64' or not sroot:
+    if (not sroot) or sroot == 'RHEL_7_x86_64' or not sroot.startswith('/cvmfs'):
         if version[0] == 'iceprod':
             copy_src(os.path.join(src,'iceprod','all'), srootbase)
         elif '.' in version[0] and not os.path.exists(os.path.join(src,*version)):
@@ -368,14 +375,21 @@ def build(src, dest, version):
     if not os.path.exists(spack_path):
         url = 'https://github.com/spack/spack.git'
         run_cmd(['git', 'clone', url, spack_path])
-        run_cmd(['git', 'checkout', 'tags/v0.12.0'], cwd=spack_path)
+        run_cmd(['git', 'checkout', 'tags/v0.12.1'], cwd=spack_path)
         
     os.environ['SPACK_ROOT'] = spack_path
     spack_bin = os.path.join(spack_path,'bin','spack')
 
+    # add custom repo
+    repo_path = os.path.join(os.path.dirname(__file__),*version)+'-repo'
+    if (not os.path.exists(repo_path)) and '.' in version[0]:
+        repo_path = os.path.join(os.path.dirname(__file__),'.'.join(version[0].split('.')[:2]),*version[1:])+'-repo'
+    if (not os.path.exists(repo_path)) and '.' in version[0]:
+        repo_path = os.path.join(os.path.dirname(__file__),version[0].split('.')[0],*version[1:])+'-repo'
+    if not os.path.exists(repo_path): # last resort
+        repo_path = os.path.join(os.path.dirname(__file__),'repo')
     try:
-        run_cmd([spack_bin, 'repo', 'add', '--scope', 'site',
-                 os.path.join(os.path.dirname(__file__),'repo')])
+        run_cmd([spack_bin, 'repo', 'add', '--scope', 'site', repo_path])
     except Exception:
         pass
 
@@ -399,7 +413,7 @@ def build(src, dest, version):
                 raise Exception('could not find compiler package name')
             disable_compiler(spack_path, compiler_package)
 
-            cmd = [spack_bin, 'install', '-y', '-v']
+            cmd = [spack_bin, 'install', '-y', '-v', '--no-checksum']
             if 'CPUS' in os.environ:
                 cmd.extend(['-j', os.environ['CPUS']])
             for name, package in packages.items():
@@ -424,10 +438,16 @@ def build(src, dest, version):
             deps = get_dependencies(spack_path, package, packages)
             run_cmd(cmd+package.split()+deps)
 
+        # set up dirs
+        for d in ('bin',):
+            path = os.path.join(sroot, d)
+            if not os.path.exists(path):
+                os.makedirs(path)
+
         # set up view
         if compiler_package:
             run_cmd([spack_bin, 'view', '-d', 'false', 'soft', '-i', sroot, compiler_package])
-            if not os.path.exists(os.path.join(sroot,'bin','cc')):
+            if not os.path.lexists(os.path.join(sroot,'bin','cc')):
                 run_cmd(['ln','-s','gcc','cc'], cwd=os.path.join(sroot,'bin'))
         cmd = [spack_bin, 'view', 'soft', '-i', sroot]
         for name, package in packages.items():
@@ -436,6 +456,12 @@ def build(src, dest, version):
             if compiler_package:
                 view_cmd[-1] += '%'+compiler_package+'spack'
             run_cmd(view_cmd)
+
+        # pip install
+        path = os.path.abspath(os.path.join(os.path.dirname(__file__), *version)+'-pip')
+        if os.path.exists(path):
+            cmd = ['pip3', 'install', '-r', path]
+            run_cmd_sroot(cmd, srootbase, cwd=sroot)
 
     finally:
         # cleanup

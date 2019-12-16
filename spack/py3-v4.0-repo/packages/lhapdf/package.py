@@ -28,7 +28,7 @@ from spack.util import web
 import os
 import glob
 
-class Lhapdf5(AutotoolsPackage):
+class Lhapdf(AutotoolsPackage):
     """LHAPDF is a general purpose C++ interpolator, used for evaluating
     PDFs from discretised data files."""
 
@@ -37,6 +37,12 @@ class Lhapdf5(AutotoolsPackage):
     homepage = "https://lhapdf.hepforge.org/"
     url = 'https://lhapdf.hepforge.org/downloads/?f=lhapdf-5.9.1.tar.gz'
 
+    @when('@6:')
+    def url_for_version(self, version):
+        url = 'https://lhapdf.hepforge.org/downloads/?f=LHAPDF-{}.tar.gz'
+        return url.format(version)
+
+    @when('@5:')
     def url_for_version(self, version):
         url = 'https://lhapdf.hepforge.org/downloads/?f=lhapdf-{}.tar.gz'
         return url.format(version)
@@ -62,7 +68,10 @@ class Lhapdf5(AutotoolsPackage):
 
     def configure_args(self):
         spec = self.spec
-        args = ['--disable-old-ccwrap', '--disable-doxygen', '--with-pic']
+        if spec.satisfies('@5:5.9.9'):
+            args = ['--disable-old-ccwrap', '--disable-doxygen', '--with-pic']
+        else:
+            args = ['--with-pic']
 
         if '+shared' in spec:
             args.append('--enable-shared')
@@ -75,22 +84,30 @@ class Lhapdf5(AutotoolsPackage):
             args.append('--disable-static')
 
         if '+python' in spec:
-            args.append('--enable-pyext')
+            if spec.satisfies('@5:5.9.9'):
+                args.append('--enable-pyext')
+            else:
+                args.append('--enable-python')
             self.env.set('PYTHON', selp.spec['python'].executable)
         else:
-            args.append('--disable-pyext')
+            if spec.satisfies('@5:5.9.9'):
+                args.append('--disable-pyext')
+            else:
+                args.append('--disable-python')
 
-        if '+octave' in spec:
-            args.append('--enable-octave')
-        else:
-            args.append('--disable-octave')
+        if spec.satisfies('@5:5.9.9'):
+            if '+octave' in spec:
+                args.append('--enable-octave')
+            else:
+                args.append('--disable-octave')
 
-        install_pdf = []
-        for pdf in self.pdfsets:
-            if '+pdfset-'+pdf in spec:
-                install_pdf.append(pdf)
-        if install_pdf:
-            args.append('--enable-pdfsets={}'.format(','.join(install_pdf)))
+        if spec.satisfies('@5:5.9.9'):
+            install_pdf = []
+            for pdf in self.pdfsets:
+                if '+pdfset-'+pdf in spec:
+                    install_pdf.append(pdf)
+            if install_pdf:
+                args.append('--enable-pdfsets={}'.format(','.join(install_pdf)))
 
         return args
 

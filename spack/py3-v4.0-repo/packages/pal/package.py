@@ -28,21 +28,26 @@ from spack import *
 class Pal(AutotoolsPackage):
     """Positional Astronomy Library."""
 
-    homepage = "https://github.com/IceCube-SPNO/pal"
-    url      = "https://github.com/IceCube-SPNO/pal.git"
+    homepage = "https://github.com/Starlink/pal"
+    url      = "https://github.com/Starlink/pal/releases/download/v0.9.8/pal-0.9.8.tar.gz"
+
+    def url_for_version(self, version):
+        return 'https://github.com/Starlink/pal/releases/download/v{}/pal-{}.tar.gz'.format(version, version)
 
     version('develop', git='https://github.com/IceCube-SPNO/pal.git')
+    version('0.9.8', sha256='d50183637d446bfb1f67b741ebdb66858abf7f40fe871f739d737c9ed8b4b3b4')
 
     variant('shared', default=True, description='Build shared libraries')
     variant('static', default=True, description='Build static libraries')
     variant('pic', default=True, description='Build PIC libraries')
 
+    depends_on('sofa-c', when="@:develop")
     depends_on('erfa')
-
-    depends_on('autoconf')
-    depends_on('automake')
-    depends_on('m4')
-    depends_on('libtool')
+    
+    depends_on('autoconf', when="@develop")
+    depends_on('automake', when="@develop")
+    depends_on('m4', when="@develop")
+    depends_on('libtool', when="@develop")
 
     def configure_args(self):
         spec = self.spec
@@ -62,5 +67,8 @@ class Pal(AutotoolsPackage):
             args.append('--with-pic')
         else:
             args.append('--without-pic')
+
+        if not spec.version.isdevelop():
+            args.append('--without-starlink')
 
         return args

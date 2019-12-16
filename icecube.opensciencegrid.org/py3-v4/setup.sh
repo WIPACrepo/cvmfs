@@ -44,7 +44,7 @@ if [ -d "$sroot_data" ]; then
     VARS="$VARS I3_DATA"
 
     # initialize I3_TESTDATA variable
-    sroot_tstdata=$sroot_data/i3-test-data
+    sroot_tstdata=$sroot_data/i3-test-data-svn/trunk
     if [ -d ${sroot_tstdata} ]; then
         I3_TESTDATA=${sroot_tstdata}
         VARS="$VARS I3_TESTDATA"
@@ -67,9 +67,9 @@ ROOTSYS=$SROOT
 VARS="$VARS ROOTSYS"
 
 # GENIE specific bits
-LHAPDF_DATA_PATH="$I3_DATA/lhapdfsets/5.9.1"
-GENIE=$SROOT
-VARS="$VARS LHAPDF_DATA_PATH GENIE"
+LHAPDF_DATA_PATH="/cvmfs/sft.cern.ch/lcg/external/lhapdfsets/current"
+#GENIE=$SROOT
+VARS="$VARS LHAPDF_DATA_PATH" # GENIE"
 
 # GotoBLAS
 GOTO_NUM_THREADS=1
