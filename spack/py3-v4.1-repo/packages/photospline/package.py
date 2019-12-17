@@ -29,9 +29,10 @@ class Photospline(CMakePackage):
     """Photospline is a library that uses the penalized spline technique
     to efficiently compute, store, and evaluate B-spline representations."""
 
-    homepage = "https://github.com/cnweaver/photospline"
-    url      = "https://github.com/cnweaver/photospline/archive/2.0.1.tar.gz"
+    homepage = "https://github.com/IceCubeOpenSource/photospline"
+    url      = "https://github.com/IceCubeOpenSource/photospline/archive/v2.0.4.tar.gz"
 
+    version('2.0.4', sha256='0a675ffe27e1d99fe482cdd7692320d6852c11c9a63de7e710ba075989e0bfb5')
     version('2.0.1', '976b07481bb2a058c3751f5ef3844654')
 
     depends_on('cfitsio')

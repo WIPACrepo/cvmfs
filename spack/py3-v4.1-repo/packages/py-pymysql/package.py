@@ -25,17 +25,18 @@
 from spack import *
 
 
-class Photospline(CMakePackage):
-    """Photospline is a library that uses the penalized spline technique
-    to efficiently compute, store, and evaluate B-spline representations."""
+class PyPymysql(PythonPackage):
+    """PyMySQL is a pure-Python MySQL client library, based on PEP 249."""
+    homepage = "https://pymysql.readthedocs.io"
+    url      = "https://github.com/PyMySQL/PyMySQL/archive/v0.9.2.tar.gz"
 
-    homepage = "https://github.com/cnweaver/photospline"
-    url      = "https://github.com/cnweaver/photospline/archive/2.0.1.tar.gz"
+    version('0.9.2', sha256='7d7eb459e7a2ae633a677e4b692a35fdafd2d816952f34fc1f3b967f40d1ac2a')
+    version('0.9.1', sha256='cfd54cae5d4309ab741c2adfc9b001bc5b92fb669d8f6744d694c5cb20be4770')
+    version('0.9.0', sha256='d1ea129058049cb2c545447d03cf4a0f28b98d5b789448edd575147e377b076e')
+    version('0.8.1', sha256='6436a31edfbe15fd3b42e86115618dddf591b121290a391423f7cc1a662510f4')
+    version('0.8.0', sha256='28db0f1acd35fcb4c4601c3c482bd962f5a5e8eb8838a499e6621da520f8a4b9')
 
-    version('2.0.1', '976b07481bb2a058c3751f5ef3844654')
+    depends_on('py-setuptools', type='build')
 
-    depends_on('cfitsio')
-
-    def cmake_args(self):
-        args = []
-        return args
+    # requirements from setup.py
+    depends_on('py-cryptography', type=('build', 'run'))

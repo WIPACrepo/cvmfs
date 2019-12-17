@@ -25,17 +25,12 @@
 from spack import *
 
 
-class Photospline(CMakePackage):
-    """Photospline is a library that uses the penalized spline technique
-    to efficiently compute, store, and evaluate B-spline representations."""
+class PyS3transfer(PythonPackage):
+    """S3transfer is a Python library for managing Amazon S3 transfers."""
+    homepage = "https://github.com/boto/s3transfer/"
+    url      = "https://pypi.io/packages/source/s/s3transfer/s3transfer-0.1.13.tar.gz"
 
-    homepage = "https://github.com/cnweaver/photospline"
-    url      = "https://github.com/cnweaver/photospline/archive/2.0.1.tar.gz"
+    version('0.1.13', sha256='90dc18e028989c609146e241ea153250be451e05ecc0c2832565231dacdf59c1')
 
-    version('2.0.1', '976b07481bb2a058c3751f5ef3844654')
-
-    depends_on('cfitsio')
-
-    def cmake_args(self):
-        args = []
-        return args
+    depends_on('py-setuptools', type='build')
+    depends_on('py-botocore@1.3.0:2.0.0', type=('build', 'run'))

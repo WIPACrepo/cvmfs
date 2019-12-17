@@ -23,40 +23,47 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##############################################################################
 from spack import *
+import os
 
+class Voms(AutotoolsPackage):
+    """The VOMS native service and APIs """
 
-class Nlopt(AutotoolsPackage):
-    """NLopt is a free/open-source library for nonlinear optimization,
-    providing a common interface for a number of different free optimization
-    routines available online as well as original implementations of various
-    other algorithms."""
+    homepage = "https://github.com/italiangrid/voms"
+    url      = "https://github.com/italiangrid/voms/archive/v2.0.14.tar.gz"
 
-    homepage = "https://nlopt.readthedocs.io"
-    url      = "https://github.com/stevengj/nlopt/releases/download/nlopt-2.4.2/nlopt-2.4.2.tar.gz"
+    version('2.0.14',    '3b07395e38a913e7b343a4d43666c428')
+    version('2.0.13',    '13a5d9cdfdf3e8aa8aa32cf0b009a250')
+    version('2.0.12-2',  'd7c3cb3dc9a3fe7baeedd1c944a5d77b')
+    version('2.0.12',    '10e8e0b630470f01f497f27a01dd76b2')
 
-    version('2.4.2', 'd0b8f139a4acf29b76dbae69ade8ac54')
-
-    variant('static', default=True, description='Build static libraries')
     variant('shared', default=True, description='Build shared libraries')
+    variant('static', default=True, description='Build static libraries')
     variant('pic', default=True, description='Build PIC libraries')
-    variant('python', default=True, description='Build python wrappers')
-    variant('guile',  default=False, description='Enable Guile support')
-    variant('octave', default=False, description='Enable GNU Octave support')
-    variant('cxx',    default=False,  description='Build the C++ routines')
 
-    # Note: matlab is licenced - spack does not download automatically
-    variant("matlab", default=False, description="Build the Matlab bindings.")
+    variant('server', default=False, description='Enable server')
+    variant('clients', default=True, description='Enable clients')
+    variant('interfaces', default=False, description='Enable interfaces')
 
-    depends_on('python', when='+python')
-    depends_on('py-numpy', when='+python', type=('build', 'run'))
-    depends_on('swig', when='+python')
-    depends_on('guile', when='+guile')
-    depends_on('octave', when='+octave')
-    depends_on('matlab', when='+matlab')
+    depends_on('m4')
+    depends_on('libtool')
+    depends_on('autoconf')
+    depends_on('automake')
+
+    depends_on('openssl@1.0:1.0.99', when='@:2.0.99')
+    depends_on('openssl', when='@2.1:')
+    depends_on('gsoap')
+
+    @run_before('autoreconf')
+    def mkdir_autoreconf(self):
+        for d in ('aux', 'src/autogen'):
+            try:
+                os.makedirs(os.path.join(self.build_directory,d))
+            except OSError:
+                pass
 
     def configure_args(self):
         spec = self.spec
-        args = []
+        args = ['--with-gsoap-wsdl2h={}'.format(os.path.join(spec['gsoap'].prefix.bin,'wsdl2h'))]
 
         if '+shared' in spec:
             args.append('--enable-shared')
@@ -72,30 +79,21 @@ class Nlopt(AutotoolsPackage):
             args.append('--with-pic')
         else:
             args.append('--without-pic')
-            
-        if '+cxx' in spec:
-            args.append('--with-cxx')
-        else:
-            args.append('--without-cxx')
 
-        if '+python' in spec:
-            args.append('--with-python')
+        if '+server' in spec:
+            args.append('--with-server')
         else:
-            args.append('--without-python')
+            args.append('--without-server')
 
-        if '+guile' in spec:
-            args.append('--with-guile')
+        if '+client' in spec:
+            args.append('--with-client')
         else:
-            args.append('--without-guile')
+            args.append('--without-client')
 
-        if '+octave' in spec:
-            args.append('--with-octave')
+        if '+interfaces' in spec:
+            args.append('--with-interfaces')
         else:
-            args.append('--without-octave')
-
-        if '+matlab' in spec:
-            args.append('--with-matlab')
-        else:
-            args.append('--without-matlab')
+            args.append('--without-interfaces')
 
         return args
+

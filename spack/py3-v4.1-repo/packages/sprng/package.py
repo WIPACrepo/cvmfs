@@ -23,19 +23,33 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##############################################################################
 from spack import *
+import os
+import glob
 
+class Sprng(MakefilePackage):
+    """The Scalable Parallel Random Number Generators Library."""
 
-class Photospline(CMakePackage):
-    """Photospline is a library that uses the penalized spline technique
-    to efficiently compute, store, and evaluate B-spline representations."""
+    homepage = "http://www.sprng.org/sprng.html"
+    url      = "http://www.sprng.org/Version2.0/sprng2.0b.tar.gz"
 
-    homepage = "https://github.com/cnweaver/photospline"
-    url      = "https://github.com/cnweaver/photospline/archive/2.0.1.tar.gz"
+    version('2.0b', 'cf825f9333d07acdcaa599f29f281b8d')
 
-    version('2.0.1', '976b07481bb2a058c3751f5ef3844654')
+    variant('pic', default=True, description='Build PIC libraries')
 
-    depends_on('cfitsio')
+    parallel = False
 
-    def cmake_args(self):
-        args = []
-        return args
+    def edit(self, spec, prefix):
+        filter_file(r'^([^#].*)', r'#\1', 'make.CHOICES')
+        filter_file(r'#PLAT = INTEL', 'PLAT = INTEL', 'make.CHOICES')
+
+        filter_file(r'^CC\s*=.*', 'CC = '+spack_cc,  'SRC/make.INTEL')
+        filter_file(r'^F77\s*=.*', 'F77 = '+spack_f77, 'SRC/make.INTEL')
+        filter_file(r'^FFXN\s*=.*', 'FFXN = -DAdd_', 'SRC/make.INTEL')
+        if '+pic' in spec:
+            filter_file(r'^CFLAGS\s*=', 'CFLAGS = -fPIC', 'SRC/make.INTEL')
+
+    def install(self, spec, prefix):
+        ins = which('install')
+        ins('-D', 'libsprng.a', os.path.join(prefix.lib, 'libsprng.a'))
+        for f in glob.glob('include/*.h'):
+            ins('-D', '-m', '644', f, os.path.join(prefix.include, os.path.basename(f)))

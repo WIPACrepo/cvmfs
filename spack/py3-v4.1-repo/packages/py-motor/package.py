@@ -25,17 +25,13 @@
 from spack import *
 
 
-class Photospline(CMakePackage):
-    """Photospline is a library that uses the penalized spline technique
-    to efficiently compute, store, and evaluate B-spline representations."""
+class PyMotor(PythonPackage):
+    """Motor is a full-featured, non-blocking MongoDB driver for Python
+    Tornado and asyncio applications."""
+    homepage = "https://github.com/mongodb/motor/"
+    url      = "https://pypi.io/packages/source/m/motor/motor-2.0.0.tar.gz"
 
-    homepage = "https://github.com/cnweaver/photospline"
-    url      = "https://github.com/cnweaver/photospline/archive/2.0.1.tar.gz"
+    version('2.0.0', sha256='d035c09ab422bc50bf3efb134f7405694cae76268545bd21e14fb22e2638f84e')
 
-    version('2.0.1', '976b07481bb2a058c3751f5ef3844654')
-
-    depends_on('cfitsio')
-
-    def cmake_args(self):
-        args = []
-        return args
+    depends_on('py-setuptools', type='build')
+    depends_on('py-mongo@3.6:4.0', type=('build', 'run'))

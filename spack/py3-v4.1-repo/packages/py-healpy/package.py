@@ -25,17 +25,23 @@
 from spack import *
 
 
-class Photospline(CMakePackage):
-    """Photospline is a library that uses the penalized spline technique
-    to efficiently compute, store, and evaluate B-spline representations."""
+class PyHealpy(PythonPackage):
+    """Healpy provides a python package to manipulate healpix maps."""
+    homepage = "https://pyfits.readthedocs.io"
+    url      = "https://pypi.python.org/packages/source/h/healpy/healpy-1.11.0.tar.gz"
 
-    homepage = "https://github.com/cnweaver/photospline"
-    url      = "https://github.com/cnweaver/photospline/archive/2.0.1.tar.gz"
+    version('1.12.4', sha256='dff1748b420065290a12ae87ca80f18df8ceefc65563315fc2667a67604a2b70')
+    version('1.11.0', sha256='8c3c7982ae188549315a11f4d1aa6528cd1ccf078017ca20120ff2cf1b47babe')
 
-    version('2.0.1', '976b07481bb2a058c3751f5ef3844654')
+    depends_on('py-setuptools', type='build')
 
-    depends_on('cfitsio')
-
-    def cmake_args(self):
-        args = []
-        return args
+    # requirements from setup.py
+    depends_on('py-numpy', type=('build', 'run'))
+    depends_on('py-scipy', type=('build', 'run'), when='@1.12.0:')
+    depends_on('py-six', type=('build', 'run'))
+    depends_on('py-astropy', type=('build', 'run'))
+    depends_on('py-matplotlib', type=('build', 'run'))
+    depends_on('py-cython@0.16:', type=('build', 'run'))
+    depends_on('healpix@3.40.0:', type=('build', 'run'), when='@1.12.0:')
+    depends_on('healpix@3.30.0:', type=('build', 'run'), when='@:1.11.99')
+    depends_on('cfitsio', type=('build', 'run'))

@@ -25,17 +25,19 @@
 from spack import *
 
 
-class Photospline(CMakePackage):
-    """Photospline is a library that uses the penalized spline technique
-    to efficiently compute, store, and evaluate B-spline representations."""
+class PyIminuit(PythonPackage):
+    """Interactive IPython-Friendly Minimizer based on SEAL Minuit2."""
 
-    homepage = "https://github.com/cnweaver/photospline"
-    url      = "https://github.com/cnweaver/photospline/archive/2.0.1.tar.gz"
+    homepage = "https://pypi.python.org/pypi/iminuit"
+    url      = "https://pypi.io/packages/source/i/iminuit/iminuit-1.2.tar.gz"
 
-    version('2.0.1', '976b07481bb2a058c3751f5ef3844654')
+    version('1.2', '4701ec472cae42015e26251703e6e984')
 
-    depends_on('cfitsio')
+    # Required dependencies
+    depends_on('py-setuptools', type='build')
 
-    def cmake_args(self):
-        args = []
-        return args
+    # Optional dependencies
+    depends_on('py-numpy', type=('build', 'run'))
+    depends_on('py-scipy', type=('build', 'run'))
+    depends_on('py-matplotlib', type=('build', 'run'))
+    depends_on('py-cython', type='build')

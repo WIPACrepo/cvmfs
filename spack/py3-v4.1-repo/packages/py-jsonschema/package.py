@@ -25,17 +25,18 @@
 from spack import *
 
 
-class Photospline(CMakePackage):
-    """Photospline is a library that uses the penalized spline technique
-    to efficiently compute, store, and evaluate B-spline representations."""
+class PyJsonschema(PythonPackage):
+    """Jsonschema: An(other) implementation of JSON Schema for Python."""
 
-    homepage = "https://github.com/cnweaver/photospline"
-    url      = "https://github.com/cnweaver/photospline/archive/2.0.1.tar.gz"
+    homepage = "http://github.com/Julian/jsonschema"
+    url      = "https://pypi.io/packages/source/j/jsonschema/jsonschema-2.5.1.tar.gz"
 
-    version('2.0.1', '976b07481bb2a058c3751f5ef3844654')
+    version('2.5.1', '374e848fdb69a3ce8b7e778b47c30640')
 
-    depends_on('cfitsio')
+    depends_on('py-setuptools', type='build')
+    depends_on('py-vcversioner', type=('build', 'run'))
 
-    def cmake_args(self):
-        args = []
-        return args
+    # This dependency breaks concretization
+    # See https://github.com/spack/spack/issues/2793
+    depends_on('py-functools32', when="^python@2.7:2.8", type=('build', 'run'))
+    #depends_on('py-functools32', type=('build', 'run'))

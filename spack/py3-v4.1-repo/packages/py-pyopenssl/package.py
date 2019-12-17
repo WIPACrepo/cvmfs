@@ -25,17 +25,15 @@
 from spack import *
 
 
-class Photospline(CMakePackage):
-    """Photospline is a library that uses the penalized spline technique
-    to efficiently compute, store, and evaluate B-spline representations."""
+class PyPyopenssl(PythonPackage):
+    """High-level wrapper around a subset of the OpenSSL library."""
+    homepage = "https://pyopenssl.org"
+    url      = "https://pypi.io/packages/source/p/pyOpenSSL/pyOpenSSL-18.0.0.tar.gz"
 
-    homepage = "https://github.com/cnweaver/photospline"
-    url      = "https://github.com/cnweaver/photospline/archive/2.0.1.tar.gz"
+    version('18.0.0', sha256='6488f1423b00f73b7ad5167885312bb0ce410d3312eb212393795b53c8caa580')
 
-    version('2.0.1', '976b07481bb2a058c3751f5ef3844654')
+    depends_on('py-setuptools', type='build')
 
-    depends_on('cfitsio')
-
-    def cmake_args(self):
-        args = []
-        return args
+    # requirements from setup.py
+    depends_on('py-cryptography@2.3:', type=('build', 'run'))
+    depends_on('py-six', type=('build', 'run'))

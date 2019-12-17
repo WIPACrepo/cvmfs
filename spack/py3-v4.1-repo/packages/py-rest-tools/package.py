@@ -25,17 +25,19 @@
 from spack import *
 
 
-class Photospline(CMakePackage):
-    """Photospline is a library that uses the penalized spline technique
-    to efficiently compute, store, and evaluate B-spline representations."""
+class PyRestTools(PythonPackage):
+    """REST tools in python - common code for client and server"""
+    homepage = "https://github.com/WIPACrepo/rest-tools"
+    url      = "https://github.com/WIPACrepo/rest-tools/archive/v0.1.0.tar.gz"
 
-    homepage = "https://github.com/cnweaver/photospline"
-    url      = "https://github.com/cnweaver/photospline/archive/2.0.1.tar.gz"
+    def url_for_version(self, version):
+        url = "https://github.com/WIPACrepo/rest-tools/archive/v{0}.tar.gz"
+        return url.format(version)
 
-    version('2.0.1', '976b07481bb2a058c3751f5ef3844654')
+    version('0.1.0', sha256='c72c53a774f2549c9ace2b4d95d28acd291591273d017d8f86549b20c54c7a0e')
 
-    depends_on('cfitsio')
-
-    def cmake_args(self):
-        args = []
-        return args
+    depends_on('py-setuptools', type='build')
+    depends_on('py-requests', type=('build', 'run'))
+    depends_on('py-requests-futures', type=('build', 'run'))
+    depends_on('py-pyjwt', type=('build', 'run'))
+    depends_on('py-tornado@5.1:', type=('build', 'run'))

@@ -25,24 +25,24 @@
 from spack import *
 
 
-class Pal(AutotoolsPackage):
-    """Positional Astronomy Library."""
+class Erfa(AutotoolsPackage):
+    """Essential Routines for Fundamental Astronomy."""
 
-    homepage = "https://github.com/IceCube-SPNO/pal"
-    url      = "https://github.com/IceCube-SPNO/pal.git"
+    homepage = "https://github.com/liberfa/erfa"
+    url      = "https://github.com/liberfa/erfa/releases/download/v1.3.0/erfa-1.3.0.tar.gz"
 
-    version('develop', git='https://github.com/IceCube-SPNO/pal.git')
+    version('1.4.0', '6f67ea6e39c70337c5de980eb7409800')
+    version('1.3.0', '62347926625ecefbe5911446baed6676')
+    version('1.2.0', '63e8e694d53add33c16f3f494d2b65f4')
+    version('1.1.1', 'f227ada197eda3e622f4ef7cf7cdbd5a')
+    version('1.1.0', '80eefd129e32c8290627a5c925c1534a')
+    version('1.0.1', '35d8cf096313ed4500349aab04e8ae07')
+    version('1.0.0', '7fcc2f647a77b8c0c883ab244b389756')
+    version('0.0.1', '3736c0ff155fec6baa3637f135737344')
 
     variant('shared', default=True, description='Build shared libraries')
     variant('static', default=True, description='Build static libraries')
     variant('pic', default=True, description='Build PIC libraries')
-
-    depends_on('erfa')
-
-    depends_on('autoconf')
-    depends_on('automake')
-    depends_on('m4')
-    depends_on('libtool')
 
     def configure_args(self):
         spec = self.spec

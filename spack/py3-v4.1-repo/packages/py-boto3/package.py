@@ -25,17 +25,18 @@
 from spack import *
 
 
-class Photospline(CMakePackage):
-    """Photospline is a library that uses the penalized spline technique
-    to efficiently compute, store, and evaluate B-spline representations."""
+class PyBoto3(PythonPackage):
+    """Boto3 is the Amazon Web Services (AWS) Software Development Kit (SDK)
+    for Python, which allows Python developers to write software that makes
+    use of services like Amazon S3 and Amazon EC2."""
+    homepage = "https://pypi.org/project/boto3/"
+    url      = "https://pypi.io/packages/source/b/boto3/boto3-1.9.83.tar.gz"
 
-    homepage = "https://github.com/cnweaver/photospline"
-    url      = "https://github.com/cnweaver/photospline/archive/2.0.1.tar.gz"
+    version('1.9.83', sha256='b36df47ca517b7c2dcb981357fa255ff9460b6c70a5143e962b98f695fc3b729')
 
-    version('2.0.1', '976b07481bb2a058c3751f5ef3844654')
+    depends_on('py-setuptools', type='build')
 
-    depends_on('cfitsio')
-
-    def cmake_args(self):
-        args = []
-        return args
+    # requirements from setup.py
+    depends_on('py-botocore@1.12.83:1.13.0', type=('build', 'run'))
+    depends_on('py-jmespath@0.7.1:1.0.0', type=('build', 'run'))
+    depends_on('py-s3transfer@0.1.10:0.2.0', type=('build', 'run'))

@@ -1,8 +1,27 @@
-# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
-# Spack Project Developers. See the top-level COPYRIGHT file for details.
+##############################################################################
+# Copyright (c) 2013-2018, Lawrence Livermore National Security, LLC.
+# Produced at the Lawrence Livermore National Laboratory.
 #
-# SPDX-License-Identifier: (Apache-2.0 OR MIT)
-
+# This file is part of Spack.
+# Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
+# LLNL-CODE-647188
+#
+# For details, see https://github.com/spack/spack
+# Please also see the NOTICE and LICENSE files for our notice and the LGPL.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License (as
+# published by the Free Software Foundation) version 2.1, February 1999.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the IMPLIED WARRANTY OF
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the terms and
+# conditions of the GNU Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+##############################################################################
 from spack import *
 
 
@@ -12,63 +31,48 @@ class PyAstropy(PythonPackage):
     Python astronomy packages."""
 
     homepage = 'http://www.astropy.org/'
-    url = 'https://pypi.io/packages/source/a/astropy/astropy-3.2.1.tar.gz'
+    url = 'https://pypi.io/packages/source/a/astropy/astropy-1.1.2.tar.gz'
 
-    version('3.2.1', sha256='706c0457789c78285e5464a5a336f5f0b058d646d60f4e5f5ba1f7d5bf424b28')
-    version('2.0.14', sha256='618807068609a4d8aeb403a07624e9984f566adc0dc0f5d6b477c3658f31aeb6')
-    version('1.1.2', sha256='6f0d84cd7dfb304bb437dda666406a1d42208c16204043bc920308ff8ffdfad1')
-    version('1.1.post1', sha256='64427ec132620aeb038e4d8df94d6c30df4cc8b1c42a6d8c5b09907a31566a21')
-
-    variant('extras', default=False, description='Enable extra functionality')
+    version('3.0.4', sha256='f5d37d20632ba74bd0b12a85179c12f64a9ea037ffc916d8a2de3be4f4656c76')
+    version('1.1.2',     'cbe32023b5b1177d1e2498a0d00cda51')
+    version('1.1.post1', 'b52919f657a37d45cc45f5cb0f58c44d')
 
     # Required dependencies
-    depends_on('python@3.6:', when='@4.0:', type=('build', 'run'))
-    depends_on('python@3.5:', when='@3.0:', type=('build', 'run'))
-    depends_on('python@2.7:2.8,3.4:', when='@2.0:', type=('build', 'run'))
-    depends_on('python@2.7:2.8,3.3:', when='@1.2:', type=('build', 'run'))
-    depends_on('python@2.6:', type=('build', 'run'))
+    depends_on('python@3.5:', type=('build', 'run'), when='@3.0.0:')
     depends_on('py-setuptools', type='build')
-    depends_on('py-numpy@1.13:', when='@3.1:', type=('build', 'run'))
-    depends_on('py-numpy@1.10:', when='@3.0:', type=('build', 'run'))
-    depends_on('py-numpy@1.9:', when='@2.0:', type=('build', 'run'))
-    depends_on('py-numpy@1.7:', when='@1.2:', type=('build', 'run'))
-    depends_on('py-numpy', type=('build', 'run'))
+    depends_on('py-numpy@1.10.1:', type=('build', 'run'))
+    depends_on('py-cython@0.21:', type=('build', 'run'))
+    depends_on('py-jinja2@2.7:', type=('build', 'run'))
 
     # Optional dependencies
-    depends_on('py-scipy', when='+extras', type=('build', 'run'))
-    depends_on('py-h5py', when='+extras', type=('build', 'run'))
-    depends_on('py-beautifulsoup4', when='+extras', type=('build', 'run'))
-    depends_on('py-html5lib', when='+extras', type=('build', 'run'))
-    depends_on('py-bleach', when='+extras', type=('build', 'run'))
-    depends_on('py-pyyaml', when='+extras', type=('build', 'run'))
-    depends_on('py-pandas', when='+extras', type=('build', 'run'))
-    depends_on('py-bintrees', when='+extras', type=('build', 'run'))
-    depends_on('py-sortedcontainers', when='+extras', type=('build', 'run'))
-    depends_on('py-pytz', when='+extras', type=('build', 'run'))
-    depends_on('py-jplephem', when='+extras', type=('build', 'run'))
-    depends_on('py-matplotlib@2.0:', when='+extras', type=('build', 'run'))
-    depends_on('py-scikit-image', when='+extras', type=('build', 'run'))
-    depends_on('py-mpmath', when='+extras', type=('build', 'run'))
-    depends_on('py-asdf@2.3:', when='+extras', type=('build', 'run'))
-    depends_on('py-bottleneck', when='+extras', type=('build', 'run'))
-    depends_on('py-pytest', when='+extras', type=('build', 'run'))
+    depends_on('py-h5py', type=('build', 'run'))
+    depends_on('py-beautifulsoup4', type=('build', 'run'))
+    depends_on('py-pyyaml', type=('build', 'run'))
+    depends_on('py-scipy', type=('build', 'run'))
+    depends_on('libxml2')
+    depends_on('py-matplotlib', type=('build', 'run'))
+    depends_on('py-pytz', type=('build', 'run'))
+    depends_on('py-scikit-image', type=('build', 'run'))
+    depends_on('py-pandas', type=('build', 'run'))
+    depends_on('py-markupsafe', type=('build', 'run'))
 
     # System dependencies
-    depends_on('erfa')
-    depends_on('wcslib')
     depends_on('cfitsio')
     depends_on('expat')
+    depends_on('wcslib', when='@3.0.0:')
+    depends_on('erfa', when='@3.0.0:')
+
+    @run_before('build')
+    def set_build_deps(self):
+        if self.spec.version >= Version('3.0.0'):
+            lib_dir = self.spec['wcslib'].prefix.lib+':'+self.spec['erfa'].prefix.lib
+            if 'LIBRARY_PATH' in env:
+                lib_dir += ':'+env['LIBRARY_PATH']
+            env['LIBRARY_PATH'] = lib_dir
 
     def build_args(self, spec, prefix):
-        args = [
-            '--use-system-libraries',
-            '--use-system-erfa',
-            '--use-system-wcslib',
-            '--use-system-cfitsio',
-            '--use-system-expat'
-        ]
-
-        if spec.satisfies('^python@3:'):
-            args.extend(['-j', str(make_jobs)])
-
+        args = ['--use-system-cfitsio', '--use-system-expat']
+        if spec.version >= Version('3.0.0'):
+            args.append('--use-system-wcslib')
+            args.append('--use-system-erfa')
         return args

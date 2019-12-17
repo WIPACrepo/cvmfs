@@ -25,17 +25,12 @@
 from spack import *
 
 
-class Photospline(CMakePackage):
-    """Photospline is a library that uses the penalized spline technique
-    to efficiently compute, store, and evaluate B-spline representations."""
+class PyJmespath(PythonPackage):
+    """JMESPath (pronounced "james path") allows you to declaratively specify
+    how to extract elements from a JSON document."""
+    homepage = "http://jmespath.org/"
+    url      = "https://pypi.io/packages/source/j/jmespath/jmespath-0.9.3.tar.gz"
 
-    homepage = "https://github.com/cnweaver/photospline"
-    url      = "https://github.com/cnweaver/photospline/archive/2.0.1.tar.gz"
+    version('0.9.3', sha256='6a81d4c9aa62caf061cb517b4d9ad1dd300374cd4706997aff9cd6aedd61fc64')
 
-    version('2.0.1', '976b07481bb2a058c3751f5ef3844654')
-
-    depends_on('cfitsio')
-
-    def cmake_args(self):
-        args = []
-        return args
+    depends_on('py-setuptools', type='build')

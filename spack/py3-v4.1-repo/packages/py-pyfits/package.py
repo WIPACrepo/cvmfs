@@ -25,17 +25,16 @@
 from spack import *
 
 
-class Photospline(CMakePackage):
-    """Photospline is a library that uses the penalized spline technique
-    to efficiently compute, store, and evaluate B-spline representations."""
+class PyPyfits(PythonPackage):
+    """The PyFITS module is a Python library providing access to FITS files.
+    FITS (Flexible Image Transport System) is a portable file standard widely
+    used in the astronomy community to store images and tables."""
+    homepage = "https://pyfits.readthedocs.io"
+    url      = "https://pypi.io/packages/source/P/Pyfits/pyfits-3.5.tar.gz"
 
-    homepage = "https://github.com/cnweaver/photospline"
-    url      = "https://github.com/cnweaver/photospline/archive/2.0.1.tar.gz"
+    version('3.5', sha256='4e668622d5a3c140590bc6cf8222afcd4d133dde3d6beda3b9c3c9539c5acf18')
 
-    version('2.0.1', '976b07481bb2a058c3751f5ef3844654')
+    depends_on('py-setuptools', type='build')
 
-    depends_on('cfitsio')
-
-    def cmake_args(self):
-        args = []
-        return args
+    # requirements from setup.py
+    depends_on('py-numpy', type=('build', 'run'))

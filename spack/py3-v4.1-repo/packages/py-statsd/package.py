@@ -25,17 +25,12 @@
 from spack import *
 
 
-class Photospline(CMakePackage):
-    """Photospline is a library that uses the penalized spline technique
-    to efficiently compute, store, and evaluate B-spline representations."""
+class PyStatsd(PythonPackage):
+    """statsd is a friendly front-end to Graphite. This is a Python client
+    for the statsd daemon."""
+    homepage = "https://github.com/jsocol/pystatsd"
+    url      = "https://pypi.io/packages/source/s/statsd/statsd-3.3.0.tar.gz"
 
-    homepage = "https://github.com/cnweaver/photospline"
-    url      = "https://github.com/cnweaver/photospline/archive/2.0.1.tar.gz"
+    version('3.3.0', sha256='e3e6db4c246f7c59003e51c9720a51a7f39a396541cb9b147ff4b14d15b5dd1f')
 
-    version('2.0.1', '976b07481bb2a058c3751f5ef3844654')
-
-    depends_on('cfitsio')
-
-    def cmake_args(self):
-        args = []
-        return args
+    depends_on('py-setuptools', type='build')

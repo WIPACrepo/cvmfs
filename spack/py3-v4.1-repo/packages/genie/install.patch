@@ -1,0 +1,27 @@
+--- a/Makefile
++++ b/Makefile
+@@ -297,10 +297,9 @@ make-install-dirs: FORCE
+ 	@echo " "
+ 	@echo "** Creating directory structure for GENIE installation..."
+ 	[ -d ${GENIE_INSTALLATION_PATH} ] || mkdir ${GENIE_INSTALLATION_PATH}
+-	cd ${GENIE_INSTALLATION_PATH}
+-	[ -d ${GENIE_BIN_INSTALLATION_PATH}     ] || mkdir ${GENIE_BIN_INSTALLATION_PATH}
+-	[ -d ${GENIE_LIB_INSTALLATION_PATH}     ] || mkdir ${GENIE_LIB_INSTALLATION_PATH}
+-	[ -d ${GENIE_INCBASE_INSTALLATION_PATH} ] || mkdir ${GENIE_INCBASE_INSTALLATION_PATH}
++	mkdir ${GENIE_BIN_INSTALLATION_PATH}
++	mkdir ${GENIE_LIB_INSTALLATION_PATH}
++	mkdir ${GENIE_INCBASE_INSTALLATION_PATH}
+ 	mkdir ${GENIE_INC_INSTALLATION_PATH}
+ 	mkdir ${GENIE_INC_INSTALLATION_PATH}/Framework
+ 	mkdir ${GENIE_INC_INSTALLATION_PATH}/Framework/Algorithm
+@@ -420,7 +419,9 @@ copy-install-files: FORCE
+ 	cd ${GENIE}/src/Tools/Flux                               &&  $(MAKE) install && \
+ 	cd ${GENIE}/src/Tools/Geometry                           &&  $(MAKE) install && \
+ 	cd ${GENIE}/src/Tools/Masterclass                        &&  $(MAKE) install && \
+-	cd ${GENIE}
++	cp -r ${GENIE}/data ${GENIE_INSTALLATION_PATH}/
++	cp -r ${GENIE}/config ${GENIE_INSTALLATION_PATH}/
++	install -D ${GENIE}/src/make/Make.config_no_paths ${GENIE_INSTALLATION_PATH}/src/make/Make.config_no_paths
+ 
+ purge: FORCE
+ 	@echo " "

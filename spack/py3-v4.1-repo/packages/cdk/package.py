@@ -25,17 +25,26 @@
 from spack import *
 
 
-class Photospline(CMakePackage):
-    """Photospline is a library that uses the penalized spline technique
-    to efficiently compute, store, and evaluate B-spline representations."""
+class Cdk(AutotoolsPackage):
+    """A library of curses widgets which can be linked into your application."""
 
-    homepage = "https://github.com/cnweaver/photospline"
-    url      = "https://github.com/cnweaver/photospline/archive/2.0.1.tar.gz"
+    homepage = "http://invisible-island.net/cdk/"
+    url      = "ftp://ftp.invisible-island.net/pub/cdk/cdk-5.0-20160131.tgz"
 
-    version('2.0.1', '976b07481bb2a058c3751f5ef3844654')
+    version('5.0-20180306', '3b52823d8a78c6d27d4be8839edd279e')
+    version('5.0-20171209', 'df6e786fc0b1faa8e518f80121c941c9')
+    version('5.0-20161210', 'fbacdf194d097d73a61f9556bb2dbe27')
+    version('5.0-20160131', '3a519980fd3c5d04ecfc82259586d7c4')
 
-    depends_on('cfitsio')
+    variant('shared', default=True, description='Build shared libraries')
 
-    def cmake_args(self):
-        args = []
+    def configure_args(self):
+        args = ['--without-x', '--enable-const']
+        spec = self.spec
+
+        if '+shared' in spec:
+            args.append('--with-shared')
+        else:
+            args.append('--without-shared')
+
         return args

@@ -25,17 +25,18 @@
 from spack import *
 
 
-class Photospline(CMakePackage):
-    """Photospline is a library that uses the penalized spline technique
-    to efficiently compute, store, and evaluate B-spline representations."""
+class PySpectrum(PythonPackage):
+    """Spectrum is a Python library that contains tools to estimate
+    Power Spectral Densities based on Fourier transform, Parametric
+    methods or eigenvalues analysis."""
+    homepage = "https://pyspectrum.readthedocs.io"
+    url      = "https://pypi.io/packages/source/s/spectrum/spectrum-0.7.4.tar.gz"
 
-    homepage = "https://github.com/cnweaver/photospline"
-    url      = "https://github.com/cnweaver/photospline/archive/2.0.1.tar.gz"
+    version('0.7.4', sha256='a15d733c9e82a6572d0515ba49bc276119a215fe71c63538c38f121ff6c5b3d6')
 
-    version('2.0.1', '976b07481bb2a058c3751f5ef3844654')
+    depends_on('py-setuptools', type='build')
 
-    depends_on('cfitsio')
-
-    def cmake_args(self):
-        args = []
-        return args
+    # requirements from setup.py
+    depends_on('py-numpy', type=('build', 'run'))
+    depends_on('py-scipy', type=('build', 'run'))
+    depends_on('py-matplotlib', type=('build', 'run'))

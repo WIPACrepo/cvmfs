@@ -25,28 +25,32 @@
 from spack import *
 
 
-class Pal(AutotoolsPackage):
-    """Positional Astronomy Library."""
+class Log4cpp(AutotoolsPackage):
+    """A library of C++ classes for flexible logging to files (rolling),
+       syslog, IDSA and other destinations. It is modeled after the Log
+       for Java library (http://www.log4j.org), staying as close to their
+       API as is reasonable."""
 
-    homepage = "https://github.com/IceCube-SPNO/pal"
-    url      = "https://github.com/IceCube-SPNO/pal.git"
+    homepage = "https://sourceforge.net/projects/log4cpp/"
+    url      = "http://downloads.sourceforge.net/project/log4cpp/log4cpp-1.1.x (new)/log4cpp-1.1/log4cpp-1.1.3.tar.gz"
 
-    version('develop', git='https://github.com/IceCube-SPNO/pal.git')
+    def url_for_version(self, version):
+        url = "http://versaweb.dl.sourceforge.net/project/log4cpp/log4cpp-1.1.x (new)/log4cpp-1.1/log4cpp-{0}.tar.gz"
+        return url.format(version)
+
+    version('1.1.3', 'b9e2cee932da987212f2c74b767b4d8b')
+    version('1.1.2', 'c70eac7334e2f3cbeac307dc78532be4')
+    version('1.1.1', '1e173df8ee97205f412ff84aa93b8fbe')
+    version('1.1',   'b9ef6244baa5e5e435f35e0b9474b35d')
 
     variant('shared', default=True, description='Build shared libraries')
     variant('static', default=True, description='Build static libraries')
-    variant('pic', default=True, description='Build PIC libraries')
 
-    depends_on('erfa')
-
-    depends_on('autoconf')
-    depends_on('automake')
-    depends_on('m4')
-    depends_on('libtool')
+    # depends_on('foo')
 
     def configure_args(self):
-        spec = self.spec
         args = []
+        spec = self.spec
 
         if '+shared' in spec:
             args.append('--enable-shared')
@@ -57,10 +61,5 @@ class Pal(AutotoolsPackage):
             args.append('--enable-static')
         else:
             args.append('--disable-static')
-
-        if '+pic' in spec:
-            args.append('--with-pic')
-        else:
-            args.append('--without-pic')
 
         return args

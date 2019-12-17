@@ -25,17 +25,11 @@
 from spack import *
 
 
-class Photospline(CMakePackage):
-    """Photospline is a library that uses the penalized spline technique
-    to efficiently compute, store, and evaluate B-spline representations."""
+class PyPyjwt(PythonPackage):
+    """A Python implementation of RFC 7519."""
+    homepage = "http://github.com/jpadilla/pyjwt"
+    url      = "https://pypi.io/packages/source/p/pyjwt/PyJWT-1.7.1.tar.gz"
 
-    homepage = "https://github.com/cnweaver/photospline"
-    url      = "https://github.com/cnweaver/photospline/archive/2.0.1.tar.gz"
+    version('1.7.1', sha256='8d59a976fb773f3e6a39c85636357c4f0e242707394cadadd9814f5cbaa20e96')
 
-    version('2.0.1', '976b07481bb2a058c3751f5ef3844654')
-
-    depends_on('cfitsio')
-
-    def cmake_args(self):
-        args = []
-        return args
+    depends_on('py-setuptools', type='build')

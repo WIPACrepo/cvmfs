@@ -25,17 +25,26 @@
 from spack import *
 
 
-class Photospline(CMakePackage):
-    """Photospline is a library that uses the penalized spline technique
-    to efficiently compute, store, and evaluate B-spline representations."""
+class PyTornado(PythonPackage):
+    """Tornado is a Python web framework and asynchronous networking
+    library."""
+    homepage = "https://github.com/tornadoweb/tornado"
+    url      = "https://github.com/tornadoweb/tornado/archive/v4.4.0.tar.gz"
 
-    homepage = "https://github.com/cnweaver/photospline"
-    url      = "https://github.com/cnweaver/photospline/archive/2.0.1.tar.gz"
+    version('5.1.1', sha256='a1da335a2978b9a8c3544cab10076d799442d7988ed0b4f2be035fe4388ca8dd')
+    version('4.4.0', 'c28675e944f364ee96dda3a8d2527a87ed28cfa3')
 
-    version('2.0.1', '976b07481bb2a058c3751f5ef3844654')
+    depends_on('py-setuptools', type='build')
 
-    depends_on('cfitsio')
-
-    def cmake_args(self):
-        args = []
-        return args
+    # requirements from setup.py
+    # These dependencies breaks concretization
+    # See https://github.com/spack/spack/issues/2793
+    depends_on('py-backports-ssl-match-hostname', when='^python@:2.7.8', type=('build', 'run'))  # noqa
+    depends_on('py-singledispatch', when='^python@:3.3', type=('build', 'run'))  # noqa
+    depends_on('py-certifi', when='^python@:3.3', type=('build', 'run'))
+    depends_on('py-backports-abc@0.4:', when='^python@:3.4', type=('build', 'run'))  # noqa
+    depends_on('py-pycurl', type=('build', 'run'))
+    #depends_on('py-backports-ssl-match-hostname', type=('build', 'run'))
+    #depends_on('py-singledispatch', type=('build', 'run'))
+    #depends_on('py-certifi', type=('build', 'run'))
+    #depends_on('py-backports-abc@0.4:', type=('build', 'run'))

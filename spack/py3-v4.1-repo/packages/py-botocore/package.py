@@ -25,17 +25,16 @@
 from spack import *
 
 
-class Photospline(CMakePackage):
-    """Photospline is a library that uses the penalized spline technique
-    to efficiently compute, store, and evaluate B-spline representations."""
+class PyBotocore(PythonPackage):
+    """A low-level interface to a growing number of Amazon Web Services. The
+    botocore package is the foundation for the AWS CLI as well as boto3."""
+    homepage = "https://pypi.org/project/boto3/"
+    url      = "https://pypi.io/packages/source/b/botocore/botocore-1.12.83.tar.gz"
 
-    homepage = "https://github.com/cnweaver/photospline"
-    url      = "https://github.com/cnweaver/photospline/archive/2.0.1.tar.gz"
+    version('1.12.83', sha256='97026101d5a9aebdd1f1f1794a25ac5fbf5969823590ee1461fb0103bc796c33')
 
-    version('2.0.1', '976b07481bb2a058c3751f5ef3844654')
+    depends_on('py-setuptools', type='build')
 
-    depends_on('cfitsio')
-
-    def cmake_args(self):
-        args = []
-        return args
+    # requirements from setup.py
+    depends_on('py-jmespath@0.7.1:1.0.0', type=('build', 'run'))
+    depends_on('py-docutils@0.10:', type=('build', 'run'))

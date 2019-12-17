@@ -25,17 +25,13 @@
 from spack import *
 
 
-class Photospline(CMakePackage):
-    """Photospline is a library that uses the penalized spline technique
-    to efficiently compute, store, and evaluate B-spline representations."""
+class PyLdap3(PythonPackage):
+    """ldap3 is a strictly RFC 4510 conforming LDAP V3 pure Python client
+    library. The same codebase runs in Python 2, Python 3, PyPy and PyPy3."""
+    homepage = "https://github.com/cannatag/ldap3"
+    url      = "https://pypi.io/packages/source/l/ldap3/ldap3-2.5.2.tar.gz"
 
-    homepage = "https://github.com/cnweaver/photospline"
-    url      = "https://github.com/cnweaver/photospline/archive/2.0.1.tar.gz"
+    version('2.5.2', sha256='3f67c83185b1f0df8fdf6b52fa42c55bc9e9b7120c8b7fec60f0d6003c536d18')
 
-    version('2.0.1', '976b07481bb2a058c3751f5ef3844654')
-
-    depends_on('cfitsio')
-
-    def cmake_args(self):
-        args = []
-        return args
+    depends_on('py-setuptools', type='build')
+    depends_on('py-pyasn1@0.1.8:', type=('build', 'run'))

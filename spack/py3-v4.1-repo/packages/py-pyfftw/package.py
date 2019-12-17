@@ -25,17 +25,27 @@
 from spack import *
 
 
-class Photospline(CMakePackage):
-    """Photospline is a library that uses the penalized spline technique
-    to efficiently compute, store, and evaluate B-spline representations."""
+class PyPyfftw(PythonPackage):
+    """A pythonic wrapper around FFTW, the FFT library,
+    presenting a unified interface for all the supported transforms."""
 
-    homepage = "https://github.com/cnweaver/photospline"
-    url      = "https://github.com/cnweaver/photospline/archive/2.0.1.tar.gz"
+    homepage = "http://hgomersall.github.com/pyFFTW"
+    url      = "https://pypi.io/packages/source/p/pyFFTW/pyFFTW-0.10.4.tar.gz"
 
-    version('2.0.1', '976b07481bb2a058c3751f5ef3844654')
+    version('0.10.4', '7fb59450308881bb48d9f178947d950e')
 
-    depends_on('cfitsio')
+    depends_on('fftw',             type=('build', 'run'))
+    #depends_on('py-setuptools',    type='build')
+    depends_on('py-cython',        type='build')
+    depends_on('py-numpy@1.6:',    type=('build', 'run'))
+    depends_on('py-scipy@0.12.0:', type=('build', 'run'))
 
-    def cmake_args(self):
-        args = []
-        return args
+    @run_before('build')
+    def set_fftw(self):
+        env['PYFFTW_INCLUDE'] = self.spec['fftw'].prefix.include
+        env['PYFFTW_LIB_DIR'] = self.spec['fftw'].prefix.lib
+        
+        lib_dir = self.spec['fftw'].prefix.lib
+        if 'LIBRARY_PATH' in env:
+            lib_dir += ':'+env['LIBRARY_PATH']
+        env['LIBRARY_PATH'] = lib_dir
