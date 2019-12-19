@@ -36,6 +36,8 @@ class Photospline(CMakePackage):
     version('2.0.1', '976b07481bb2a058c3751f5ef3844654')
 
     depends_on('cfitsio')
+    depends_on('openblas')
+    depends_on('python')
 
     def cmake_args(self):
         args = []
