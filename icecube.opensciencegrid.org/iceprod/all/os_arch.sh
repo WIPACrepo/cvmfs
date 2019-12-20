@@ -23,7 +23,9 @@ case $DISTRIB in
         ;;
     "ubuntu")
         DISTRIB="Ubuntu"
-        if echo $VERSION | grep -q '18\.\?'; then
+        if echo $VERSION | grep -q '20\.\?'; then
+            VERSION="20.04"
+        elif echo $VERSION | grep -q '18\.\?'; then
             VERSION="18.04"
         elif echo $VERSION | grep -q '17\.\?'; then
             VERSION="16.04"
@@ -84,7 +86,10 @@ case $DISTRIB in
         ;;
     "linux")
         # Damn. Try harder with the heuristics.
-        if echo $VERSION | grep -q '\.el7\.\?'; then
+        if echo $VERSION | grep -q '\.el8\.\?'; then
+            DISTRIB="RHEL"
+            VERSION=8
+        elif echo $VERSION | grep -q '\.el7\.\?'; then
             DISTRIB="RHEL"
             VERSION=7
         elif echo $VERSION | grep -q '\.el6\.\?'; then
