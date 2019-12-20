@@ -382,6 +382,8 @@ def build(src, dest, version):
 
     # add custom repo
     repo_path = os.path.join(os.path.dirname(__file__),*version)+'-repo'
+    if (not os.path.exists(repo_path)) and len(version) > 1:
+        repo_path = os.path.join(os.path.dirname(__file__),version[0])+'-repo'
     if (not os.path.exists(repo_path)) and '.' in version[0]:
         repo_path = os.path.join(os.path.dirname(__file__),'.'.join(version[0].split('.')[:2]),*version[1:])+'-repo'
     if (not os.path.exists(repo_path)) and '.' in version[0]:
