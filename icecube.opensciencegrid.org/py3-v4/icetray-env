@@ -5,5 +5,9 @@ METAPROJECT=$1
 shift
 
 eval `$SROOTBASE/setup.sh`
-$SROOT/metaprojects/$METAPROJECT/env-shell.sh $@
 
+if [ -e "$METAPROJECT/env-shell.sh" ]; then
+    $METAPROJECT/env-shell.sh $@
+else
+    $SROOT/metaprojects/$METAPROJECT/env-shell.sh $@
+fi
