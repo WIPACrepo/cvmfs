@@ -353,9 +353,10 @@ def build(src, dest, version):
             copy_src(os.path.join(src,*version), srootbase)
     if not sroot:
         sroot = get_sroot(srootbase)
-    #if version == ['iceprod','master']:
-    #    myprint('iceprod/master - deleting sroot')
-    #    shutil.rmtree(sroot)
+
+    if version == ['iceprod','master']:
+        myprint('iceprod/master - deleting sroot')
+        shutil.rmtree(sroot)
     if not os.path.isdir(sroot):
         os.makedirs(sroot)
 
