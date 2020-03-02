@@ -1,7 +1,14 @@
 # cvmfs
 Scripts to build the CVMFS repository for IceCube/WIPAC.
 
-## Build
+## Spack Build
+
+Build a single variant:
+
+`spack/build.py py3-v4.1.0 --dest /cvmfs/icecube.opensciencegrid.org --src ../icecube.opensciencegrid.org`
+
+
+## Old Build
 
 To build all variants at once:
 
