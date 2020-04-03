@@ -281,6 +281,10 @@ if [ -d ${tmp_cert} ]; then
     VARS=$(modifyList "$VARS" "X509_CERT_DIR")
 fi
 
+# for DESY gridftp subject alt names
+GLOBUS_GSSAPI_NAME_COMPATIBILITY="HYBRID"
+VARS=$(modifyList "$VARS" "GLOBUS_GSSAPI_NAME_COMPATIBILITY")
+
 # export fully-qualified X509 user proxy environment variable
 if [ ! -z "$X509_USER_PROXY" ]; then
     RET=`basename "$X509_USER_PROXY"`

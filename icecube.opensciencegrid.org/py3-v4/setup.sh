@@ -88,6 +88,9 @@ if [ -e ${tmp_userconf} ]; then
     VOMS_USERCONF=${tmp_cert}
     VARS="$VARS VOMS_USERCONF"
 fi
+# for DESY gridftp subject alt names
+GLOBUS_GSSAPI_NAME_COMPATIBILITY="HYBRID"
+VARS="$VARS GLOBUS_GSSAPI_NAME_COMPATIBILITY"
 
 # export fully-qualified X509 user proxy environment variable
 if [ ! -z "$X509_USER_PROXY" ]; then
