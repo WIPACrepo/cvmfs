@@ -32,5 +32,6 @@ py-ipython@7.10.1
 py-ldap3@2.6.1
 py-certifi@2020.4.5.1
 py-cryptography@2.5
+py-urllib3@1.25.9
 py-requests@2.23.0
 py-iceprod@develop
