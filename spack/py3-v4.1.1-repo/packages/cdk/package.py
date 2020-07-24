@@ -38,7 +38,7 @@ class Cdk(AutotoolsPackage):
 
     variant('shared', default=True, description='Build shared libraries')
 
-    depends('ncurses')
+    depends_on('ncurses')
 
     def configure_args(self):
         args = ['--without-x', '--enable-const']
