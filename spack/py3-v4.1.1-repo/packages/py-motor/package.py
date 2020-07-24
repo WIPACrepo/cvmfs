@@ -25,26 +25,13 @@
 from spack import *
 
 
-class Cdk(AutotoolsPackage):
-    """A library of curses widgets which can be linked into your application."""
+class PyMotor(PythonPackage):
+    """Motor is a full-featured, non-blocking MongoDB driver for Python
+    Tornado and asyncio applications."""
+    homepage = "https://github.com/mongodb/motor/"
+    url      = "https://pypi.io/packages/source/m/motor/motor-2.0.0.tar.gz"
 
-    homepage = "http://invisible-island.net/cdk/"
-    url      = "ftp://ftp.invisible-island.net/pub/cdk/cdk-5.0-20160131.tgz"
+    version('2.0.0', sha256='d035c09ab422bc50bf3efb134f7405694cae76268545bd21e14fb22e2638f84e')
 
-    version('5.0-20180306', '3b52823d8a78c6d27d4be8839edd279e')
-    version('5.0-20171209', 'df6e786fc0b1faa8e518f80121c941c9')
-    version('5.0-20161210', 'fbacdf194d097d73a61f9556bb2dbe27')
-    version('5.0-20160131', '3a519980fd3c5d04ecfc82259586d7c4')
-
-    variant('shared', default=True, description='Build shared libraries')
-
-    def configure_args(self):
-        args = ['--without-x', '--enable-const']
-        spec = self.spec
-
-        if '+shared' in spec:
-            args.append('--with-shared')
-        else:
-            args.append('--without-shared')
-
-        return args
+    depends_on('py-setuptools', type='build')
+    depends_on('py-mongo@3.6:4.0', type=('build', 'run'))

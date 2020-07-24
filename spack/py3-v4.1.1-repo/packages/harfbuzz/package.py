@@ -25,26 +25,27 @@
 from spack import *
 
 
-class Cdk(AutotoolsPackage):
-    """A library of curses widgets which can be linked into your application."""
+class Harfbuzz(AutotoolsPackage):
+    """The Harfbuzz package contains an OpenType text shaping engine."""
+    homepage = "http://www.freedesktop.org/wiki/Software/HarfBuzz/"
+    url      = "http://www.freedesktop.org/software/harfbuzz/release/harfbuzz-0.9.37.tar.bz2"
 
-    homepage = "http://invisible-island.net/cdk/"
-    url      = "ftp://ftp.invisible-island.net/pub/cdk/cdk-5.0-20160131.tgz"
+    version('1.4.6', '21a78b81cd20cbffdb04b59ac7edfb410e42141869f637ae1d6778e74928d293')
+    version('0.9.37', 'bfe733250e34629a188d82e3b971bc1e')
 
-    version('5.0-20180306', '3b52823d8a78c6d27d4be8839edd279e')
-    version('5.0-20171209', 'df6e786fc0b1faa8e518f80121c941c9')
-    version('5.0-20161210', 'fbacdf194d097d73a61f9556bb2dbe27')
-    version('5.0-20160131', '3a519980fd3c5d04ecfc82259586d7c4')
+    depends_on("pkgconfig", type="build")
+    depends_on("glib")
+    depends_on("icu4c")
+    depends_on("freetype")
+    depends_on("cairo")
+    depends_on("zlib")
 
-    variant('shared', default=True, description='Build shared libraries')
+    def patch(self):
+        change_sed_delimiter('@', ';', 'src/Makefile.in')
 
-    def configure_args(self):
-        args = ['--without-x', '--enable-const']
-        spec = self.spec
+    @run_before('configure')
+    def build_fix(self):
+        # Disable the test and doc dirs
+        filter_file(r'^(SUBDIRS = .*) tests(.*)', r'\1\2', 'Makefile.in')
+        filter_file(r'^(SUBDIRS = .*) docs(.*)', r'\1\2', 'Makefile.in')
 
-        if '+shared' in spec:
-            args.append('--with-shared')
-        else:
-            args.append('--without-shared')
-
-        return args

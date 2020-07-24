@@ -25,26 +25,41 @@
 from spack import *
 
 
-class Cdk(AutotoolsPackage):
-    """A library of curses widgets which can be linked into your application."""
+class Log4cpp(AutotoolsPackage):
+    """A library of C++ classes for flexible logging to files (rolling),
+       syslog, IDSA and other destinations. It is modeled after the Log
+       for Java library (http://www.log4j.org), staying as close to their
+       API as is reasonable."""
 
-    homepage = "http://invisible-island.net/cdk/"
-    url      = "ftp://ftp.invisible-island.net/pub/cdk/cdk-5.0-20160131.tgz"
+    homepage = "https://sourceforge.net/projects/log4cpp/"
+    url      = "http://downloads.sourceforge.net/project/log4cpp/log4cpp-1.1.x (new)/log4cpp-1.1/log4cpp-1.1.3.tar.gz"
 
-    version('5.0-20180306', '3b52823d8a78c6d27d4be8839edd279e')
-    version('5.0-20171209', 'df6e786fc0b1faa8e518f80121c941c9')
-    version('5.0-20161210', 'fbacdf194d097d73a61f9556bb2dbe27')
-    version('5.0-20160131', '3a519980fd3c5d04ecfc82259586d7c4')
+    def url_for_version(self, version):
+        url = "http://versaweb.dl.sourceforge.net/project/log4cpp/log4cpp-1.1.x (new)/log4cpp-1.1/log4cpp-{0}.tar.gz"
+        return url.format(version)
+
+    version('1.1.3', 'b9e2cee932da987212f2c74b767b4d8b')
+    version('1.1.2', 'c70eac7334e2f3cbeac307dc78532be4')
+    version('1.1.1', '1e173df8ee97205f412ff84aa93b8fbe')
+    version('1.1',   'b9ef6244baa5e5e435f35e0b9474b35d')
 
     variant('shared', default=True, description='Build shared libraries')
+    variant('static', default=True, description='Build static libraries')
+
+    # depends_on('foo')
 
     def configure_args(self):
-        args = ['--without-x', '--enable-const']
+        args = []
         spec = self.spec
 
         if '+shared' in spec:
-            args.append('--with-shared')
+            args.append('--enable-shared')
         else:
-            args.append('--without-shared')
+            args.append('--disable-shared')
+
+        if '+static' in spec:
+            args.append('--enable-static')
+        else:
+            args.append('--disable-static')
 
         return args

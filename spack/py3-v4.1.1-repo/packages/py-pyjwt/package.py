@@ -25,26 +25,11 @@
 from spack import *
 
 
-class Cdk(AutotoolsPackage):
-    """A library of curses widgets which can be linked into your application."""
+class PyPyjwt(PythonPackage):
+    """A Python implementation of RFC 7519."""
+    homepage = "http://github.com/jpadilla/pyjwt"
+    url      = "https://pypi.io/packages/source/p/pyjwt/PyJWT-1.7.1.tar.gz"
 
-    homepage = "http://invisible-island.net/cdk/"
-    url      = "ftp://ftp.invisible-island.net/pub/cdk/cdk-5.0-20160131.tgz"
+    version('1.7.1', sha256='8d59a976fb773f3e6a39c85636357c4f0e242707394cadadd9814f5cbaa20e96')
 
-    version('5.0-20180306', '3b52823d8a78c6d27d4be8839edd279e')
-    version('5.0-20171209', 'df6e786fc0b1faa8e518f80121c941c9')
-    version('5.0-20161210', 'fbacdf194d097d73a61f9556bb2dbe27')
-    version('5.0-20160131', '3a519980fd3c5d04ecfc82259586d7c4')
-
-    variant('shared', default=True, description='Build shared libraries')
-
-    def configure_args(self):
-        args = ['--without-x', '--enable-const']
-        spec = self.spec
-
-        if '+shared' in spec:
-            args.append('--with-shared')
-        else:
-            args.append('--without-shared')
-
-        return args
+    depends_on('py-setuptools', type='build')

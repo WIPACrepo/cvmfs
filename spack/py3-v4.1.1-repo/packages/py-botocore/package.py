@@ -25,26 +25,16 @@
 from spack import *
 
 
-class Cdk(AutotoolsPackage):
-    """A library of curses widgets which can be linked into your application."""
+class PyBotocore(PythonPackage):
+    """A low-level interface to a growing number of Amazon Web Services. The
+    botocore package is the foundation for the AWS CLI as well as boto3."""
+    homepage = "https://pypi.org/project/boto3/"
+    url      = "https://pypi.io/packages/source/b/botocore/botocore-1.12.83.tar.gz"
 
-    homepage = "http://invisible-island.net/cdk/"
-    url      = "ftp://ftp.invisible-island.net/pub/cdk/cdk-5.0-20160131.tgz"
+    version('1.12.83', sha256='97026101d5a9aebdd1f1f1794a25ac5fbf5969823590ee1461fb0103bc796c33')
 
-    version('5.0-20180306', '3b52823d8a78c6d27d4be8839edd279e')
-    version('5.0-20171209', 'df6e786fc0b1faa8e518f80121c941c9')
-    version('5.0-20161210', 'fbacdf194d097d73a61f9556bb2dbe27')
-    version('5.0-20160131', '3a519980fd3c5d04ecfc82259586d7c4')
+    depends_on('py-setuptools', type='build')
 
-    variant('shared', default=True, description='Build shared libraries')
-
-    def configure_args(self):
-        args = ['--without-x', '--enable-const']
-        spec = self.spec
-
-        if '+shared' in spec:
-            args.append('--with-shared')
-        else:
-            args.append('--without-shared')
-
-        return args
+    # requirements from setup.py
+    depends_on('py-jmespath@0.7.1:1.0.0', type=('build', 'run'))
+    depends_on('py-docutils@0.10:', type=('build', 'run'))

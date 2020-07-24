@@ -25,26 +25,42 @@
 from spack import *
 
 
-class Cdk(AutotoolsPackage):
-    """A library of curses widgets which can be linked into your application."""
+class Erfa(AutotoolsPackage):
+    """Essential Routines for Fundamental Astronomy."""
 
-    homepage = "http://invisible-island.net/cdk/"
-    url      = "ftp://ftp.invisible-island.net/pub/cdk/cdk-5.0-20160131.tgz"
+    homepage = "https://github.com/liberfa/erfa"
+    url      = "https://github.com/liberfa/erfa/releases/download/v1.3.0/erfa-1.3.0.tar.gz"
 
-    version('5.0-20180306', '3b52823d8a78c6d27d4be8839edd279e')
-    version('5.0-20171209', 'df6e786fc0b1faa8e518f80121c941c9')
-    version('5.0-20161210', 'fbacdf194d097d73a61f9556bb2dbe27')
-    version('5.0-20160131', '3a519980fd3c5d04ecfc82259586d7c4')
+    version('1.4.0', '6f67ea6e39c70337c5de980eb7409800')
+    version('1.3.0', '62347926625ecefbe5911446baed6676')
+    version('1.2.0', '63e8e694d53add33c16f3f494d2b65f4')
+    version('1.1.1', 'f227ada197eda3e622f4ef7cf7cdbd5a')
+    version('1.1.0', '80eefd129e32c8290627a5c925c1534a')
+    version('1.0.1', '35d8cf096313ed4500349aab04e8ae07')
+    version('1.0.0', '7fcc2f647a77b8c0c883ab244b389756')
+    version('0.0.1', '3736c0ff155fec6baa3637f135737344')
 
     variant('shared', default=True, description='Build shared libraries')
+    variant('static', default=True, description='Build static libraries')
+    variant('pic', default=True, description='Build PIC libraries')
 
     def configure_args(self):
-        args = ['--without-x', '--enable-const']
         spec = self.spec
+        args = []
 
         if '+shared' in spec:
-            args.append('--with-shared')
+            args.append('--enable-shared')
         else:
-            args.append('--without-shared')
+            args.append('--disable-shared')
+
+        if '+static' in spec:
+            args.append('--enable-static')
+        else:
+            args.append('--disable-static')
+
+        if '+pic' in spec:
+            args.append('--with-pic')
+        else:
+            args.append('--without-pic')
 
         return args

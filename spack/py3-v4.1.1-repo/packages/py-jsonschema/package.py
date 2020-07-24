@@ -25,26 +25,18 @@
 from spack import *
 
 
-class Cdk(AutotoolsPackage):
-    """A library of curses widgets which can be linked into your application."""
+class PyJsonschema(PythonPackage):
+    """Jsonschema: An(other) implementation of JSON Schema for Python."""
 
-    homepage = "http://invisible-island.net/cdk/"
-    url      = "ftp://ftp.invisible-island.net/pub/cdk/cdk-5.0-20160131.tgz"
+    homepage = "http://github.com/Julian/jsonschema"
+    url      = "https://pypi.io/packages/source/j/jsonschema/jsonschema-2.5.1.tar.gz"
 
-    version('5.0-20180306', '3b52823d8a78c6d27d4be8839edd279e')
-    version('5.0-20171209', 'df6e786fc0b1faa8e518f80121c941c9')
-    version('5.0-20161210', 'fbacdf194d097d73a61f9556bb2dbe27')
-    version('5.0-20160131', '3a519980fd3c5d04ecfc82259586d7c4')
+    version('2.5.1', '374e848fdb69a3ce8b7e778b47c30640')
 
-    variant('shared', default=True, description='Build shared libraries')
+    depends_on('py-setuptools', type='build')
+    depends_on('py-vcversioner', type=('build', 'run'))
 
-    def configure_args(self):
-        args = ['--without-x', '--enable-const']
-        spec = self.spec
-
-        if '+shared' in spec:
-            args.append('--with-shared')
-        else:
-            args.append('--without-shared')
-
-        return args
+    # This dependency breaks concretization
+    # See https://github.com/spack/spack/issues/2793
+    depends_on('py-functools32', when="^python@2.7:2.8", type=('build', 'run'))
+    #depends_on('py-functools32', type=('build', 'run'))

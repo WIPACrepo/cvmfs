@@ -25,26 +25,23 @@
 from spack import *
 
 
-class Cdk(AutotoolsPackage):
-    """A library of curses widgets which can be linked into your application."""
+class PyHealpy(PythonPackage):
+    """Healpy provides a python package to manipulate healpix maps."""
+    homepage = "https://pyfits.readthedocs.io"
+    url      = "https://pypi.python.org/packages/source/h/healpy/healpy-1.11.0.tar.gz"
 
-    homepage = "http://invisible-island.net/cdk/"
-    url      = "ftp://ftp.invisible-island.net/pub/cdk/cdk-5.0-20160131.tgz"
+    version('1.12.4', sha256='dff1748b420065290a12ae87ca80f18df8ceefc65563315fc2667a67604a2b70')
+    version('1.11.0', sha256='8c3c7982ae188549315a11f4d1aa6528cd1ccf078017ca20120ff2cf1b47babe')
 
-    version('5.0-20180306', '3b52823d8a78c6d27d4be8839edd279e')
-    version('5.0-20171209', 'df6e786fc0b1faa8e518f80121c941c9')
-    version('5.0-20161210', 'fbacdf194d097d73a61f9556bb2dbe27')
-    version('5.0-20160131', '3a519980fd3c5d04ecfc82259586d7c4')
+    depends_on('py-setuptools', type='build')
 
-    variant('shared', default=True, description='Build shared libraries')
-
-    def configure_args(self):
-        args = ['--without-x', '--enable-const']
-        spec = self.spec
-
-        if '+shared' in spec:
-            args.append('--with-shared')
-        else:
-            args.append('--without-shared')
-
-        return args
+    # requirements from setup.py
+    depends_on('py-numpy', type=('build', 'run'))
+    depends_on('py-scipy', type=('build', 'run'), when='@1.12.0:')
+    depends_on('py-six', type=('build', 'run'))
+    depends_on('py-astropy', type=('build', 'run'))
+    depends_on('py-matplotlib', type=('build', 'run'))
+    depends_on('py-cython@0.16:', type=('build', 'run'))
+    depends_on('healpix@3.40.0:', type=('build', 'run'), when='@1.12.0:')
+    depends_on('healpix@3.30.0:', type=('build', 'run'), when='@:1.11.99')
+    depends_on('cfitsio', type=('build', 'run'))

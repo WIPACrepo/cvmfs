@@ -23,28 +23,33 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##############################################################################
 from spack import *
+import os
+import glob
 
+class Sprng(MakefilePackage):
+    """The Scalable Parallel Random Number Generators Library."""
 
-class Cdk(AutotoolsPackage):
-    """A library of curses widgets which can be linked into your application."""
+    homepage = "http://www.sprng.org/sprng.html"
+    url      = "http://www.sprng.org/Version2.0/sprng2.0b.tar.gz"
 
-    homepage = "http://invisible-island.net/cdk/"
-    url      = "ftp://ftp.invisible-island.net/pub/cdk/cdk-5.0-20160131.tgz"
+    version('2.0b', 'cf825f9333d07acdcaa599f29f281b8d')
 
-    version('5.0-20180306', '3b52823d8a78c6d27d4be8839edd279e')
-    version('5.0-20171209', 'df6e786fc0b1faa8e518f80121c941c9')
-    version('5.0-20161210', 'fbacdf194d097d73a61f9556bb2dbe27')
-    version('5.0-20160131', '3a519980fd3c5d04ecfc82259586d7c4')
+    variant('pic', default=True, description='Build PIC libraries')
 
-    variant('shared', default=True, description='Build shared libraries')
+    parallel = False
 
-    def configure_args(self):
-        args = ['--without-x', '--enable-const']
-        spec = self.spec
+    def edit(self, spec, prefix):
+        filter_file(r'^([^#].*)', r'#\1', 'make.CHOICES')
+        filter_file(r'#PLAT = INTEL', 'PLAT = INTEL', 'make.CHOICES')
 
-        if '+shared' in spec:
-            args.append('--with-shared')
-        else:
-            args.append('--without-shared')
+        filter_file(r'^CC\s*=.*', 'CC = '+spack_cc,  'SRC/make.INTEL')
+        filter_file(r'^F77\s*=.*', 'F77 = '+spack_f77, 'SRC/make.INTEL')
+        filter_file(r'^FFXN\s*=.*', 'FFXN = -DAdd_', 'SRC/make.INTEL')
+        if '+pic' in spec:
+            filter_file(r'^CFLAGS\s*=', 'CFLAGS = -fPIC', 'SRC/make.INTEL')
 
-        return args
+    def install(self, spec, prefix):
+        ins = which('install')
+        ins('-D', 'libsprng.a', os.path.join(prefix.lib, 'libsprng.a'))
+        for f in glob.glob('include/*.h'):
+            ins('-D', '-m', '644', f, os.path.join(prefix.include, 'sprng', os.path.basename(f)))

@@ -25,26 +25,15 @@
 from spack import *
 
 
-class Cdk(AutotoolsPackage):
-    """A library of curses widgets which can be linked into your application."""
+class PyPyopenssl(PythonPackage):
+    """High-level wrapper around a subset of the OpenSSL library."""
+    homepage = "https://pyopenssl.org"
+    url      = "https://pypi.io/packages/source/p/pyOpenSSL/pyOpenSSL-18.0.0.tar.gz"
 
-    homepage = "http://invisible-island.net/cdk/"
-    url      = "ftp://ftp.invisible-island.net/pub/cdk/cdk-5.0-20160131.tgz"
+    version('18.0.0', sha256='6488f1423b00f73b7ad5167885312bb0ce410d3312eb212393795b53c8caa580')
 
-    version('5.0-20180306', '3b52823d8a78c6d27d4be8839edd279e')
-    version('5.0-20171209', 'df6e786fc0b1faa8e518f80121c941c9')
-    version('5.0-20161210', 'fbacdf194d097d73a61f9556bb2dbe27')
-    version('5.0-20160131', '3a519980fd3c5d04ecfc82259586d7c4')
+    depends_on('py-setuptools', type='build')
 
-    variant('shared', default=True, description='Build shared libraries')
-
-    def configure_args(self):
-        args = ['--without-x', '--enable-const']
-        spec = self.spec
-
-        if '+shared' in spec:
-            args.append('--with-shared')
-        else:
-            args.append('--without-shared')
-
-        return args
+    # requirements from setup.py
+    depends_on('py-cryptography@2.3:', type=('build', 'run'))
+    depends_on('py-six', type=('build', 'run'))

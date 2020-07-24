@@ -25,26 +25,18 @@
 from spack import *
 
 
-class Cdk(AutotoolsPackage):
-    """A library of curses widgets which can be linked into your application."""
+class PyPymysql(PythonPackage):
+    """PyMySQL is a pure-Python MySQL client library, based on PEP 249."""
+    homepage = "https://pymysql.readthedocs.io"
+    url      = "https://github.com/PyMySQL/PyMySQL/archive/v0.9.2.tar.gz"
 
-    homepage = "http://invisible-island.net/cdk/"
-    url      = "ftp://ftp.invisible-island.net/pub/cdk/cdk-5.0-20160131.tgz"
+    version('0.9.2', sha256='7d7eb459e7a2ae633a677e4b692a35fdafd2d816952f34fc1f3b967f40d1ac2a')
+    version('0.9.1', sha256='cfd54cae5d4309ab741c2adfc9b001bc5b92fb669d8f6744d694c5cb20be4770')
+    version('0.9.0', sha256='d1ea129058049cb2c545447d03cf4a0f28b98d5b789448edd575147e377b076e')
+    version('0.8.1', sha256='6436a31edfbe15fd3b42e86115618dddf591b121290a391423f7cc1a662510f4')
+    version('0.8.0', sha256='28db0f1acd35fcb4c4601c3c482bd962f5a5e8eb8838a499e6621da520f8a4b9')
 
-    version('5.0-20180306', '3b52823d8a78c6d27d4be8839edd279e')
-    version('5.0-20171209', 'df6e786fc0b1faa8e518f80121c941c9')
-    version('5.0-20161210', 'fbacdf194d097d73a61f9556bb2dbe27')
-    version('5.0-20160131', '3a519980fd3c5d04ecfc82259586d7c4')
+    depends_on('py-setuptools', type='build')
 
-    variant('shared', default=True, description='Build shared libraries')
-
-    def configure_args(self):
-        args = ['--without-x', '--enable-const']
-        spec = self.spec
-
-        if '+shared' in spec:
-            args.append('--with-shared')
-        else:
-            args.append('--without-shared')
-
-        return args
+    # requirements from setup.py
+    depends_on('py-cryptography', type=('build', 'run'))

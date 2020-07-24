@@ -25,26 +25,26 @@
 from spack import *
 
 
-class Cdk(AutotoolsPackage):
-    """A library of curses widgets which can be linked into your application."""
+class PyTornado(PythonPackage):
+    """Tornado is a Python web framework and asynchronous networking
+    library."""
+    homepage = "https://github.com/tornadoweb/tornado"
+    url      = "https://github.com/tornadoweb/tornado/archive/v4.4.0.tar.gz"
 
-    homepage = "http://invisible-island.net/cdk/"
-    url      = "ftp://ftp.invisible-island.net/pub/cdk/cdk-5.0-20160131.tgz"
+    version('5.1.1', sha256='a1da335a2978b9a8c3544cab10076d799442d7988ed0b4f2be035fe4388ca8dd')
+    version('4.4.0', 'c28675e944f364ee96dda3a8d2527a87ed28cfa3')
 
-    version('5.0-20180306', '3b52823d8a78c6d27d4be8839edd279e')
-    version('5.0-20171209', 'df6e786fc0b1faa8e518f80121c941c9')
-    version('5.0-20161210', 'fbacdf194d097d73a61f9556bb2dbe27')
-    version('5.0-20160131', '3a519980fd3c5d04ecfc82259586d7c4')
+    depends_on('py-setuptools', type='build')
 
-    variant('shared', default=True, description='Build shared libraries')
-
-    def configure_args(self):
-        args = ['--without-x', '--enable-const']
-        spec = self.spec
-
-        if '+shared' in spec:
-            args.append('--with-shared')
-        else:
-            args.append('--without-shared')
-
-        return args
+    # requirements from setup.py
+    # These dependencies breaks concretization
+    # See https://github.com/spack/spack/issues/2793
+    depends_on('py-backports-ssl-match-hostname', when='^python@:2.7.8', type=('build', 'run'))  # noqa
+    depends_on('py-singledispatch', when='^python@:3.3', type=('build', 'run'))  # noqa
+    depends_on('py-certifi', when='^python@:3.3', type=('build', 'run'))
+    depends_on('py-backports-abc@0.4:', when='^python@:3.4', type=('build', 'run'))  # noqa
+    depends_on('py-pycurl', type=('build', 'run'))
+    #depends_on('py-backports-ssl-match-hostname', type=('build', 'run'))
+    #depends_on('py-singledispatch', type=('build', 'run'))
+    #depends_on('py-certifi', type=('build', 'run'))
+    #depends_on('py-backports-abc@0.4:', type=('build', 'run'))
