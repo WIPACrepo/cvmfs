@@ -104,6 +104,11 @@ if [ ! -z "$X509_USER_PROXY" ]; then
     fi
 fi
 
+# handle running inside singularity containers
+tmp_singularity=/.singularity.d/libs
+if [ -d ${tmp_singularity} ]; then
+    LD_LIBRARY_PATH="$tmp_singularity:$LD_LIBRARY_PATH"
+fi
 
 # start specialized detection, using python scripts
 srootpy='python -E -s'
