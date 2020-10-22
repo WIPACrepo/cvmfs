@@ -332,7 +332,7 @@ def uninstall(spack_path, sroot, package):
     cmd = [spack_bin, 'uninstall', '-y', '-f', '-a', package]
     run_cmd(cmd)
 
-def build(src, dest, version):
+def build(src, dest, version, mirror=None):
     myprint('building version',version)
     if 'PYTHONPATH' in os.environ:
         del os.environ['PYTHONPATH']
@@ -354,9 +354,9 @@ def build(src, dest, version):
     if not sroot:
         sroot = get_sroot(srootbase)
 
-    if version == ['iceprod','master']:
+    if version == ['iceprod','master'] and os.path.isdir(sroot):
         myprint('iceprod/master - deleting sroot')
-        shutil.rmtree(sroot)
+        #shutil.rmtree(sroot)
     if not os.path.isdir(sroot):
         os.makedirs(sroot)
 
@@ -404,6 +404,17 @@ def build(src, dest, version):
         run_cmd(['git', 'clone', url, hep_repo_path])
         run_cmd([spack_bin, 'repo', 'add', '--scope', 'site',
                  hep_repo_path])
+
+    # add mirror
+    if mirror:
+        try:
+            if mirror.startswith('/'):
+                mirror = 'file://'+mirror
+                run_cmd([spack_bin, 'mirror', 'add', 'local_filesystem', mirror])
+            else:
+                run_cmd([spack_bin, 'mirror', 'add', 'remote_server', mirror])
+        except Exception:
+            pass
 
     try:
         # setup compiler
@@ -552,6 +563,7 @@ if __name__ == '__main__':
     parser.add_option("--src", help="base source path")
     parser.add_option("--dest", help="base dest path")
     parser.add_option("--svnonly", action='store_true', help="metaproject svn only")
+    parser.add_option("--mirror", help="mirror location")
     (options, args) = parser.parse_args()
     if not args:
         parser.error("need to specify a version")
@@ -560,4 +572,4 @@ if __name__ == '__main__':
         if version.endswith('-metaproject'):
             build_meta(options.dest, version, svn_only=options.svnonly)
         else:
-            build(options.src, options.dest, version)
+            build(options.src, options.dest, version, mirror=options.mirror)

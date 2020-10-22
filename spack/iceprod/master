@@ -5,7 +5,7 @@ pkg-config@0.29.2
 # system libraries
 libffi@3.2.1
 libxml2@2.9.10
-libarchive@3.4.0
+libarchive@3.4.3
 zstd@1.4.4
 snappy@1.1.7
 c-blosc@1.17.1 avx2=False
