@@ -356,7 +356,7 @@ def build(src, dest, version, mirror=None):
 
     if version == ['iceprod','master'] and os.path.isdir(sroot):
         myprint('iceprod/master - deleting sroot')
-        #shutil.rmtree(sroot)
+        shutil.rmtree(sroot)
     if not os.path.isdir(sroot):
         os.makedirs(sroot)
 
