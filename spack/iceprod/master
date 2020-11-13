@@ -35,4 +35,5 @@ py-cryptography@2.5
 py-chardet@3.0.4
 py-urllib3@1.25.9
 py-requests@2.23.0
+py-dateutil@2.7.3
 py-iceprod@develop

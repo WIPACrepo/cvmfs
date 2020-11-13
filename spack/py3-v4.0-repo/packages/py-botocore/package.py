@@ -38,3 +38,4 @@ class PyBotocore(PythonPackage):
     # requirements from setup.py
     depends_on('py-jmespath@0.7.1:1.0.0', type=('build', 'run'))
     depends_on('py-docutils@0.10:', type=('build', 'run'))
+    depends_on('py-dateutil@2.7:', type=('build', 'run'))
