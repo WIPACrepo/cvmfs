@@ -85,7 +85,7 @@ if [ -d ${tmp_cert} ]; then
 fi
 tmp_userconf=${SROOT}/etc/vomses
 if [ -e ${tmp_userconf} ]; then
-    VOMS_USERCONF=${tmp_cert}
+    VOMS_USERCONF=${tmp_userconf}
     VARS="$VARS VOMS_USERCONF"
 fi
 # for DESY gridftp subject alt names
