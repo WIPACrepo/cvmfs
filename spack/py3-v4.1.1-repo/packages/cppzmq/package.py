@@ -21,3 +21,10 @@ class Cppzmq(CMakePackage):
     depends_on('zeromq@4.3:', when='@4.4:')
     depends_on('zeromq@4.2.5', when='@4.3.0')
     depends_on('zeromq@4.2.2', when='@4.2.2')
+
+    def cmake_args(self):
+        args = []
+        # https://github.com/zeromq/cppzmq/issues/422
+        # https://github.com/zeromq/cppzmq/pull/288
+        args.append('-DCPPZMQ_BUILD_TESTS=OFF')
+        return args
