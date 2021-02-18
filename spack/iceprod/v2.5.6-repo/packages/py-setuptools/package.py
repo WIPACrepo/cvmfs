@@ -64,7 +64,7 @@ class PySetuptools(PythonPackage):
         url = 'https://pypi.io/packages/source/s/setuptools/setuptools-{0}'
         url = url.format(version)
 
-        if version > Version('32.1.2'):
+        if Version('32.1.2') < version < Version('51.1.0'):
             url += '.zip'
         else:
             url += '.tar.gz'
