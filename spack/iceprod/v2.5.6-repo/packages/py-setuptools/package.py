@@ -59,6 +59,7 @@ class PySetuptools(PythonPackage):
     depends_on('py-packaging@16.8:', when='@34:35', type=('build', 'run'))
     depends_on('py-six@1.6.0:',      when='@34:35', type=('build', 'run'))
     depends_on('py-appdirs@1.4.0:',  when='@34:35', type=('build', 'run'))
+    depends_on('py-wheel@0.36.2:',   when='@51.1:', type=('build', 'run'))
 
     def url_for_version(self, version):
         url = 'https://pypi.io/packages/source/s/setuptools/setuptools-{0}'
