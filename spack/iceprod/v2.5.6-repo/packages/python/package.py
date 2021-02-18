@@ -97,9 +97,6 @@ class Python(AutotoolsPackage):
     depends_on("libffi", when="@3.7:")
     depends_on("openssl@1.0.2:", when="@3.7:")
 
-    # Patch does not work for Python 3.1
-    patch('ncurses.patch', when='@:2.8,3.2:3.8')
-
     # Ensure that distutils chooses correct compiler option for RPATH on cray:
     patch('cray-rpath-2.3.patch', when="@2.3:3.0.1 platform=cray")
     patch('cray-rpath-3.1.patch', when="@3.1:3.99  platform=cray")

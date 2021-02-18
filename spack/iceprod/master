@@ -6,34 +6,34 @@ pkg-config@0.29.2
 libffi@3.2.1
 libxml2@2.9.10
 libarchive@3.4.3
-zstd@1.4.4
-snappy@1.1.7
-c-blosc@1.17.1 avx2=False
+zstd@1.4.8
+snappy@1.1.8
+c-blosc@1.21.0 avx2=False
 
 # system applications
 sqlite@3.30.1
-python@3.7.6+optimizations
-cmake@3.16.1
+python@3.8.7+optimizations
+cmake@3.19.5
 
 # basic python
-py-pip@19.3.1
-py-virtualenv@16.7.8
+py-pip@21.0.1
+py-virtualenv@20.4.2
 
 # file transfer tools
-curl@7.67.0
-wget@1.20.3
+curl@7.75.0
+wget@1.21.1
 globus-toolkit@6.0.1558548600 gram5=False myproxy=False
 gsoap@2.8.55
 voms@2.0.14
 uberftp@2_8
 
 # extra python packages
-py-ipython@7.10.1
+py-ipython@7.20.0
 py-ldap3@2.6.1
-py-certifi@2020.4.5.1
-py-cryptography@2.5
+py-certifi@2020.12.5
+py-cryptography@3.3.2
 py-chardet@3.0.4
 py-urllib3@1.25.9
-py-requests@2.23.0
-py-dateutil@2.7.3
+py-requests@2.25.1
+py-dateutil@2.8.1
 py-iceprod@develop
