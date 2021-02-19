@@ -526,7 +526,8 @@ def build_meta(dest, version, svn_only=False):
 
         if svn_only:
             src_dir = os.path.join(srootbase, 'metaprojects', meta_name)
-            svn_download(src_url, src_dir)
+            if trunk or not os.path.exists(src_dir):
+                svn_download(src_url, src_dir)
             myprint('   svn only, so skipping build of', meta_name)
             continue
 
