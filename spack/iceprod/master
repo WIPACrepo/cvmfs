@@ -1,8 +1,10 @@
 # build tools
 libtool@2.4.6
 pkg-config@0.29.2
+gdbm@1.19
 
 # system libraries
+openssl@1.1.1j
 libffi@3.2.1
 libxml2@2.9.10
 libarchive@3.4.3
@@ -11,29 +13,33 @@ snappy@1.1.8
 c-blosc@1.21.0 avx2=False
 
 # system applications
-sqlite@3.30.1
+sqlite@3.34.1
 python@3.8.7+optimizations
 cmake@3.19.5
 
 # basic python
 py-pip@21.0.1
-py-virtualenv@20.4.2
+py-virtualenv@16.7.8
 
 # file transfer tools
 curl@7.75.0
 wget@1.21.1
 globus-toolkit@6.0.1558548600 gram5=False myproxy=False
 gsoap@2.8.55
-voms@2.0.14
+voms@2.1.0-rc0
 uberftp@2_8
 
 # extra python packages
 py-ipython@7.20.0
 py-ldap3@2.6.1
 py-certifi@2020.12.5
+py-cffi@1.14.5
 py-cryptography@3.3.2
 py-chardet@3.0.4
 py-urllib3@1.25.9
 py-requests@2.25.1
 py-dateutil@2.8.1
+py-htcondor@8.9.11
+py-pyopenssl@20.0.1
+py-tornado@6.1.0
 py-iceprod@develop
