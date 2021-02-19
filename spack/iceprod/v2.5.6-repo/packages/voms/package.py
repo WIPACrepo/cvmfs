@@ -49,8 +49,8 @@ class Voms(AutotoolsPackage):
     depends_on('autoconf')
     depends_on('automake')
 
-    depends_on('openssl@1.0:1.0.99', when='@:2.0.99')
-    depends_on('openssl', when='@2.1:')
+    depends_on('openssl@1.0:1.0.99', when='@:2.0.14')
+    depends_on('openssl@1.1:', when='@2.0.15:')
     depends_on('gsoap')
 
     @run_before('autoreconf')
