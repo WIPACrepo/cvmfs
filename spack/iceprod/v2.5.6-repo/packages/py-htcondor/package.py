@@ -34,6 +34,7 @@ class PyHtcondor(PythonPackage):
     url = 'https://files.pythonhosted.org/packages/a5/fd/585d398ec544050b60449644aafef1b21e57feab5460b54313c9d5fb0c09/htcondor-8.7.9-cp36-cp36m-manylinux1_x86_64.whl'
 
     version('8.7.9', sha256='17ae9767bc74b6fb007666eafcacb03c14b1c521b3e154f9ebb053e14376eaa2', expand=False)
+    version('8.9.11', sha256='fe568076cc3e4c20e7e77c03695c72d4082ccd14bb889e515ef7be9ac6bd3ad7', url='https://files.pythonhosted.org/packages/8c/c7/fad9fe2312df48f7647069ee7df0e1837373318c4172938ca6dad40d2ce0/htcondor-8.9.11-cp38-cp38-manylinux1_x86_64.whl', expand=False)
 
     depends_on('py-setuptools', type='build')
     depends_on('py-pip', type='build')
