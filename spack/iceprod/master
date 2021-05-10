@@ -14,7 +14,7 @@ c-blosc@1.21.0 avx2=False
 
 # system applications
 sqlite@3.34.1
-python@3.8.7+optimizations
+python@3.8.7
 cmake@3.19.5
 
 # basic python
