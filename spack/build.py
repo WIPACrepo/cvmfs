@@ -442,7 +442,7 @@ def build(src, dest, version, mirror=None):
             for name, package in packages.items():
                 myprint('installing', name)
                 if mirror.startswith('/'):
-                    run_cmd(spack_mirror_bin+['mirror', '-d', mirror, package.split()[0]])
+                    run_cmd([spack_mirror_bin, 'mirror', '-d', mirror, package.split()[0]])
                 run_cmd(cmd+package.split())
             update_compiler(spack_path, compiler_package)
 
@@ -462,7 +462,7 @@ def build(src, dest, version, mirror=None):
                 continue
             deps = get_dependencies(spack_path, package, packages)
             if mirror.startswith('/'):
-                run_cmd(spack_mirror_bin+['mirror', '-d', mirror, package.split()[0]])
+                run_cmd([spack_mirror_bin, 'mirror', '-d', mirror, package.split()[0]])
             run_cmd(cmd+package.split()+deps)
 
         # set up dirs
