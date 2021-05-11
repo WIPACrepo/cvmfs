@@ -300,7 +300,7 @@ def get_dependencies(spack_path, package, packages):
                 raise Exception('bad dep: '+d)
             parts[0] = '^'+parts[0]
             ret.extend(parts)
-    
+
     return ret
 
 def is_installed(spack_path, package):
@@ -377,7 +377,14 @@ def build(src, dest, version, mirror=None):
         url = 'https://github.com/spack/spack.git'
         run_cmd(['git', 'clone', url, spack_path])
         run_cmd(['git', 'checkout', 'tags/v0.12.1'], cwd=spack_path)
-        
+
+    # set up spack latest version for mirror
+    spack_mirror_path = os.path.join(os.getcwd(), 'spack')
+    if not os.path.exists(spack_mirror_path):
+        url = 'https://github.com/spack/spack.git'
+        run_cmd(['git', 'clone', url, spack_mirror_path])
+    spack_mirror_bin = os.path.join(spack_mirror_path,'bin','spack')
+
     os.environ['SPACK_ROOT'] = spack_path
     spack_bin = os.path.join(spack_path,'bin','spack')
 
@@ -409,8 +416,8 @@ def build(src, dest, version, mirror=None):
     if mirror:
         try:
             if mirror.startswith('/'):
-                mirror = 'file://'+mirror
-                run_cmd([spack_bin, 'mirror', 'add', 'local_filesystem', mirror])
+                mirror_path = 'file://'+mirror
+                run_cmd([spack_bin, 'mirror', 'add', 'local_filesystem', mirror_path])
             else:
                 run_cmd([spack_bin, 'mirror', 'add', 'remote_server', mirror])
         except Exception:
@@ -434,9 +441,11 @@ def build(src, dest, version, mirror=None):
                 cmd.extend(['-j', os.environ['CPUS']])
             for name, package in packages.items():
                 myprint('installing', name)
+                if mirror.startswith('/'):
+                    run_cmd(spack_mirror_bin+['mirror', '-d', mirror, package.split()[0]])
                 run_cmd(cmd+package.split())
             update_compiler(spack_path, compiler_package)
-        
+
         # install packages
         packages = get_packages(os.path.join(os.path.dirname(__file__), *version))
         cmd = [spack_bin, 'install', '-y', '-v', '--no-checksum']
@@ -452,6 +461,8 @@ def build(src, dest, version, mirror=None):
                 myprint(name, 'already installed')
                 continue
             deps = get_dependencies(spack_path, package, packages)
+            if mirror.startswith('/'):
+                run_cmd(spack_mirror_bin+['mirror', '-d', mirror, package.split()[0]])
             run_cmd(cmd+package.split()+deps)
 
         # set up dirs
@@ -491,20 +502,25 @@ def num_cpus():
         pass
     return ret
 
-def svn_download(url, dest):
+def meta_download(url, dest, tag=None):
     """
-    SVN download of a url to a dest.
+    Metaproject download of a url to a dest.
     """
     print("   downloading", url, "to", dest)
     if os.path.exists(dest):
         shutil.rmtree(dest)
-    run_cmd(['svn', 'co', url, dest, '--username', 'icecube',
-             '--password', 'skua', '--no-auth-cache', '--non-interactive'])
+
+    if src_url.endswith('.git'):
+        run_cmd(['git', 'clone', url, dest])
+        run_cmd(['git', 'checkout', tag], cwd=dest)
+    else:
+        run_cmd(['svn', 'co', url, dest, '--username', 'icecube',
+                 '--password', 'skua', '--no-auth-cache', '--non-interactive'])
 
     if not os.path.exists(dest):
         raise Exception('download failed')
 
-def build_meta(dest, version, svn_only=False):
+def build_meta(dest, version, checkout=False):
     srootbase = os.path.join(dest,version.replace('-metaproject',''))
     sroot = get_sroot(srootbase)
 
@@ -516,18 +532,25 @@ def build_meta(dest, version, svn_only=False):
         install_dir = os.path.join(sroot, 'metaprojects', meta_name)
 
         trunk = False
-        if 'RC' in name:
-            src_url = 'http://code.icecube.wisc.edu/svn/meta-projects/%s/candidates/%s'%(meta,name)
-        elif name not in ('trunk', 'stable'):
-            src_url = 'http://code.icecube.wisc.edu/svn/meta-projects/%s/releases/%s'%(meta,name)
+        if meta == 'icetray':
+            src_url = 'https://github.com/icecube/icetray.git'
+            if name.startswith('V'):
+                name = 'tags/releases/'+name
+            else:
+                trunk = True
         else:
-            src_url = 'http://code.icecube.wisc.edu/svn/meta-projects/%s/%s'%(meta,name)
-            trunk = True
+            if 'RC' in name:
+                src_url = 'http://code.icecube.wisc.edu/svn/meta-projects/%s/candidates/%s'%(meta,name)
+            elif name not in ('trunk', 'stable'):
+                src_url = 'http://code.icecube.wisc.edu/svn/meta-projects/%s/releases/%s'%(meta,name)
+            else:
+                src_url = 'http://code.icecube.wisc.edu/svn/meta-projects/%s/%s'%(meta,name)
+                trunk = True
 
-        if svn_only:
+        if checkout:
             src_dir = os.path.join(srootbase, 'metaprojects', meta_name)
             if trunk or not os.path.exists(src_dir):
-                svn_download(src_url, src_dir)
+                meta_download(src_url, src_dir, tag=name)
             myprint('   svn only, so skipping build of', meta_name)
             continue
 
@@ -538,7 +561,7 @@ def build_meta(dest, version, svn_only=False):
         src_dir = tempfile.mkdtemp(dir=os.getcwd())
         build_dir = tempfile.mkdtemp(dir=os.getcwd())
         try:
-            svn_download(src_url, src_dir)
+            meta_download(src_url, src_dir, tag=name)
 
             cmd = ['cmake', '-DCMAKE_BUILD_TYPE=Release',
                    '-DINSTALL_TOOL_LIBS=OFF',
@@ -563,7 +586,7 @@ if __name__ == '__main__':
     parser = OptionParser(usage="%prog [options] versions")
     parser.add_option("--src", help="base source path")
     parser.add_option("--dest", help="base dest path")
-    parser.add_option("--svnonly", action='store_true', help="metaproject svn only")
+    parser.add_option("--checkout", action='store_true', help="metaproject checkout only")
     parser.add_option("--mirror", help="mirror location")
     (options, args) = parser.parse_args()
     if not args:
@@ -571,6 +594,6 @@ if __name__ == '__main__':
 
     for version in args:
         if version.endswith('-metaproject'):
-            build_meta(options.dest, version, svn_only=options.svnonly)
+            build_meta(options.dest, version, checkout=options.checkout)
         else:
             build(options.src, options.dest, version, mirror=options.mirror)
