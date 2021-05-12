@@ -332,6 +332,36 @@ def uninstall(spack_path, sroot, package):
     cmd = [spack_bin, 'uninstall', '-y', '-f', '-a', package]
     run_cmd(cmd)
 
+class Mirror:
+    def __init__(self, mirror_path):
+        self.mirror_path = mirror_path
+        self.spack_bin = None
+        if mirror_path.startswith('/'):
+            # set up spack latest version for mirror
+            spack_path = os.path.join(os.getcwd(), 'spack')
+            if not os.path.exists(spack_path):
+                url = 'https://github.com/spack/spack.git'
+                run_cmd(['git', 'clone', url, spack_path])
+            self.spack_bin = os.path.join(spack_path, 'bin', 'spack')
+
+    def add_repo(self, repo_path):
+        if self.spack_bin:
+            run_cmd([self.spack_bin, 'repo', 'add', '--scope', 'site', repo_path])
+
+    def download(self, package):
+        if self.spack_bin:
+            pkg_version = package.split()[0]
+            pkg_name = pkg_version.split('@')[0]
+            pkg_version_name = pkg_version.replace('@','-')+'.tar.gz'
+            if os.path.exists(self.mirror_path, pkg_name, pkg_version_name):
+                myprint(pkg_version+' already in mirror')
+                return
+            myprint('attempting to add '+pkg_version+' to mirror')
+            try:
+                run_cmd([self.spack_bin, 'mirror', 'create', '-d', self.mirror_path, pkg_version])
+            except Exception:
+                pass
+
 def build(src, dest, version, mirror=None):
     myprint('building version',version)
     if 'PYTHONPATH' in os.environ:
@@ -378,12 +408,7 @@ def build(src, dest, version, mirror=None):
         run_cmd(['git', 'clone', url, spack_path])
         run_cmd(['git', 'checkout', 'tags/v0.12.1'], cwd=spack_path)
 
-    # set up spack latest version for mirror
-    spack_mirror_path = os.path.join(os.getcwd(), 'spack')
-    if not os.path.exists(spack_mirror_path):
-        url = 'https://github.com/spack/spack.git'
-        run_cmd(['git', 'clone', url, spack_mirror_path])
-    spack_mirror_bin = os.path.join(spack_mirror_path,'bin','spack')
+    fileMirror = Mirror(mirror)
 
     os.environ['SPACK_ROOT'] = spack_path
     spack_bin = os.path.join(spack_path,'bin','spack')
@@ -404,16 +429,19 @@ def build(src, dest, version, mirror=None):
         run_cmd([spack_bin, 'repo', 'add', '--scope', 'site', repo_path])
     except Exception:
         pass
+    fileMirror.add_repo(repo_path)
 
     hep_repo_path = os.path.join(spack_path,'spack/var/spack/repos/hep-spack')
-    if not os.path.exists(spack_path):
+    if not os.path.exists(hep_repo_path):
         url = 'https://github.com/HEP-SF/hep-spack.git'
         run_cmd(['git', 'clone', url, hep_repo_path])
         run_cmd([spack_bin, 'repo', 'add', '--scope', 'site',
                  hep_repo_path])
+        fileMirror.add_repo(hep_repo_path)
 
     # add mirror
     if mirror:
+        # set up mirror
         try:
             if mirror.startswith('/'):
                 mirror_path = 'file://'+mirror
@@ -441,8 +469,7 @@ def build(src, dest, version, mirror=None):
                 cmd.extend(['-j', os.environ['CPUS']])
             for name, package in packages.items():
                 myprint('installing', name)
-                if mirror.startswith('/'):
-                    run_cmd([spack_mirror_bin, 'mirror', 'create', '-d', mirror, package.split()[0]])
+                fileMirror.download(package)
                 run_cmd(cmd+package.split())
             update_compiler(spack_path, compiler_package)
 
@@ -461,8 +488,7 @@ def build(src, dest, version, mirror=None):
                 myprint(name, 'already installed')
                 continue
             deps = get_dependencies(spack_path, package, packages)
-            if mirror.startswith('/'):
-                run_cmd([spack_mirror_bin, 'mirror', 'create', '-d', mirror, package.split()[0]])
+            fileMirror.download(package)
             run_cmd(cmd+package.split()+deps)
 
         # set up dirs
