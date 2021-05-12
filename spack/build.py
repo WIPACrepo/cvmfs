@@ -353,7 +353,7 @@ class Mirror:
             pkg_version = package.split()[0]
             pkg_name = pkg_version.split('@')[0]
             pkg_version_name = pkg_version.replace('@','-')+'.tar.gz'
-            if os.path.exists(self.mirror_path, pkg_name, pkg_version_name):
+            if os.path.exists(os.path.join(self.mirror_path, pkg_name, pkg_version_name)):
                 myprint(pkg_version+' already in mirror')
                 return
             myprint('attempting to add '+pkg_version+' to mirror')
