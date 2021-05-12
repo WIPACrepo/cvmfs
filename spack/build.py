@@ -346,7 +346,10 @@ class Mirror:
 
     def add_repo(self, repo_path):
         if self.spack_bin:
-            run_cmd([self.spack_bin, 'repo', 'add', '--scope', 'site', repo_path])
+            try:
+                run_cmd([self.spack_bin, 'repo', 'add', '--scope', 'site', repo_path])
+            except:
+                pass
 
     def download(self, package):
         if self.spack_bin:
