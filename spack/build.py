@@ -539,7 +539,7 @@ def meta_download(url, dest, tag=None):
     if os.path.exists(dest):
         shutil.rmtree(dest)
 
-    if src_url.endswith('.git'):
+    if url.endswith('.git'):
         run_cmd(['git', 'clone', url, dest])
         run_cmd(['git', 'checkout', tag], cwd=dest)
     else:
