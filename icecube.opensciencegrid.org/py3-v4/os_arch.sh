@@ -23,7 +23,15 @@ case $DISTRIB in
         ;;
     "ubuntu")
         DISTRIB="Ubuntu"
-        if echo $VERSION | grep -q '18\.\?'; then
+        if echo $VERSION | grep -q '22\.\?'; then
+            VERSION="22.04"
+        elif echo $VERSION | grep -q '21\.\?'; then
+            VERSION="20.04"
+        elif echo $VERSION | grep -q '20\.\?'; then
+            VERSION="20.04"
+        elif echo $VERSION | grep -q '19\.\?'; then
+            VERSION="18.04"
+        elif echo $VERSION | grep -q '18\.\?'; then
             VERSION="18.04"
         elif echo $VERSION | grep -q '17\.\?'; then
             VERSION="16.04"
@@ -44,9 +52,11 @@ case $DISTRIB in
     "debian")
         DISTRIB="Ubuntu"
         if [ "$VERSION" = "unstable" ]; then
-            VERSION="18.04"
+            VERSION="20.04"
         elif [ "$VERSION" = "testing" ]; then
-            VERSION="18.04"
+            VERSION="20.04"
+        elif echo $VERSION | grep -q '11\.\?'; then
+            VERSION="20.04"
         elif echo $VERSION | grep -q '10\.\?'; then
             VERSION="18.04"
         elif echo $VERSION | grep -q '9\.\?'; then
@@ -57,7 +67,9 @@ case $DISTRIB in
         ;;
     "linuxmint")
         DISTRIB="Ubuntu"
-        if echo $VERSION | grep -q '19\.\?'; then
+        if echo $VERSION | grep -q '20\.\?'; then
+            VERSION="20.04"
+        elif echo $VERSION | grep -q '19\.\?'; then
             VERSION="18.04"
         elif echo $VERSION | grep -q '18\.\?'; then
             VERSION="16.04"
@@ -84,7 +96,10 @@ case $DISTRIB in
         ;;
     "linux")
         # Damn. Try harder with the heuristics.
-        if echo $VERSION | grep -q '\.el7\.\?'; then
+        if echo $VERSION | grep -q '\.el8\.\?'; then
+            DISTRIB="RHEL"
+            VERSION=8
+        elif echo $VERSION | grep -q '\.el7\.\?'; then
             DISTRIB="RHEL"
             VERSION=7
         elif echo $VERSION | grep -q '\.el6\.\?'; then

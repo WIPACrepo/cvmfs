@@ -580,7 +580,7 @@ def build_meta(dest, version, checkout=False):
             src_dir = os.path.join(srootbase, 'metaprojects', meta_name)
             if trunk or not os.path.exists(src_dir):
                 meta_download(src_url, src_dir, tag=name)
-            myprint('   svn only, so skipping build of', meta_name)
+            myprint('   checkout only, so skipping build of', meta_name)
             continue
 
         if (not trunk) and os.path.exists(install_dir):
