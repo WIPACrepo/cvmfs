@@ -416,6 +416,13 @@ def build(src, dest, version, mirror=None):
     os.environ['SPACK_ROOT'] = spack_path
     spack_bin = os.path.join(spack_path,'bin','spack')
 
+    hep_repo_path = os.path.join(spack_path,'var/spack/repos/hep-spack')
+    if not os.path.exists(hep_repo_path):
+        url = 'https://github.com/HEP-SF/hep-spack.git'
+        run_cmd(['git', 'clone', url, hep_repo_path])
+        run_cmd([spack_bin, 'repo', 'add', '--scope', 'site',
+                 hep_repo_path])
+
     # add custom repo
     repo_path = os.path.join(os.path.dirname(__file__),*version)+'-repo'
     if (not os.path.exists(repo_path)) and len(version) == 2 and '.' in version[1]:
@@ -432,15 +439,6 @@ def build(src, dest, version, mirror=None):
         run_cmd([spack_bin, 'repo', 'add', '--scope', 'site', repo_path])
     except Exception:
         pass
-    fileMirror.add_repo(repo_path)
-
-    hep_repo_path = os.path.join(spack_path,'spack/var/spack/repos/hep-spack')
-    if not os.path.exists(hep_repo_path):
-        url = 'https://github.com/HEP-SF/hep-spack.git'
-        run_cmd(['git', 'clone', url, hep_repo_path])
-        run_cmd([spack_bin, 'repo', 'add', '--scope', 'site',
-                 hep_repo_path])
-        fileMirror.add_repo(hep_repo_path)
 
     # add mirror
     if mirror:
