@@ -359,6 +359,14 @@ class Mirror:
             if os.path.exists(os.path.join(self.mirror_path, pkg_name, pkg_version_name)):
                 myprint(pkg_version+' already in mirror')
                 return
+            pkg_version_name = pkg_version.replace('@','-')+'.tar.bz2'
+            if os.path.exists(os.path.join(self.mirror_path, pkg_name, pkg_version_name)):
+                myprint(pkg_version+' already in mirror')
+                return
+            pkg_version_name = pkg_version.replace('@','-')+'.tar.xz'
+            if os.path.exists(os.path.join(self.mirror_path, pkg_name, pkg_version_name)):
+                myprint(pkg_version+' already in mirror')
+                return
             myprint('attempting to add '+pkg_version+' to mirror')
             try:
                 run_cmd([self.spack_bin, 'mirror', 'create', '-d', self.mirror_path, pkg_version])
