@@ -232,7 +232,7 @@ def get_dependencies(spack_path, package, packages):
     dependencies = set()
     ret = []
     success = False
-    while True:
+    for _ in range(50):
         cmd = [spack_bin, 'spec']+package.split()+ret
         code,output,error = run_cmd_output(cmd)
         success = code == 0
@@ -300,6 +300,10 @@ def get_dependencies(spack_path, package, packages):
                 raise Exception('bad dep: '+d)
             parts[0] = '^'+parts[0]
             ret.extend(parts)
+    else:
+        print(output)
+        print(error)
+        raise Exception('bad dependencies')
 
     return ret
 
