@@ -428,6 +428,12 @@ def build(src, dest, version, mirror=None):
     os.environ['SPACK_ROOT'] = spack_path
     spack_bin = os.path.join(spack_path,'bin','spack')
 
+    # clear repos
+    repo_yaml = os.path.join(spack_path,'etc/spack/repos.yaml')
+    if os.path.exists(repo_yaml):
+        os.remove(repo_yaml)
+
+    # add HEP repo
     hep_repo_path = os.path.join(spack_path,'var/spack/repos/hep-spack')
     if not os.path.exists(hep_repo_path):
         url = 'https://github.com/HEP-SF/hep-spack.git'
