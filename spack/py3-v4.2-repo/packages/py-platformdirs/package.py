@@ -21,4 +21,5 @@ class PyPlatformdirs(PythonPackage):
     depends_on('py-setuptools-scm', type=('build', 'run'))
     depends_on('py-pip', type=('build', 'run'))
     depends_on('py-wheel', type=('build', 'run'))
+    depends_on('py-packaging', type=('build', 'run'))
 
