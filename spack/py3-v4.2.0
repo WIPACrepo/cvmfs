@@ -78,7 +78,7 @@ py-pickleshare@0.7.5
 py-ipython-genutils@0.2.0
 py-ipython@8.1.1
 py-pyfits@3.5
-py-numexpr@2.7.0
+py-numexpr@2.8.1
 py-cffi@1.15.0
 py-certifi@2021.10.8
 py-cryptography@36.0.1
@@ -86,13 +86,16 @@ py-pymysql@0.9.3
 py-pillow@6.2.1
 py-tornado@6.0.3
 py-pytz@2021.3
+py-dateutil@2.8.2
 py-matplotlib@3.5.0 tk=False ipython=True
 py-urllib3@1.26.8
 py-requests@2.27.1
 py-babel@2.9.1
 py-markupsafe@2.1.0
 py-jinja2@3.0.3
+py-pyyaml@6.0
 py-sphinx@4.4.0
+py-networkx@2.7.1
 py-h5py@2.10.0 mpi=False
 py-pandas@1.4.1
 py-dask@2022.2.1
