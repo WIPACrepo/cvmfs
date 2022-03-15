@@ -4,7 +4,7 @@ pkg-config@0.29.2
 
 # system libraries
 openssl@1.1.1m
-libffi@3.2.1
+libffi@3.4.2
 libxml2@2.9.10
 libarchive@3.4.0
 zstd@1.4.4
@@ -61,7 +61,7 @@ hdf5@1.10.5 cxx=True hl=True mpi=False
 nlopt@2.6.1 cxx=True python=True
 
 # physics applications
-erfa@1.7.0
+erfa@2.0.0
 pal@0.9.8
 wcslib@7.7 cfitsio=True
 healpix@3.50
@@ -74,6 +74,7 @@ lhapdf@6.2.3
 # extra python packages
 py-chardet@4.0.0
 py-pexpect@4.7.0
+py-pickleshare@0.7.5
 py-ipython-genutils@0.2.0
 py-ipython@8.1.1
 py-pyfits@3.5
