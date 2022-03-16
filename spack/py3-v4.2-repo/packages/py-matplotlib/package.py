@@ -108,6 +108,7 @@ class PyMatplotlib(PythonPackage):
     depends_on('py-tornado@6.0.3:', type=('build', 'run'))
     depends_on('py-pillow', type=('build', 'run'))
     depends_on('py-certifi', type=('build', 'run'))
+    depends_on('py-fonttools@4.22:', when='@3.5:', type=('build', 'run'))
 
     @run_before('build')
     def set_cc(self):
@@ -120,6 +121,22 @@ class PyMatplotlib(PythonPackage):
         if 'CPLUS_INCLUDE_PATH' in env:
             include_dir += ':'+env['CPLUS_INCLUDE_PATH']
         env['CPLUS_INCLUDE_PATH'] = include_dir
+
+    @run_before('build')
+    def configure(self):
+        """Set build options with regards to backend GUI libraries."""
+
+        backend = 'agg'
+
+        config_file = 'mplsetup.cfg' if self.version >= Version('3.5') else 'setup.cfg'
+        with open(config_file, 'w') as config:
+            # Default backend
+            config.write('[rc_options]\n')
+            config.write('backend = ' + backend + '\n')
+            if self.version >= Version('3.3.0'):
+                setup.write('[libs]\n')
+                setup.write('system_freetype = True\n')
+                setup.write('system_qhull = True\n')
 
     @run_after('install')
     def set_backend(self):
