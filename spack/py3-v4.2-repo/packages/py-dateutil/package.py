@@ -19,5 +19,6 @@ class PyDateutil(PythonPackage):
     depends_on('py-setuptools', type='build')
     depends_on('py-setuptools-scm', type='build')
     depends_on('py-wheel', type='build')
+    depends_on('py-packaging', type='build')
     depends_on('py-pip', type='build')
     depends_on('py-six', type=('build', 'run'))
