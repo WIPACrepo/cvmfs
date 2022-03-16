@@ -28,3 +28,4 @@ class PyDistributed(PythonPackage):
     depends_on('py-tornado@6.0.3:', type=('build', 'run'))
     depends_on('py-zict@0.1.3:', type=('build', 'run'))
     depends_on('py-pyyaml', type=('build', 'run'))
+    depends_on('py-msgpack', type=('build', 'run'))
