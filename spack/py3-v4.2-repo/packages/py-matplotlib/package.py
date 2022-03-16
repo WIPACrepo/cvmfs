@@ -65,6 +65,7 @@ class PyMatplotlib(PythonPackage):
     # to make mpl_toolkits a namespace package that can span multiple
     # directories (i.e., matplotlib and basemap)
     depends_on('py-setuptools', type=('build', 'run'))
+    depends_on('py-setuptools-scm', type=('build', 'run'))
     depends_on('py-pip', type=('build', 'run'))
 
     depends_on('libpng@1.2:')
@@ -105,6 +106,8 @@ class PyMatplotlib(PythonPackage):
     # depends_on('ttconv')
     depends_on('py-six@1.9.0:', type=('build', 'run'))
     depends_on('py-tornado@6.0.3:', type=('build', 'run'))
+    depends_on('py-pillow', type=('build', 'run'))
+    depends_on('py-certifi', type=('build', 'run'))
 
     @run_before('build')
     def set_cc(self):
