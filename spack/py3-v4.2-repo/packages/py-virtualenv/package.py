@@ -25,5 +25,6 @@ class PyVirtualenv(PythonPackage):
     depends_on('py-setuptools-scm', type=('build', 'run'))
     depends_on('py-pip', type=('build', 'run'))
     depends_on('py-packaging', type=('build', 'run'))
-    depends_on('py-platformdirs', type=('build', 'run'))
+    depends_on('py-platformdirs', when='@20:', type=('build', 'run'))
+    depends_on('py-filelock@3.6.0:', when='@20:', type=('build', 'run'))
 
