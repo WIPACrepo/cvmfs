@@ -24,4 +24,4 @@ class PyPyparsing(PythonPackage):
     # fallback on distutils.core instead. Don't add a setuptools dependency
     # or we won't be able to bootstrap setuptools.
 
-    depends_on('py-setuptools', when='@3:', type='build')
+    depends_on('py-setuptools', when='@2.4:', type='build')
