@@ -134,9 +134,9 @@ class PyMatplotlib(PythonPackage):
             config.write('[rc_options]\n')
             config.write('backend = ' + backend + '\n')
             if self.version >= Version('3.3.0'):
-                setup.write('[libs]\n')
-                setup.write('system_freetype = True\n')
-                setup.write('system_qhull = True\n')
+                config.write('[libs]\n')
+                config.write('system_freetype = True\n')
+                config.write('system_qhull = True\n')
 
     @run_after('install')
     def set_backend(self):
