@@ -36,14 +36,23 @@ class PyHtcondor(PythonPackage):
 
     def url_for_version(self, version):
         base_url = 'https://pypi.org/simple/htcondor/'
-        if self.spec.satisfies('^python@3.9:3.9.99'):
-            filename = 'htcondor-{}-cp39-cp39-manylinux1_x86_64.whl'.format(version)
-        elif self.spec.satisfies('^python@3.8:3.8.99'):
-            filename = 'htcondor-{}-cp38-cp38-manylinux1_x86_64.whl'.format(version)
+        suffix = 'manylinux1_x86_64.whl'
+        if self.version >= Version('9.4.0'):
+            suffix = 'manylinux_2_12_x86_64.manylinux2010_x86_64.whl'
+        elif self.version >= Version('9.0.1'):
+            suffix = 'manylinux_2_5_x86_64.manylinux1_x86_64.whl'
+
+        if self.spec.satisfies('^python@3.6:3.6.99'):
+            filename = 'htcondor-{}-cp36-cp36m-{}'.format(version, suffix)
         elif self.spec.satisfies('^python@3.7:3.7.99'):
-            filename = 'htcondor-{}-cp37-cp37m-manylinux1_x86_64.whl'.format(version)
-        elif self.spec.satisfies('^python@3.6:3.6.99'):
-            filename = 'htcondor-{}-cp36-cp36m-manylinux1_x86_64.whl'.format(version)
+            filename = 'htcondor-{}-cp37-cp37m-{}'.format(version, suffix)
+        elif self.spec.satisfies('^python@3.8:3.8.99'):
+            filename = 'htcondor-{}-cp38-cp38-{}'.format(version, suffix)
+        elif self.spec.satisfies('^python@3.9:3.9.99'):
+            filename = 'htcondor-{}-cp39-cp39-{}'.format(version, suffix)
+        elif self.spec.satisfies('^python@3.10:'):
+            filename = 'htcondor-{}-cp310-cp310-{}'.format(version, suffix)
+
 
         response = web._urlopen(base_url)
         readme = response.read().decode('utf-8')
