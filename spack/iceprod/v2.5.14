@@ -8,7 +8,7 @@ openssl@1.1.1j
 libffi@3.2.1
 libxml2@2.9.10
 libarchive@3.4.3
-zstd@1.4.8
+zstd@1.5.2
 snappy@1.1.8
 c-blosc@1.21.0 avx2=False
 
