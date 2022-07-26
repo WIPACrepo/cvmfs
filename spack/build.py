@@ -340,7 +340,7 @@ class Mirror:
     def __init__(self, mirror_path):
         self.mirror_path = mirror_path
         self.spack_bin = None
-        if mirror_path.startswith('/'):
+        if mirror_path and mirror_path.startswith('/'):
             # set up spack latest version for mirror
             spack_path = os.path.join(os.getcwd(), 'spack')
             if not os.path.exists(spack_path):
