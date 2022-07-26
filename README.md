@@ -10,6 +10,7 @@ Build a single variant:
 ## Dependencies
 
 * gcc, make, autoconf (standard build system)
+* git
 * python
 
 ## Old Build
