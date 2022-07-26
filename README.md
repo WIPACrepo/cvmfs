@@ -7,6 +7,10 @@ Build a single variant:
 
 `spack/build.py py3-v4.1.0 --dest /cvmfs/icecube.opensciencegrid.org --src ../icecube.opensciencegrid.org`
 
+## Dependencies
+
+* gcc, make, autoconf (standard build system)
+* python
 
 ## Old Build
 
