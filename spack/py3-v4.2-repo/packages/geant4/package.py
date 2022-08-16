@@ -17,6 +17,7 @@ class Geant4(CMakePackage):
     homepage = "http://geant4.cern.ch/"
     url = "https://geant4-data.web.cern.ch/releases/geant4.10.01.p03.tar.gz"
 
+    version('10.05.p01', sha256='f4a292220500fad17e0167ce3153e96e3410ecbe96284e572dc707f63523bdff')
     version('10.04', 'b84beeb756821d0c61f7c6c93a2b83de')
     version('10.03.p03', 'ccae9fd18e3908be78784dc207f2d73b')
     version('10.02.p03', '2b887e66f0d41174016160707662a77b')
@@ -28,6 +29,7 @@ class Geant4(CMakePackage):
     variant('vecgeom', default=False, description='Enable vecgeom support')
     variant('cxx11', default=True, description='Enable CXX11 support')
     variant('cxx14', default=False, description='Enable CXX14 support')
+    variant('cxx17', default=False, description='Enable CXX17 support')
     variant('opengl', default=False, description='Optional OpenGL support')
     variant('x11', default=False, description='Optional X11 support')
     variant('motif', default=False, description='Optional motif support')
@@ -35,22 +37,36 @@ class Geant4(CMakePackage):
 
     depends_on('cmake@3.5:', type='build')
 
+    conflicts('+cxx17', when='+cxx11')
+    conflicts('+cxx17', when='+cxx14')
     conflicts('+cxx14', when='+cxx11')
+    conflicts('+cxx14', when='+cxx17')
     conflicts('+cxx11', when='+cxx14')
+    conflicts('+cxx11', when='+cxx17')
 
     # C++11 support
-    depends_on("clhep@2.4.0.0+cxx11~cxx14", when="@10.04+cxx11~cxx14")
-    depends_on("clhep@2.3.4.3+cxx11~cxx14", when="@10.03.p03+cxx11~cxx14")
-    depends_on("clhep@2.3.1.1+cxx11~cxx14", when="@10.02.p01+cxx11~cxx14")
-    depends_on("clhep@2.3.1.1+cxx11~cxx14", when="@10.02.p01+cxx11~cxx14")
-    depends_on("clhep@2.2.0.4+cxx11~cxx14", when="@10.01.p03+cxx11~cxx14")
+    depends_on("clhep@2.4.1.0+cxx11~cxx14~cxx17", when="@10.05.p01+cxx11~cxx14~cxx17")
+    depends_on("clhep@2.4.0.0+cxx11~cxx14~cxx17", when="@10.04+cxx11~cxx14~cxx17")
+    depends_on("clhep@2.3.4.3+cxx11~cxx14~cxx17", when="@10.03.p03+cxx11~cxx14~cxx17")
+    depends_on("clhep@2.3.1.1+cxx11~cxx14~cxx17", when="@10.02.p01+cxx11~cxx14~cxx17")
+    depends_on("clhep@2.3.1.1+cxx11~cxx14~cxx17", when="@10.02.p01+cxx11~cxx14~cxx17")
+    depends_on("clhep@2.2.0.4+cxx11~cxx14~cxx17", when="@10.01.p03+cxx11~cxx14~cxx17")
 
     # C++14 support
-    depends_on("clhep@2.4.0.0+cxx11~cxx14", when="@10.04~cxx11+cxx14")
-    depends_on("clhep@2.3.4.3+cxx11~cxx14", when="@10.03.p03~cxx11+cxx14")
-    depends_on("clhep@2.3.1.1~cxx11+cxx14", when="@10.02.p02~cxx11+cxx14")
-    depends_on("clhep@2.3.1.1~cxx11+cxx14", when="@10.02.p01~cxx11+cxx14")
-    depends_on("clhep@2.2.0.4~cxx11+cxx14", when="@10.01.p03~cxx11+cxx14")
+    depends_on("clhep@2.4.1.0~cxx11+cxx14~cxx17", when="@10.05.p01~cxx11+cxx14~cxx17")
+    depends_on("clhep@2.4.0.0~cxx11+cxx14~cxx17", when="@10.04~cxx11+cxx14~cxx17")
+    depends_on("clhep@2.3.4.3~cxx11+cxx14~cxx17", when="@10.03.p03~cxx11+cxx14~cxx17")
+    depends_on("clhep@2.3.1.1~cxx11+cxx14~cxx17", when="@10.02.p02~cxx11+cxx14~cxx17")
+    depends_on("clhep@2.3.1.1~cxx11+cxx14~cxx17", when="@10.02.p01~cxx11+cxx14~cxx17")
+    depends_on("clhep@2.2.0.4~cxx11+cxx14~cxx17", when="@10.01.p03~cxx11+cxx14~cxx17")
+
+    # C++17 support
+    depends_on("clhep@2.4.1.0~cxx11~cxx14+cxx17", when="@10.05.p01~cxx11~cxx14+cxx17")
+    depends_on("clhep@2.4.0.0~cxx11~cxx14+cxx17", when="@10.04~cxx11~cxx14+cxx17")
+    depends_on("clhep@2.3.4.3~cxx11~cxx14+cxx17", when="@10.03.p03~cxx11~cxx14+cxx17")
+    depends_on("clhep@2.3.1.1~cxx11~cxx14+cxx17", when="@10.02.p02~cxx11~cxx14+cxx17")
+    depends_on("clhep@2.3.1.1~cxx11~cxx14+cxx17", when="@10.02.p01~cxx11~cxx14+cxx17")
+    depends_on("clhep@2.2.0.4~cxx11~cxx14+cxx17", when="@10.01.p03~cxx11~cxx14+cxx17")
 
     depends_on("expat")
     depends_on("zlib")
@@ -89,6 +105,8 @@ class Geant4(CMakePackage):
             options.append('-DGEANT4_BUILD_CXXSTD=c++11')
         if '+cxx14' in spec:
             options.append('-DGEANT4_BUILD_CXXSTD=c++14')
+        if '+cxx17' in spec:
+            options.append('-DGEANT4_BUILD_CXXSTD=c++17')
 
         if '+qt' in spec:
             options.append('-DGEANT4_USE_QT=ON')
