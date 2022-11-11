@@ -111,7 +111,7 @@ if [ -d ${tmp_singularity} ]; then
 fi
 
 # start specialized detection, using python scripts
-srootpy='python -E -s'
+srootpy="${SROOT}/bin/python -E -s"
 
 for var in PERL5LIB MANPATH; do
     varlower=`echo ${var} | tr '[:upper:]' '[:lower:]'`
