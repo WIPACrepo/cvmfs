@@ -580,8 +580,10 @@ def build_meta(dest, version, checkout=False):
         if meta == 'icetray':
             src_url = 'https://github.com/icecube/icetray.git'
             if name.startswith('V'):
+                # these are old releases ported to git, and need special tag names
                 name = 'tags/releases/'+name
-            else:
+            elif not name.startswith('v'):
+                # this is a branch, so always rebuild
                 trunk = True
         else:
             if 'RC' in name:
