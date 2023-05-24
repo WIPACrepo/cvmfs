@@ -13,12 +13,12 @@ ICEPRODROOT=$ICEPRODBASE/$OS_ARCH
 
 PATH=$ICEPRODROOT/bin:$PATH
 
-# clear the pythonpath, otherwise strange things happen
-PYTHONPATH=
-
 PKG_CONFIG_PATH=$ICEPRODROOT/lib/pkgconfig:$PKG_CONFIG_PATH
 LD_LIBRARY_PATH=$ICEPRODROOT/lib:$ICEPRODROOT/lib64:$LD_LIBRARY_PATH
-#PYTHONPATH=$ICEPRODROOT/lib/python2.7/site-packages:$PYTHONPATH
+
+python_version=$($ICEPRODROOT/bin/python -V|awk '{print $2}'|awk -F. '{print $1"."$2}')
+PYTHONPATH="$ICEPRODROOT/lib/python${python_version}/site-packages"
+
 MANPATH=$ICEPRODROOT/man:$ICEPRODROOT/share/man:$MANPATH
 GLOBUS_LOCATION=$ICEPRODROOT
 GLOBUS_GSSAPI_NAME_COMPATIBILITY="HYBRID"

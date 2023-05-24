@@ -16,7 +16,7 @@ fi
 
 # VARS is the list of variables to be exported to the user's environment
 #
-VARS="SROOTBASE SROOT OS_ARCH PATH LD_LIBRARY_PATH"
+VARS="SROOTBASE SROOT OS_ARCH PATH LD_LIBRARY_PATH PYTHONPATH"
 
 # set the architecture-specific root directory
 SROOT=$SROOTBASE/$OS_ARCH
@@ -35,6 +35,15 @@ if [ "" = "$LD_LIBRARY_PATH" ]; then
     LD_LIBRARY_PATH="$sroot_lib"
 else
     LD_LIBRARY_PATH="$sroot_lib:$LD_LIBRARY_PATH"
+fi
+
+# prepend the standard library directory to the user's PYTHONPATH
+python_version=$($SROOT/bin/python -V|awk '{print $2}'|awk -F. '{print $1"."$2}')
+sroot_pythonpath="$SROOT/lib/python${python_version}/site-packages"
+if [ "" = "$PYTHONPATH" ]; then
+    PYTHONPATH="$sroot_pythonpath"
+else
+    PYTHONPATH="$sroot_pythonpath:$PYTHONPATH"
 fi
 
 # initialize I3_DATA variable
