@@ -16,6 +16,7 @@ class PyPythran(PythonPackage):
     homepage = "https://github.com/serge-sans-paille/pythran"
     pypi = "pythran/pythran-0.9.11.tar.gz"
 
+    version("0.12.2", sha256="2344c7ad76255f31f79d87877cc6bb8bddc5e5593015dae29b3f821c6c06a627")
     version("0.12.0", sha256="eff3dd0d3eebe57372f0d14f82985525e9bcdfb5b1d1010e1932cf9207060f9f")
     version("0.11.0", sha256="0b2cba712e09f7630879dff69f268460bfe34a6d6000451b47d598558a92a875")
     version("0.10.0", sha256="9dac8e1d50f33d4676003e350b1f0c878ce113e6f907920e92dc103352cac5bf")
@@ -56,6 +57,9 @@ class PyPythran(PythonPackage):
 
     # https://github.com/serge-sans-paille/pythran/issues/1937
     conflicts("%apple-clang@13:", when="@:0.10")
+
+    # https://github.com/serge-sans-paille/pythran/issues/2072
+    conflicts("%gcc@13:", when="@:0.12.0")
 
     @property
     def headers(self):

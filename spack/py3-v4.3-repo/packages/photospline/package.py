@@ -25,29 +25,23 @@
 from spack import *
 
 
-class Cdk(AutotoolsPackage):
-    """A library of curses widgets which can be linked into your application."""
+class Photospline(CMakePackage):
+    """Photospline is a library that uses the penalized spline technique
+    to efficiently compute, store, and evaluate B-spline representations."""
 
-    homepage = "https://invisible-island.net/cdk/"
-    url      = "https://invisible-island.net/archives/cdk/cdk-5.0-20160131.tgz"
+    homepage = "https://github.com/IceCubeOpenSource/photospline"
+    url      = "https://github.com/IceCubeOpenSource/photospline/archive/v2.0.4.tar.gz"
 
-    version("5.0-20230201", sha256="a3127b59fe505f5e898daa3dd15b0cf724a1274ce68165b779be2f29d4c4f2f6")
-    version('5.0-20180306', '3b52823d8a78c6d27d4be8839edd279e')
-    version('5.0-20171209', 'df6e786fc0b1faa8e518f80121c941c9')
-    version('5.0-20161210', 'fbacdf194d097d73a61f9556bb2dbe27')
-    version('5.0-20160131', '3a519980fd3c5d04ecfc82259586d7c4')
+    version("2.1.1", sha256="0a0dae8e1b994a35be23896982bd572fa97c617ad55a99b3da34782ad9435de8")
+    version('2.0.4', sha256='0a675ffe27e1d99fe482cdd7692320d6852c11c9a63de7e710ba075989e0bfb5')
+    version('2.0.1', '976b07481bb2a058c3751f5ef3844654')
 
-    variant('shared', default=True, description='Build shared libraries')
+    depends_on('cfitsio')
+    depends_on('openblas')
+    depends_on('suite-sparse')
+    depends_on('python')
+    depends_on('py-numpy')
 
-    depends_on('ncurses')
-
-    def configure_args(self):
-        args = ['--without-x', '--enable-const']
-        spec = self.spec
-
-        if '+shared' in spec:
-            args.append('--with-shared')
-        else:
-            args.append('--without-shared')
-
+    def cmake_args(self):
+        args = []
         return args
