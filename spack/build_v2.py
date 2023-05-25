@@ -343,7 +343,7 @@ class Build:
 
     def setup_env(self):
         # create spack env
-        env_name = Path(self.sroot).name
+        env_name = Path(self.sroot).name.replace('.','_')
         env_yaml = """# This is a Spack Environment file.
 #
 # It describes a set of packages to be installed, along with
