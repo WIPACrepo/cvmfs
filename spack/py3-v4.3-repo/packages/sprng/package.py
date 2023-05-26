@@ -48,6 +48,10 @@ class Sprng(MakefilePackage):
         if '+pic' in spec:
             filter_file(r'^CFLAGS\s*=', 'CFLAGS = -fPIC', 'SRC/make.INTEL')
 
+        # primes_32.c and primes_64.c both define primes[]
+        # this is invalid in newer gcc
+        filter_file(r'primes\[', 'primes_64[', 'SRC/primes_64.c')
+
     def install(self, spec, prefix):
         ins = which('install')
         ins('-D', 'libsprng.a', os.path.join(prefix.lib, 'libsprng.a'))

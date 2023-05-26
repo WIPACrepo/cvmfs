@@ -58,7 +58,7 @@ py-numpy@1.24.3
 py-pybind11@2.10.1
 py-pythran@0.12.2
 py-scipy@1.10.1
-boost@1.82.0 date_time=True numpy=True python=True
+boost@1.82.0+atomic+chrono+container+context+contract+coroutine+date_time+exception+filesystem+graph+iostreams+json+locale+log+math+nowide+numpy+program_options+python+random+regex+serialization+system+test+thread+timer+type_erasure+wave cxxstd=17 pic=True
 cppzmq@4.9.0
 json-c@0.16
 
