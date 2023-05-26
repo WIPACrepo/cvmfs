@@ -234,13 +234,11 @@ class Build:
         icecube_repo_path = os.path.join(self.spack_path, 'var/spack/repos/icecube')
         if os.path.exists(icecube_repo_path):
             shutil.rmtree(icecube_repo_path)
-            copy_src(repo_path, icecube_repo_path)
-        else:
-            copy_src(repo_path, icecube_repo_path)
-            ret,out,err = run_cmd_output([self.spack_bin, 'repo', 'list', '--scope', 'site'])
-            if any(line.startswith('repo ') for line in out.split('\n')):
-                run_cmd([self.spack_bin, 'repo', 'rm', '--scope', 'site', 'repo'])
-            run_cmd([self.spack_bin, 'repo', 'add', '--scope', 'site', icecube_repo_path])
+        copy_src(repo_path, icecube_repo_path)
+        ret,out,err = run_cmd_output([self.spack_bin, 'repo', 'list', '--scope', 'site'])
+        if any(line.startswith('repo ') for line in out.split('\n')):
+            run_cmd([self.spack_bin, 'repo', 'rm', '--scope', 'site', 'repo'])
+        run_cmd([self.spack_bin, 'repo', 'add', '--scope', 'site', icecube_repo_path])
 
         # add mirror
         self.fileMirror = Mirror(mirror, spack_bin=self.spack_bin)
