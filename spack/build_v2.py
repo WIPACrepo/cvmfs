@@ -237,6 +237,9 @@ class Build:
             copy_src(repo_path, icecube_repo_path)
         else:
             copy_src(repo_path, icecube_repo_path)
+            ret,out,err = run_cmd_output([self.spack_bin, 'repo', 'list', '--scope', 'site'])
+            if any(line.startswith('repo ') for line in out.split('\n')):
+                run_cmd([self.spack_bin, 'repo', 'rm', '--scope', 'site', 'repo'])
             run_cmd([self.spack_bin, 'repo', 'add', '--scope', 'site', icecube_repo_path])
 
         # add mirror
