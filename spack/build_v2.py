@@ -237,7 +237,7 @@ class Build:
             copy_src(repo_path, icecube_repo_path)
         else:
             copy_src(repo_path, icecube_repo_path)
-            run_cmd([self.spack_bin, 'repo', 'add', '--scope', 'site', repo_path])
+            run_cmd([self.spack_bin, 'repo', 'add', '--scope', 'site', icecube_repo_path])
 
         # add mirror
         self.fileMirror = Mirror(mirror, spack_bin=self.spack_bin)
