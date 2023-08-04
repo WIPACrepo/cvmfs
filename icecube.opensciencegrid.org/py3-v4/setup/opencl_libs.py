@@ -25,7 +25,8 @@ ld_path = ''
 for path in ('/usr/lib', '/usr/lib64', '/lib', '/lib64',
              '/usr/lib/x86_64-linux-gnu', '/usr/lib/nvidia',
              '/usr/lib64/nvidia', '/usr/local/cuda/lib',
-             '/usr/local/cuda/lib64', '/host-libs'):
+             '/usr/local/cuda/lib64', '/host-libs',
+             '/opt/rocm/opencl/lib'):
     for libname in ('libOpenCL.so', 'libOpenCL.so.1', 'libOpenCL.so.1.0'):
         p = os.path.join(path, libname)
         if os.path.exists(p):
@@ -69,6 +70,11 @@ if os.path.isdir(ocl_path):
 for path in ('/usr/lib/nvidia', '/usr/lib64/nvidia',
              '/usr/local/cuda/lib', '/usr/local/cuda/lib64',
              '/host-libs'):
+    if os.path.isdir(path):
+        ld_path += ':'+path
+
+# force-enable AMD rocm in LD_LIBRARY_PATH
+for path in ('/opt/rocm/opencl/lib'):
     if os.path.isdir(path):
         ld_path += ':'+path
 
