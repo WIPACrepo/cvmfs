@@ -37,6 +37,11 @@ For the icetray metaproject build, there is a checkout-only mode for populating
 the universal src directory once, before building various OS versions.  Use
 the option `--checkout` and it will do a source code checkout and skip the build.
 
+## Parallel Builds
+
+By default, Spack will use a single core to build.  To use multiple cores, set
+the environment variable `CPUS=10` (using 10 cores in this example).
+
 ## Generic Build Instructions
 
 ### Spack Build
