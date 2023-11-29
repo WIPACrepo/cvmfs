@@ -13,6 +13,22 @@ Build icetray metaprojects
 
 Done!
 
+## Mirrors
+
+You can use a filesystem mirror for the base software build, by adding the argument
+
+```
+--mirror /path/to/mirror
+```
+
+This allows caching of package downloads between builds, especially helpful
+when debugging.
+
+## Metaproject Checkout
+
+For the icetray metaproject build, there is a checkout-only mode for populating
+the universal src directory once, before building various OS versions.  Use
+the option `--checkout` and it will do a source code checkout and skip the build.
 
 ## Generic Build Instructions
 
