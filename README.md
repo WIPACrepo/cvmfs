@@ -3,7 +3,8 @@ Scripts to build the CVMFS repository for IceCube/WIPAC.
 
 ## Current Build
 
-Inside the correct OS environment (possibly inside a container), run the following:
+Inside the correct OS environment (possibly inside a container), run the following
+python scripts (using python3).
 
 Build the base software:
 
