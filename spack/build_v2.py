@@ -174,7 +174,10 @@ def num_cpus():
 
 
 class Build:
-    def __init__(self, src, dest, version, mirror=None):
+    def __init__(self, src, dest, version, 
+                 spack_tag,
+                 spack_targets, 
+                 mirror=None):
         myprint('building version', version)
         if 'PYTHONPATH' in os.environ:
             del os.environ['PYTHONPATH']
@@ -207,8 +210,8 @@ class Build:
         if not os.path.isdir(self.sroot):
             os.makedirs(self.sroot)
 
-        self.spack_tag = 'v0.20.0'
-        self.spack_targets = ['x86_64_v2']
+        self.spack_tag = spack_tag
+        self.spack_targets = spack_targets
 
         # set up spack
         self.spack_path = os.path.join(self.sroot, 'spack')
@@ -497,8 +500,18 @@ if __name__ == '__main__':
     parser = OptionParser(usage="%prog [options] versions")
     parser.add_option("--src", help="base source path")
     parser.add_option("--dest", help="base dest path")
-    parser.add_option("--checkout", action='store_true', help="metaproject checkout only")
+    parser.add_option("--checkout", action='store_true', 
+                      help="metaproject checkout only")
     parser.add_option("--mirror", help="mirror location")
+    parser.add_option("--spack-version", 
+                      help="spack version to use",
+                      default="v0.22.1")
+    parser.add_option("--spack-targets",
+                      help="""list of CPU archs to optimize for. 
+                      Use multiple spack-targets to build more than one 
+                      target."""
+                      action="append",
+                      default=['x86_64_v2'])
     (options, args) = parser.parse_args()
     if not args:
         parser.error("need to specify a version")
