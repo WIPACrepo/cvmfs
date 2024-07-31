@@ -290,8 +290,9 @@ class Build:
         else:
             packages = get_packages(path)
             compiler_name = None
+            print(packages)
             for name, package in packages.items():
-                if 'gcc' in name or 'llvm' in name:
+                if 'gcc' in name or 'llvm' in name or 'nvhpc' in name:
                     compiler_name = name
                     compiler_package = package.split()[0]
             if not compiler_package:
@@ -509,10 +510,12 @@ if __name__ == '__main__':
     parser.add_option("--spack-targets",
                       help="""list of CPU archs to optimize for. 
                       Use multiple spack-targets to build more than one 
-                      target."""
+                      target.""",
                       action="append",
-                      default=['x86_64_v2'])
+                      default=['neoverse_v2'], # ['x86_64_v2']
+                      )
     (options, args) = parser.parse_args()
+    print(options)
     if not args:
         parser.error("need to specify a version")
 
@@ -522,4 +525,4 @@ if __name__ == '__main__':
         #elif float(version.split('-')[1][1:3]) < 4.3:
         #    build_old(options.src, options.dest, version, mirror=options.mirror)
         else:
-            Build(options.src, options.dest, version, mirror=options.mirror)
+            Build(options.src, options.dest, version, options.spack_version, options.spack_targets, mirror=options.mirror)
