@@ -174,7 +174,7 @@ def num_cpus():
 
 
 class Build:
-    def __init__(self, src, dest, version, mirror=None):
+    def __init__(self, src, dest, version, mirror=None, spack_tag=None, spack_target=None):
         myprint('building version', version)
         if 'PYTHONPATH' in os.environ:
             del os.environ['PYTHONPATH']
@@ -207,8 +207,10 @@ class Build:
         if not os.path.isdir(self.sroot):
             os.makedirs(self.sroot)
 
-        self.spack_tag = 'v0.20.0'
-        self.spack_targets = ['x86_64_v2']
+        myprint('spack tag:', spack_tag)
+        self.spack_tag = spack_tag
+        self.spack_target = spack_target if spack_target else 'x86_64_v2'
+        os.environ['ARCH'] = self.spack_target
 
         # set up spack
         self.spack_path = os.path.join(self.sroot, 'spack')
@@ -257,7 +259,7 @@ class Build:
         self.spack_arch = {
             'platform': ret[0],
             'platform_os': ret[1],
-            'target': self.spack_targets[0]
+            'target': self.spack_target
         }
 
         self.setup_compiler()
@@ -304,8 +306,7 @@ class Build:
                 for name, package in packages.items():
                     myprint('installing', name)
                     self.fileMirror.download(package)
-                    for target in self.spack_targets:
-                        run_cmd(cmd+package.split()+['target='+target])
+                    run_cmd(cmd+package.split()+['target='+self.spack_target])
         self.compiler_package = compiler_package
 
         # add compiler to spack's list of compilers
@@ -360,9 +361,11 @@ spack:
   view: false
   concretizer:
     unify: true
+    duplicates:
+      strategy: none
   packages:
     all:
-      target: [{', '.join(self.spack_targets)}]"""
+      target: [{self.spack_target}]"""
         if self.compiler_package:
             env_yaml += f"""
       compiler:: [{self.compiler_package}]
@@ -492,21 +495,28 @@ def build_meta(dest, version, checkout=False):
             shutil.rmtree(src_dir)
 
 if __name__ == '__main__':
-    from optparse import OptionParser
+    from argparse import ArgumentParser
 
-    parser = OptionParser(usage="%prog [options] versions")
-    parser.add_option("--src", help="base source path")
-    parser.add_option("--dest", help="base dest path")
-    parser.add_option("--checkout", action='store_true', help="metaproject checkout only")
-    parser.add_option("--mirror", help="mirror location")
-    (options, args) = parser.parse_args()
-    if not args:
-        parser.error("need to specify a version")
+    parser = ArgumentParser(usage='%prog [options] versions')
+    parser.add_argument('--src', help='base source path')
+    parser.add_argument('--dest', help='base dest path')
+    parser.add_argument('--checkout', action='store_true', help='metaproject checkout only')
+    parser.add_argument('--mirror', help='mirror location')
+    parser.add_argument('--spack-tag', default=None, help='spack tag')
+    parser.add_argument('--spack-target', default='x86_64_v2', help='CPU arch to optimize for. ex: x86_64_v2 or neoverse_v2')
+    parser.add_argument('versions', nargs='+', help='cvmfs versions to build')
+    args = parser.parse_args()
 
-    for version in args:
+    for version in args.versions:
         if version.endswith('-metaproject'):
-            build_meta(options.dest, version, checkout=options.checkout)
+            build_meta(args.dest, version, checkout=args.checkout)
         #elif float(version.split('-')[1][1:3]) < 4.3:
-        #    build_old(options.src, options.dest, version, mirror=options.mirror)
+        #    build_old(args.src, args.dest, version, mirror=args.mirror)
         else:
-            Build(options.src, options.dest, version, mirror=options.mirror)
+            spack_tag = args.spack_tag
+            if not spack_tag:
+                if float(version.split('-')[1][1:3]) == 4.3:
+                    spack_tag = 'v0.20.0'
+                else:
+                    spack_tag = 'v0.22.1'
+            Build(args.src, args.dest, version, mirror=args.mirror, spack_tag=spack_tag, spack_target=args.spack_target)
