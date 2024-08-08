@@ -6,14 +6,13 @@ autoconf
 automake
 m4
 meson@1.3.2
-gdb@15.2
 
 # system libraries
-openssl@3.4.0 certs=mozilla shared=True docs=True
+openssl@3.3.0 certs=mozilla shared=True docs=True
 libffi@3.4.6
-libxml2@2.13.4
+libxml2@2.13.3
 zstd@1.5.6 compression=none
-libarchive@3.7.6 crypto=openssl
+libarchive@3.7.4 crypto=openssl
 snappy@1.2.1
 c-blosc@1.21.5 avx2=False
 libsodium@1.0.20
@@ -21,8 +20,8 @@ libzmq@4.3.5
 
 # system applications
 sqlite@3.46.0
-python@3.12.5+optimizations+pythoncmd
-cmake@3.30.5
+python@3.12.4+optimizations+pythoncmd
+cmake@3.27.9
 log4cpp@1.1.4
 perl
 
@@ -40,9 +39,9 @@ py-distlib@0.3.7
 py-virtualenv@20.24.5
 
 # file transfer tools
-curl@8.10.1
+curl@8.9.1
 wget@1.24.5
-#globus-toolkit@6.0.1558548600 gram5=False myproxy=False
+globus-toolkit@6.0.1558548600 gram5=False myproxy=False
 #gsoap@2.8.55
 #voms@2.1.0-rc2
 #uberftp@2_8
@@ -51,15 +50,15 @@ wget@1.24.5
 gsl@2.8
 sprng@2.0b
 openblas@0.3.26 threads=pthreads
-suite-sparse@7.8.0
+suite-sparse@7.7.0
 
 # core libraries
-py-cython@3.0.11
+py-cython@3.0.10
 py-numpy@1.26.4
 py-pybind11@2.12.0
-py-pythran@0.16.1
-py-scipy@1.14.1
-boost@1.86.0+atomic+chrono+container+context+contract+coroutine+date_time+exception+filesystem+graph+iostreams+json+locale+log+math+nowide+numpy+program_options+python+random+regex+serialization+system+test+thread+timer+type_erasure+wave cxxstd=17 pic=True
+py-pythran@0.15.0
+py-scipy@1.13.0
+boost@1.85.0+atomic+chrono+container+context+contract+coroutine+date_time+exception+filesystem+graph+iostreams+json+locale+log+math+nowide+numpy+program_options+python+random+regex+serialization+system+test+thread+timer+type_erasure+wave cxxstd=17 pic=True
 cppzmq@4.10.0
 json-c@0.16
 
@@ -69,18 +68,18 @@ fftw@3.3.10 mpi=False precision=float,double,long_double,quad
 cdk@5.0-20240619
 gnuplot@6.0.0 cairo=False qt=False wx=False X=False
 hdf5@1.14.3 cxx=True hl=True mpi=False
-py-h5py@3.12.1 mpi=False
-nlopt@2.8.0 cxx=True python=True
+py-h5py@3.11.0 mpi=False
+nlopt@2.7.1 cxx=True python=True
 
 # physics applications
 erfa@2.0.1
-pal@0.9.8
-wcslib@8.4 cfitsio=True
+pal@0.9.10
+wcslib@8.3 cfitsio=True
 healpix@3.82
-root@6.30.08~davix~examples+fftw+fits~gdml~math~opengl~python~tbb~webgui~unuran~vdt~x~xml cxxstd=17
-py-uproot@5.0.5~xrootd
+root@6.30.06~davix~examples+fftw+fits~gdml~opengl~pythia6~tbb~unuran~vdt~x~python cxxstd=17
 clhep@2.4.7.1 cxxstd=17
-geant4@11.2.2 cxxstd=17 threads=False
+geant4-data@11.2.0
+geant4@11.2.0 cxxstd=17 threads=False
 lhapdf@6.5.4
 
 # icecube packages

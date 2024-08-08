@@ -223,8 +223,18 @@ class Build:
         if self.version == ['iceprod','master'] and self.sroot.is_dir():
             myprint('iceprod/master - deleting sroot '+str(self.sroot))
             shutil.rmtree(self.sroot)
+<<<<<<< HEAD
         if not self.sroot.is_dir():
             self.sroot.mkdir(parents=True)
+=======
+        if not os.path.isdir(self.sroot):
+            os.makedirs(self.sroot)
+
+        myprint('spack tag:', spack_tag)
+        self.spack_tag = spack_tag
+        self.spack_target = spack_target if spack_target else 'x86_64_v2'
+        os.environ['ARCH'] = self.spack_target
+>>>>>>> 67edcd0 (new 4.4 branch. waiting on py3.12 issue)
 
         # set up spack
         self.spack_path = self.sroot / 'spack'
@@ -274,11 +284,14 @@ class Build:
             'platform': ret[0],
             'platform_os': ret[1],
             'target': self.spack_target
+<<<<<<< HEAD
         }
         self.compiler_arch = {
             'platform': ret[0],
             'platform_os': ret[1],
             'target': self.compiler_target
+=======
+>>>>>>> 67edcd0 (new 4.4 branch. waiting on py3.12 issue)
         }
 
         self.setup_compiler()
@@ -325,7 +338,11 @@ class Build:
                 for name, package in packages.items():
                     myprint('installing', name)
                     self.fileMirror.download(package)
+<<<<<<< HEAD
                     run_cmd(cmd+package.split()+['target='+self.compiler_target])
+=======
+                    run_cmd(cmd+package.split()+['target='+self.spack_target])
+>>>>>>> 67edcd0 (new 4.4 branch. waiting on py3.12 issue)
         self.compiler_package = compiler_package
 
         # add compiler to spack's list of compilers
@@ -391,10 +408,7 @@ spack:
       strategy: none
   packages:
     all:
-      require: '"""
-        if self.compiler_package:
-            env_yaml += f'%{self.compiler_package} '
-        env_yaml += f"""arch={self.spack_arch["platform"]}-{self.spack_arch["platform_os"]}-{self.spack_arch["target"]}'"""
+      target: [{self.spack_target}]"""
         if self.compiler_package:
             env_yaml += f"""
       compiler:: [{self.compiler_package}]"""
@@ -535,35 +549,26 @@ def build_meta(dest, version, checkout=False, spack_target=None):
 if __name__ == '__main__':
     from argparse import ArgumentParser
 
-    parser = ArgumentParser()
+    parser = ArgumentParser(usage='%prog [options] versions')
     parser.add_argument('--src', help='base source path')
     parser.add_argument('--dest', help='base dest path')
     parser.add_argument('--checkout', action='store_true', help='metaproject checkout only')
     parser.add_argument('--mirror', help='mirror location')
     parser.add_argument('--spack-tag', default=None, help='spack tag')
-    parser.add_argument('--spack-target', default=None, help='CPU arch to optimize for. ex: x86_64_v2 or neoverse_v2')
-    parser.add_argument('--compiler-target', default=None, help='CPU arch to build compiler (may need to be lower than --spack-target)')
+    parser.add_argument('--spack-target', default='x86_64_v2', help='CPU arch to optimize for. ex: x86_64_v2 or neoverse_v2')
     parser.add_argument('versions', nargs='+', help='cvmfs versions to build')
     args = parser.parse_args()
 
     for version in args.versions:
         if version.endswith('-metaproject'):
-            build_meta(args.dest, version,
-                checkout=args.checkout,
-                spack_target=args.spack_target,
-            )
+            build_meta(args.dest, version, checkout=args.checkout)
         #elif float(version.split('-')[1][1:3]) < 4.3:
         #    build_old(args.src, args.dest, version, mirror=args.mirror)
         else:
             spack_tag = args.spack_tag
             if not spack_tag:
-                if version.startswith('py') and float(version.split('-')[1][1:3]) == 4.3:
+                if float(version.split('-')[1][1:3]) == 4.3:
                     spack_tag = 'v0.20.0'
                 else:
-                    spack_tag = 'v0.23.0'
-            Build(args.src, args.dest, version,
-                mirror=args.mirror,
-                spack_tag=spack_tag,
-                spack_target=args.spack_target,
-                compiler_target=args.compiler_target,
-            )
+                    spack_tag = 'v0.22.1'
+            Build(args.src, args.dest, version, mirror=args.mirror, spack_tag=spack_tag, spack_target=args.spack_target)

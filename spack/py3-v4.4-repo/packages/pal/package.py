@@ -17,6 +17,7 @@ class Pal(AutotoolsPackage):
 
     license("LGPL-3.0-only")
 
+    version("0.9.10", sha256="dc7461cb03ac3a7ca2ab30c24deee7eb04b656f77d9c41d83f1a64ad3b4f733a")
     version("0.9.8", sha256="191fde8c4f45d6807d4b011511344014966bb46e44029a4481d070cd5e7cc697")
 
     depends_on("sofa-c")

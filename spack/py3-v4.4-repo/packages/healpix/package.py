@@ -49,7 +49,10 @@ class Healpix(Package):
             raise Exception('cannot find version')
         return base_url+name
 
+<<<<<<< HEAD
     version('3.83', sha1='afb8874eb580ae8d1b320a244bbcc7c19cd8db7b')
+=======
+>>>>>>> 67edcd0 (new 4.4 branch. waiting on py3.12 issue)
     version('3.82', sha1='57b9963340af7c983040892c84d8f6d1a72dd22a')
     version('3.31', 'c0dc75e57f237b634fec97df55997918')
 

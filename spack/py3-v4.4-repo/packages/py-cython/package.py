@@ -102,6 +102,7 @@ class PyCython(PythonPackage):
     patch("5307.patch", when="@0.29:0.29.33")
     patch("5712.patch", when="@0.29")
 
+<<<<<<< HEAD
     def url_for_version(self, version):
         url = "https://files.pythonhosted.org/packages/source/c/cython/{}-{}.tar.gz"
         if version >= Version("3.0.11"):
@@ -110,6 +111,8 @@ class PyCython(PythonPackage):
             name = "Cython"
         return url.format(name, version)
 
+=======
+>>>>>>> 67edcd0 (new 4.4 branch. waiting on py3.12 issue)
     @property
     def command(self):
         """Returns the Cython command"""
