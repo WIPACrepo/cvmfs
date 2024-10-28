@@ -129,7 +129,7 @@ urlcopy()
 }
 
 # Parse metaproject specification
-METAPROJECT=$(awk -F ' ' '/^#METAPROJECT:.*/ { sub(/:/, " "); }; /^#METAPROJECT.*/ {mp = $2; gsub(/[ \t]/, "", mp); print mp}' $1)
+METAPROJECT=$(awk -F ' ' '/^#METAPROJECT:.*/ { sub(/:/, " "); }; /^#METAPROJECT.*/ {mp = $2; gsub(/[ \t]/, "", mp); print mp}' $1 | envsubst)
 TARBALL=$METAPROJECT.$OS_ARCH.tar.gz
 
 unset env_shell
