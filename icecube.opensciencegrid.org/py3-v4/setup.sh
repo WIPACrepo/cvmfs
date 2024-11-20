@@ -139,6 +139,9 @@ if [ "" != "${tmp}" ]; then
         OPENCL_VENDOR_PATH="${tmpocl}"
         VARS="$VARS OPENCL_VENDOR_PATH"
     fi
+    # force our OpenCL lib to be first
+    LD_LIBRARY_PATH="${SROOTBASE}/../distrib/OpenCL_Linux/lib/x86_64:$LD_LIBRARY_PATH"
+    # then add extra libs
     if [ "" != "$tmplib" ]; then
         LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${tmplib}"
     fi

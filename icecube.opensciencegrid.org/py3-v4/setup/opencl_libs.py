@@ -34,8 +34,6 @@ for path in ('/usr/lib', '/usr/lib64', '/lib', '/lib64',
             break
     if ld_path:
         break
-if not ld_path:
-    ld_path = cvmfs_lib
 
 if os.path.isdir(ocl_path):
     devices = os.listdir(ocl_path)
@@ -66,16 +64,20 @@ if os.path.isdir(ocl_path):
                         os.symlink(os.path.join(ld_path, name), path)
         ld_path = os.path.join(tmp_path, 'lib')
 
+ld_path_list = [ld_path] if ld_path else []
+
 # force-enable nvidia in LD_LIBRARY_PATH
 for path in ('/usr/lib/nvidia', '/usr/lib64/nvidia',
              '/usr/local/cuda/lib', '/usr/local/cuda/lib64',
              '/host-libs'):
     if os.path.isdir(path):
-        ld_path += ':'+path
+        ld_path_list.append(path)
 
 # force-enable AMD rocm in LD_LIBRARY_PATH
-for path in ('/opt/rocm/opencl/lib'):
+for path in ('/opt/rocm/opencl/lib',):
     if os.path.isdir(path):
-        ld_path += ':'+path
+        ld_path_list.append(path)
+
+ld_path = ':'.join(ld_path_list)
 
 print(ocl_path+';'+ld_path)
