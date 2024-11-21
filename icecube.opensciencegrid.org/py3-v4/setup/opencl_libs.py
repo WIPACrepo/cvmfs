@@ -18,8 +18,6 @@ if ('OPENCL_VENDOR_PATH' in os.environ and
     ocl_path = os.environ['OPENCL_VENDOR_PATH']
 elif os.path.exists('/etc/OpenCL/vendors'):
     ocl_path = '/etc/OpenCL/vendors'
-else:
-    ocl_path = cvmfs_ocl
 
 ld_path = ''
 for path in ('/usr/lib', '/usr/lib64', '/lib', '/lib64',
@@ -36,33 +34,33 @@ for path in ('/usr/lib', '/usr/lib64', '/lib', '/lib64',
         break
 
 if os.path.isdir(ocl_path):
-    devices = os.listdir(ocl_path)
-    if ('amdocl64.icd' not in devices and 'intel64.icd' not in devices) or not ld_path:
-        # need to blend with cvmfs_ocl
-        tmp_path = tempfile.mkdtemp()
-        
-        os.makedirs(os.path.join(tmp_path, 'etc/OpenCL/vendors'))
-        for name in devices:
-            path = os.path.join(tmp_path, 'etc/OpenCL/vendors', name)
-            os.symlink(os.path.join(ocl_path, name), path)
-        for name in os.listdir(cvmfs_ocl):
-            path = os.path.join(tmp_path, 'etc/OpenCL/vendors', name)
-            if not os.path.exists(path):
-                os.symlink(os.path.join(cvmfs_ocl, name), path)
-        ocl_path = os.path.join(tmp_path, 'etc/OpenCL/vendors')
-        
-        os.makedirs(os.path.join(tmp_path, 'lib'))
-        for name in os.listdir(cvmfs_lib):
+    # need to blend with cvmfs_ocl
+    tmp_path = tempfile.mkdtemp()
+    
+    os.makedirs(os.path.join(tmp_path, 'etc/OpenCL/vendors'))
+    for name in devices:
+        path = os.path.join(tmp_path, 'etc/OpenCL/vendors', name)
+        os.symlink(os.path.join(ocl_path, name), path)
+    for name in os.listdir(cvmfs_ocl):
+        path = os.path.join(tmp_path, 'etc/OpenCL/vendors', name)
+        if not os.path.exists(path):
+            os.symlink(os.path.join(cvmfs_ocl, name), path)
+    ocl_path = os.path.join(tmp_path, 'etc/OpenCL/vendors')
+    
+    os.makedirs(os.path.join(tmp_path, 'lib'))
+    for name in os.listdir(cvmfs_lib):
+        if name.startswith('libOpenCL.so'):
+            path = os.path.join(tmp_path, 'lib', name)
+            os.symlink(os.path.join(cvmfs_lib, name), path)
+    if ld_path:
+        for name in os.listdir(ld_path):
             if name.startswith('libOpenCL.so'):
                 path = os.path.join(tmp_path, 'lib', name)
-                os.symlink(os.path.join(cvmfs_lib, name), path)
-        if ld_path:
-            for name in os.listdir(ld_path):
-                if name.startswith('libOpenCL.so'):
-                    path = os.path.join(tmp_path, 'lib', name)
-                    if not os.path.exists(path):
-                        os.symlink(os.path.join(ld_path, name), path)
-        ld_path = os.path.join(tmp_path, 'lib')
+                if not os.path.exists(path):
+                    os.symlink(os.path.join(ld_path, name), path)
+    ld_path = os.path.join(tmp_path, 'lib')
+else:
+    ocl_path = cvmfs_ocl
 
 ld_path_list = [ld_path] if ld_path else []
 

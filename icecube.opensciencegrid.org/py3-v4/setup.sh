@@ -60,17 +60,6 @@ if [ -d "$sroot_data" ]; then
     fi
 fi
 
-# add SROOT package configuration directory if it exists
-sroot_pcfg=$SROOT/lib/pkgconfig
-if [ -d ${sroot_pcfg} ]; then
-    if [ "" = "$PKG_CONFIG_PATH" ]; then
-        PKG_CONFIG_PATH="$sroot_pcfg"
-    else
-        PKG_CONFIG_PATH="$sroot_pcfg:$PKG_CONFIG_PATH"
-    fi
-    VARS="$VARS PKG_CONFIG_PATH"
-fi
-
 # ROOT specific bits
 ROOTSYS=$SROOT
 VARS="$VARS ROOTSYS"
@@ -122,7 +111,7 @@ fi
 # start specialized detection, using python scripts
 srootpy="${SROOT}/bin/python -E -s"
 
-for var in PERL5LIB MANPATH; do
+for var in PERL5LIB MANPATH PKG_CONFIG_PATH; do
     varlower=`echo ${var} | tr '[:upper:]' '[:lower:]'`
     tmp=`${srootpy} ${SROOTBASE}/setup/${varlower}.py`
     if [ "" != "${tmp}" ]; then
