@@ -183,7 +183,14 @@ def relative_to(path1, path2):
 
 
 class Build:
+<<<<<<< HEAD
     def __init__(self, src, dest, version, mirror=None, spack_tag=None, spack_target=None, compiler_target=None):
+=======
+    def __init__(self, src, dest, version, 
+                 spack_tag,
+                 spack_targets, 
+                 mirror=None):
+>>>>>>> c3c54dc (pass3 container)
         myprint('building version', version)
         if 'PYTHONPATH' in os.environ:
             del os.environ['PYTHONPATH']
@@ -223,8 +230,16 @@ class Build:
         if self.version == ['iceprod','master'] and self.sroot.is_dir():
             myprint('iceprod/master - deleting sroot '+str(self.sroot))
             shutil.rmtree(self.sroot)
+<<<<<<< HEAD
         if not self.sroot.is_dir():
             self.sroot.mkdir(parents=True)
+=======
+        if not os.path.isdir(self.sroot):
+            os.makedirs(self.sroot)
+
+        self.spack_tag = spack_tag
+        self.spack_targets = spack_targets
+>>>>>>> c3c54dc (pass3 container)
 
         # set up spack
         self.spack_path = self.sroot / 'spack'
@@ -309,7 +324,7 @@ class Build:
             packages = get_packages(path)
             compiler_name = None
             for name, package in packages.items():
-                if 'gcc' in name or 'llvm' in name:
+                if 'gcc' in name or 'llvm' in name or 'nvhpc' in name:
                     compiler_name = name
                     compiler_package = package.split()[0]
             if not compiler_package:
@@ -535,6 +550,7 @@ def build_meta(dest, version, checkout=False, spack_target=None):
 if __name__ == '__main__':
     from argparse import ArgumentParser
 
+<<<<<<< HEAD
     parser = ArgumentParser()
     parser.add_argument('--src', help='base source path')
     parser.add_argument('--dest', help='base dest path')
@@ -545,6 +561,28 @@ if __name__ == '__main__':
     parser.add_argument('--compiler-target', default=None, help='CPU arch to build compiler (may need to be lower than --spack-target)')
     parser.add_argument('versions', nargs='+', help='cvmfs versions to build')
     args = parser.parse_args()
+=======
+    parser = OptionParser(usage="%prog [options] versions")
+    parser.add_option("--src", help="base source path")
+    parser.add_option("--dest", help="base dest path")
+    parser.add_option("--checkout", action='store_true', 
+                      help="metaproject checkout only")
+    parser.add_option("--mirror", help="mirror location")
+    parser.add_option("--spack-version", 
+                      help="spack version to use",
+                      default="v0.22.1")
+    parser.add_option("--spack-targets",
+                      help="""list of CPU archs to optimize for. 
+                      Use multiple spack-targets to build more than one 
+                      target.""",
+                      action="append",
+                      default=['x86_64_v2']
+                      )
+    (options, args) = parser.parse_args()
+    print(options)
+    if not args:
+        parser.error("need to specify a version")
+>>>>>>> c3c54dc (pass3 container)
 
     for version in args.versions:
         if version.endswith('-metaproject'):
@@ -555,6 +593,7 @@ if __name__ == '__main__':
         #elif float(version.split('-')[1][1:3]) < 4.3:
         #    build_old(args.src, args.dest, version, mirror=args.mirror)
         else:
+<<<<<<< HEAD
             spack_tag = args.spack_tag
             if not spack_tag:
                 if version.startswith('py') and float(version.split('-')[1][1:3]) == 4.3:
@@ -567,3 +606,7 @@ if __name__ == '__main__':
                 spack_target=args.spack_target,
                 compiler_target=args.compiler_target,
             )
+=======
+            Build(options.src, options.dest, version, options.spack_version, options.spack_targets, mirror=options.mirror)
+
+>>>>>>> c3c54dc (pass3 container)
