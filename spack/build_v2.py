@@ -309,7 +309,7 @@ class Build:
             packages = get_packages(path)
             compiler_name = None
             for name, package in packages.items():
-                if 'gcc' in name or 'llvm' in name:
+                if 'gcc' in name or 'llvm' in name or 'nvhpc' in name:
                     compiler_name = name
                     compiler_package = package.split()[0]
             if not compiler_package:
