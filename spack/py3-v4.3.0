@@ -41,7 +41,7 @@ py-virtualenv@20.22.0
 # file transfer tools
 curl@8.0.1
 wget@1.21.3
-globus-toolkit@6.0.1558548600 gram5=False myproxy=False
+#globus-toolkit@6.0.1558548600 gram5=False myproxy=False
 #gsoap@2.8.55
 #voms@2.1.0-rc2
 #uberftp@2_8
