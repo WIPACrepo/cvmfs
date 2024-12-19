@@ -73,7 +73,7 @@ nlopt@2.7.1 cxx=True python=True
 # physics applications
 erfa@2.0.0
 pal@0.9.8
-wcslib@7.12 cfitsio=True
+wcslib@8.1 cfitsio=True
 healpix@3.82
 root@6.28.02~davix~examples+fftw+fits~gdml~opengl~pythia6~tbb~unuran~vdt~x cxxstd=17
 clhep@2.4.6.4 cxxstd=17
