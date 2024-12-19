@@ -62,8 +62,11 @@ def run_cmd_source_env(source_script, lines):
 def get_sroot(dir_name, target_arch=None):
     """Get the SROOT from dir/os_arch.sh"""
     code,output,error = run_cmd_output(os.path.join(dir_name,'os_arch.sh'), shell=True)
-    noarch = '_'.join(output.strip().split('_')[:2])
-    return Path(dir_name) / (noarch + f'_{target_arch}')
+    if target_arch:
+        noarch = '_'.join(output.strip().split('_')[:2])
+        return Path(dir_name) / (noarch + f'_{target_arch}')
+    else:
+        return Path(dir_name) / output.strip()
 
 
 def get_sroot_no_arch(dir_name, *args):
@@ -173,6 +176,14 @@ def num_cpus():
     return ret
 
 
+def relative_to(path1, path2):
+    try:
+        path1.relative_to(path2)
+    except ValueError:
+        return False
+    return True
+
+
 class Build:
     def __init__(self, src, dest, version, mirror=None, spack_tag=None, spack_target=None, compiler_target=None):
         myprint('building version', version)
@@ -190,12 +201,16 @@ class Build:
         self.compiler_target = compiler_target if compiler_target else self.spack_target
         os.environ['ARCH'] = self.spack_target
 
+        sroot_arch = self.spack_target
+        if self.version[0] == 'iceprod':
+            sroot_arch = None
+
         srootbase = self.dest.joinpath(*self.version)
         try:
-            sroot = get_sroot(str(srootbase), self.spack_target)
+            sroot = get_sroot(str(srootbase), sroot_arch)
         except Exception:
             sroot = None
-        if (not sroot) or sroot == 'RHEL_7_x86_64' or not sroot.is_relative_to('/cvmfs'):
+        if (not sroot) or sroot == 'RHEL_7_x86_64' or not relative_to(sroot, '/cvmfs'):
             if self.version[0] == 'iceprod':
                 copy_src(self.src / 'iceprod' / 'all', srootbase)
             elif '.' in self.version[0] and not self.src.joinpath(*self.version).exists():
@@ -203,19 +218,22 @@ class Build:
             else:
                 copy_src(self.src.joinpath(*self.version), srootbase)
         if not sroot:
-            sroot = get_sroot(str(srootbase), self.spack_target)
+            sroot = get_sroot(str(srootbase), sroot_arch)
         self.srootbase = srootbase
         self.sroot = sroot
 
         if self.version == ['iceprod','master'] and self.sroot.is_dir():
-            myprint('iceprod/master - deleting sroot')
+            myprint('iceprod/master - deleting sroot '+str(self.sroot))
             shutil.rmtree(self.sroot)
         if not self.sroot.is_dir():
             self.sroot.mkdir(parents=True)
 
         # set up spack
-        sroot_no_arch = get_sroot_no_arch(str(srootbase))
-        self.spack_path = sroot_no_arch.parent / (sroot_no_arch.name + '-spack')
+        if sroot_arch:
+            sroot_no_arch = get_sroot_no_arch(str(srootbase))
+            self.spack_path = sroot_no_arch.parent / (sroot_no_arch.name + '-spack')
+        else:
+            self.spack_path = self.sroot / 'spack'
         if not self.spack_path.is_dir():
             url = 'https://github.com/spack/spack.git'
             run_cmd(['git', 'clone', '--depth', '1', '--branch', self.spack_tag, url, str(self.spack_path)])
