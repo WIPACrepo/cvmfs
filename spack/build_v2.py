@@ -62,8 +62,11 @@ def run_cmd_source_env(source_script, lines):
 def get_sroot(dir_name, target_arch=None):
     """Get the SROOT from dir/os_arch.sh"""
     code,output,error = run_cmd_output(os.path.join(dir_name,'os_arch.sh'), shell=True)
-    noarch = '_'.join(output.strip().split('_')[:2])
-    return Path(dir_name) / (noarch + f'_{target_arch}')
+    if target_arch:
+        noarch = '_'.join(output.strip().split('_')[:2])
+        return Path(dir_name) / (noarch + f'_{target_arch}')
+    else:
+        return Path(dir_name) / output.strip()
 
 
 def get_sroot_no_arch(dir_name, *args):
@@ -202,9 +205,13 @@ class Build:
         if self.version[0] == 'iceprod':
             sroot_arch = None
 
+        sroot_arch = self.spack_target
+        if self.version[0] == 'iceprod':
+            sroot_arch = None
+
         srootbase = self.dest.joinpath(*self.version)
         try:
-            sroot = get_sroot(str(srootbase))
+            sroot = get_sroot(str(srootbase), sroot_arch)
         except Exception:
             sroot = None
         if (not sroot) or sroot == 'RHEL_7_x86_64' or not relative_to(sroot, '/cvmfs'):
@@ -215,40 +222,12 @@ class Build:
             else:
                 copy_src(self.src.joinpath(*self.version), srootbase)
         if not sroot:
-            sroot = get_sroot(str(srootbase))
+            sroot = get_sroot(str(srootbase), sroot_arch)
         self.srootbase = srootbase
         self.sroot = sroot
 
         if self.version == ['iceprod','master'] and self.sroot.is_dir():
             myprint('iceprod/master - deleting sroot '+str(self.sroot))
-            shutil.rmtree(self.sroot)
-        if not os.path.isdir(self.sroot):
-            os.makedirs(self.sroot)
-
-        self.spack_tag = spack_tag
-        self.spack_targets = spack_targets
-
-        # set up spack
-        self.spack_path = self.sroot / 'spack'
-        srootbase = self.dest.joinpath(*self.version)
-        try:
-            sroot = get_sroot(str(srootbase), self.spack_target)
-        except Exception:
-            sroot = None
-        if (not sroot) or sroot == 'RHEL_7_x86_64' or not sroot.is_relative_to('/cvmfs'):
-            if self.version[0] == 'iceprod':
-                copy_src(self.src / 'iceprod' / 'all', srootbase)
-            elif '.' in self.version[0] and not self.src.joinpath(*self.version).exists():
-                copy_src(self.src.joinpath(self.version[0].split('.')[0], *self.version[1:]), srootbase)
-            else:
-                copy_src(self.src.joinpath(*self.version), srootbase)
-        if not sroot:
-            sroot = get_sroot(str(srootbase), self.spack_target)
-        self.srootbase = srootbase
-        self.sroot = sroot
-
-        if self.version == ['iceprod','master'] and self.sroot.is_dir():
-            myprint('iceprod/master - deleting sroot')
             shutil.rmtree(self.sroot)
         if not self.sroot.is_dir():
             self.sroot.mkdir(parents=True)
@@ -256,7 +235,12 @@ class Build:
         # set up spack
         sroot_no_arch = get_sroot_no_arch(str(srootbase))
         self.spack_path = sroot_no_arch.parent / (sroot_no_arch.name + '-spack')
->>>>>>> 4267e36 (v4 is working?)
+
+        if sroot_arch:
+            sroot_no_arch = get_sroot_no_arch(str(srootbase))
+            self.spack_path = sroot_no_arch.parent / (sroot_no_arch.name + '-spack')
+        else:
+            self.spack_path = self.sroot / 'spack'
         if not self.spack_path.is_dir():
             url = 'https://github.com/spack/spack.git'
             run_cmd(['git', 'clone', '--depth', '1', '--branch', self.spack_tag, url, str(self.spack_path)])
@@ -426,13 +410,9 @@ spack:
         env_yaml += f"""arch={self.spack_arch["platform"]}-{self.spack_arch["platform_os"]}-{self.spack_arch["target"]}'"""
         if self.compiler_package:
             env_yaml += f"""
-<<<<<<< HEAD
-      compiler:: [{self.compiler_package}]"""
-=======
       compiler:: [{self.compiler_package}]
       require: '%{self.compiler_package}'
 """
->>>>>>> 4267e36 (v4 is working?)
         env_path = self.spack_path / 'var' / 'spack' / 'environments' / env_name / 'spack.yaml'
         env_path.parent.mkdir(parents=True, exist_ok=True)
         with open(env_path, 'w') as f:
@@ -471,25 +451,10 @@ spack:
 
     def setup_python(self):
         # pip install
-<<<<<<< HEAD
-        path = Path(os.path.abspath(os.path.join(os.path.dirname(__file__), *self.version)+'-pip'))
-        path_os = path.parent / (path.name + '-' + str(self.sroot.name))
-        if path_os.is_file():
-            myprint('pip install using', path_os.name)
-            cmd = ['python', '-m', 'pip', 'install', '-r', str(path_os)]
-        elif path.is_file():
-            myprint('pip install using', path.name)
-            cmd = ['python', '-m', 'pip', 'install', '-r', str(path)]
-        else:
-            myprint('no pip install')
-            return
-        run_cmd_sroot(cmd, str(self.srootbase), cwd=self.sroot)
-=======
         path = os.path.abspath(os.path.join(os.path.dirname(__file__), *self.version)+'-pip')
         if os.path.exists(path):
             cmd = ['python', '-m', 'pip', 'install', '-r', path]
             run_cmd_sroot(cmd, str(self.srootbase), cwd=self.sroot)
->>>>>>> 4267e36 (v4 is working?)
 
 
 def meta_download(url, dest, tag=None):
@@ -512,13 +477,7 @@ def meta_download(url, dest, tag=None):
 
 def build_meta(dest, version, checkout=False, spack_target=None):
     srootbase = os.path.join(dest, version.replace('-metaproject',''))
-<<<<<<< HEAD
-    spack_target = spack_target if spack_target else 'x86_64_v2'
-    os.environ['ARCH'] = spack_target
-    sroot = str(get_sroot(str(srootbase)))
-=======
     sroot = str(get_sroot(str(srootbase), spack_target))
->>>>>>> 4267e36 (v4 is working?)
 
     metaprojects = get_packages(os.path.join(os.path.dirname(__file__), version))
     for meta_name in metaprojects:
@@ -581,26 +540,6 @@ def build_meta(dest, version, checkout=False, spack_target=None):
 if __name__ == '__main__':
     from argparse import ArgumentParser
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 4267e36 (v4 is working?)
-    parser = ArgumentParser()
-    parser.add_argument('--src', help='base source path')
-    parser.add_argument('--dest', help='base dest path')
-    parser.add_argument('--checkout', action='store_true', help='metaproject checkout only')
-    parser.add_argument('--mirror', help='mirror location')
-    parser.add_argument('--spack-tag', default=None, help='spack tag')
-<<<<<<< HEAD
-    parser.add_argument('--spack-target', default=None, help='CPU arch to optimize for. ex: x86_64_v2 or neoverse_v2')
-    parser.add_argument('--compiler-target', default=None, help='CPU arch to build compiler (may need to be lower than --spack-target)')
-=======
-    parser.add_argument('--spack-target', default='x86_64_v2', help='CPU arch to optimize for. ex: x86_64_v2 or neoverse_v2')
-    parser.add_argument('--compiler-target', default='x86_64_v2', help='CPU arch to build compiler (may need to be lower than --spack-target)')
->>>>>>> 4267e36 (v4 is working?)
-    parser.add_argument('versions', nargs='+', help='cvmfs versions to build')
-    args = parser.parse_args()
-=======
     parser = OptionParser(usage="%prog [options] versions")
     parser.add_option("--src", help="base source path")
     parser.add_option("--dest", help="base dest path")
@@ -621,8 +560,6 @@ if __name__ == '__main__':
     print(options)
     if not args:
         parser.error("need to specify a version")
->>>>>>> c3c54dc (pass3 container)
-
     for version in args.versions:
         if version.endswith('-metaproject'):
             build_meta(args.dest, version,
@@ -632,7 +569,6 @@ if __name__ == '__main__':
         #elif float(version.split('-')[1][1:3]) < 4.3:
         #    build_old(args.src, args.dest, version, mirror=args.mirror)
         else:
-<<<<<<< HEAD
             spack_tag = args.spack_tag
             if not spack_tag:
                 if version.startswith('py') and float(version.split('-')[1][1:3]) == 4.3:
@@ -645,10 +581,3 @@ if __name__ == '__main__':
                 spack_target=args.spack_target,
                 compiler_target=args.compiler_target,
             )
-<<<<<<< HEAD
-=======
-            Build(options.src, options.dest, version, options.spack_version, options.spack_targets, mirror=options.mirror)
-
->>>>>>> c3c54dc (pass3 container)
-=======
->>>>>>> 4267e36 (v4 is working?)
