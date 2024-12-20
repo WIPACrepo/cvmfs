@@ -540,6 +540,17 @@ def build_meta(dest, version, checkout=False, spack_target=None):
 if __name__ == '__main__':
     from argparse import ArgumentParser
 
+    parser = ArgumentParser()
+    parser.add_argument('--src', help='base source path')
+    parser.add_argument('--dest', help='base dest path')
+    parser.add_argument('--checkout', action='store_true', help='metaproject checkout only')
+    parser.add_argument('--mirror', help='mirror location')
+    parser.add_argument('--spack-tag', default=None, help='spack tag')
+    parser.add_argument('--spack-target', default='x86_64_v2', help='CPU arch to optimize for. ex: x86_64_v2 or neoverse_v2')
+    parser.add_argument('--compiler-target', default='x86_64_v2', help='CPU arch to build compiler (may need to be lower than --spack-target)')
+    parser.add_argument('versions', nargs='+', help='cvmfs versions to build')
+    args = parser.parse_args()
+
     parser = OptionParser(usage="%prog [options] versions")
     parser.add_option("--src", help="base source path")
     parser.add_option("--dest", help="base dest path")
