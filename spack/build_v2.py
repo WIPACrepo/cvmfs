@@ -532,7 +532,11 @@ def build_meta(dest, version, checkout=False, spack_target=None):
 if __name__ == '__main__':
     from argparse import ArgumentParser
 
+<<<<<<< HEAD
     parser = ArgumentParser(usage='%prog [options] versions')
+=======
+    parser = ArgumentParser()
+>>>>>>> cd70057 (debugging)
     parser.add_argument('--src', help='base source path')
     parser.add_argument('--dest', help='base dest path')
     parser.add_argument('--checkout', action='store_true', help='metaproject checkout only')
