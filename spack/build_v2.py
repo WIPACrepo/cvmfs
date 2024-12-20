@@ -523,6 +523,8 @@ def build_meta(dest, version, checkout=False, spack_target=None):
             shutil.rmtree(src_dir)
 
 if __name__ == '__main__':
+    from argparse import ArgumentParser
+
     parser = ArgumentParser()
     parser.add_argument('--src', help='base source path')
     parser.add_argument('--dest', help='base dest path')
