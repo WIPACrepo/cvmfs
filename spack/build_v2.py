@@ -431,7 +431,8 @@ spack:
             myprint('adding', name, 'to view')
             view_cmd = cmd+package.split()[:1]
             if self.compiler_package:
-                view_cmd[-1] += '%'+self.compiler_package_with_arch
+                view_cmd[-1] += '%'+self.compiler_package
+            view_cmd[-1] += f' arch={self.spack_arch["platform"]}-{self.spack_arch["platform_os"]}-{self.spack_arch["target"]}'
             run_cmd(view_cmd)
 
     def setup_python(self):
