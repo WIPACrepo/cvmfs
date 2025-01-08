@@ -166,7 +166,7 @@ class Mirror:
 
 
 def num_cpus():
-    ret = 20
+    ret = 1
     try:
         ret = int(os.environ['CPUS'])
     except Exception:
@@ -391,10 +391,7 @@ spack:
       strategy: none
   packages:
     all:
-      require: '"""
-        if self.compiler_package:
-            env_yaml += f'%{self.compiler_package} '
-        env_yaml += f"""arch={self.spack_arch["platform"]}-{self.spack_arch["platform_os"]}-{self.spack_arch["target"]}'"""
+      target: [{self.spack_target}]"""
         if self.compiler_package:
             env_yaml += f"""
       compiler:: [{self.compiler_package}]"""
@@ -535,11 +532,7 @@ def build_meta(dest, version, checkout=False, spack_target=None):
 if __name__ == '__main__':
     from argparse import ArgumentParser
 
-<<<<<<< HEAD
-    parser = ArgumentParser(usage='%prog [options] versions')
-=======
     parser = ArgumentParser()
->>>>>>> cd70057 (debugging)
     parser.add_argument('--src', help='base source path')
     parser.add_argument('--dest', help='base dest path')
     parser.add_argument('--checkout', action='store_true', help='metaproject checkout only')
