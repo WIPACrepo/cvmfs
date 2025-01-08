@@ -59,14 +59,12 @@ def run_cmd_source_env(source_script, lines):
         subprocess.check_call(f'bash {script}', shell=True)
 
 
-def get_sroot(dir_name, target_arch=None):
+def get_sroot(dir_name):
     """Get the SROOT from dir/os_arch.sh"""
     code,output,error = run_cmd_output(os.path.join(dir_name,'os_arch.sh'), shell=True)
-    if target_arch:
-        noarch = '_'.join(output.strip().split('_')[:2])
-        return Path(dir_name) / (noarch + f'_{target_arch}')
-    else:
-        return Path(dir_name) / output.strip()
+    if code != 0:
+        raise Exception('Failed to find SROOT')
+    return Path(dir_name) / output.strip()
 
 
 def get_sroot_no_arch(dir_name, *args):
@@ -211,7 +209,7 @@ class Build:
 
         srootbase = self.dest.joinpath(*self.version)
         try:
-            sroot = get_sroot(str(srootbase), sroot_arch)
+            sroot = get_sroot(str(srootbase))
         except Exception:
             sroot = None
         if (not sroot) or sroot == 'RHEL_7_x86_64' or not relative_to(sroot, '/cvmfs'):
@@ -222,7 +220,7 @@ class Build:
             else:
                 copy_src(self.src.joinpath(*self.version), srootbase)
         if not sroot:
-            sroot = get_sroot(str(srootbase), sroot_arch)
+            sroot = get_sroot(str(srootbase))
         self.srootbase = srootbase
         self.sroot = sroot
 
@@ -233,14 +231,7 @@ class Build:
             self.sroot.mkdir(parents=True)
 
         # set up spack
-        sroot_no_arch = get_sroot_no_arch(str(srootbase))
-        self.spack_path = sroot_no_arch.parent / (sroot_no_arch.name + '-spack')
-
-        if sroot_arch:
-            sroot_no_arch = get_sroot_no_arch(str(srootbase))
-            self.spack_path = sroot_no_arch.parent / (sroot_no_arch.name + '-spack')
-        else:
-            self.spack_path = self.sroot / 'spack'
+        self.spack_path = self.sroot / 'spack'
         if not self.spack_path.is_dir():
             url = 'https://github.com/spack/spack.git'
             run_cmd(['git', 'clone', '--depth', '1', '--branch', self.spack_tag, url, str(self.spack_path)])
@@ -475,7 +466,9 @@ def meta_download(url, dest, tag=None):
 
 def build_meta(dest, version, checkout=False, spack_target=None):
     srootbase = os.path.join(dest, version.replace('-metaproject',''))
-    sroot = str(get_sroot(str(srootbase), spack_target))
+    spack_target = spack_target if spack_target else 'x86_64_v2'
+    os.environ['ARCH'] = spack_target
+    sroot = str(get_sroot(str(srootbase)))
 
     metaprojects = get_packages(os.path.join(os.path.dirname(__file__), version))
     for meta_name in metaprojects:
@@ -544,8 +537,8 @@ if __name__ == '__main__':
     parser.add_argument('--checkout', action='store_true', help='metaproject checkout only')
     parser.add_argument('--mirror', help='mirror location')
     parser.add_argument('--spack-tag', default=None, help='spack tag')
-    parser.add_argument('--spack-target', default='x86_64_v2', help='CPU arch to optimize for. ex: x86_64_v2 or neoverse_v2')
-    parser.add_argument('--compiler-target', default='x86_64_v2', help='CPU arch to build compiler (may need to be lower than --spack-target)')
+    parser.add_argument('--spack-target', default=None, help='CPU arch to optimize for. ex: x86_64_v2 or neoverse_v2')
+    parser.add_argument('--compiler-target', default=None, help='CPU arch to build compiler (may need to be lower than --spack-target)')
     parser.add_argument('versions', nargs='+', help='cvmfs versions to build')
     args = parser.parse_args()
 
