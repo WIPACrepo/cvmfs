@@ -37,10 +37,6 @@ else
     LD_LIBRARY_PATH="$sroot_lib:$LD_LIBRARY_PATH"
 fi
 
-# play nice with python virtualenvs and system site packages
-PYTHONHOME=$SROOT
-VARS="$VARS PYTHONHOME"
-
 # initialize I3_DATA variable
 sroot_data=$SROOTBASE/../data
 if [ -d "$sroot_data" ]; then
@@ -58,6 +54,10 @@ fi
 # CMake
 CMAKE_PREFIX_PATH=$SROOT
 VARS="$VARS CMAKE_PREFIX_PATH"
+
+# Boost
+BOOST_ROOT=$SROOT
+VARS="$VARS BOOST_ROOT"
 
 # ROOT specific bits
 ROOTSYS=$SROOT
