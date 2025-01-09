@@ -169,19 +169,14 @@ webcolors==24.11.1
 webencodings==0.5.1
 websocket-client==1.8.0
 widgetsnbextension==4.0.13
-<<<<<<< HEAD
 wipac-dev-tools==1.13.0
 wipac-rest-tools==1.8.5
 yarl==1.18.3
 zipp==3.21.0
 zope.event==5.0
 zope.interface==7.2
-<<<<<<< HEAD
-=======
 yarl==1.18.3
 zipp==3.21.0
 zope.event==5.0
 zope.interface==7.2
->>>>>>> 4267e36 (v4 is working?)
-=======
->>>>>>> beeaf62 (add uproot)
+
