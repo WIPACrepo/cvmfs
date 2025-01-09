@@ -9,6 +9,9 @@ if [ -x /usr/bin/lsb_release ]; then
 elif [ -e /etc/os-release ]; then
     DISTRIB=`cat /etc/os-release|grep '^ID='|cut -d '=' -f 2|sed s/\"//g|tr '[:upper:]' '[:lower:]'`
     VERSION=`cat /etc/os-release|grep '^VERSION='|cut -d '=' -f 2|cut -d ' ' -f 1|sed s/\"//g`
+    if [ "x$VERSION" = "x" ]; then
+        VERSION=`cat /etc/os-release|grep '^VERSION.*='|cut -d '=' -f 2|cut -d ' ' -f 1|sed s/\"//g`
+    fi
 elif [ -e /etc/redhat-release ]; then
     DISTRIB="centos"
     VERSION=`cat /etc/redhat-release|sed s/\ /\\\\n/g|grep '\.'`

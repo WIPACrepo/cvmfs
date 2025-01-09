@@ -6,8 +6,12 @@ shift
 
 eval `$SROOTBASE/setup.sh`
 
-if [ -e "$METAPROJECT/env-shell.sh" ]; then
+if [ -x "$METAPROJECT/bin/icetray-shell" ]; then
+    $METAPROJECT/bin/icetray-shell $@
+elif [ -x "$METAPROJECT/env-shell.sh" ]; then
     $METAPROJECT/env-shell.sh $@
+elif [ -x "$SROOT/metaprojects/$METAPROJECT/bin/icetray-shell" ]; then
+    $SROOT/metaprojects/$METAPROJECT/bin/icetray-shell $@
 else
     $SROOT/metaprojects/$METAPROJECT/env-shell.sh $@
 fi
