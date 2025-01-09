@@ -6,6 +6,7 @@ autoconf
 automake
 m4
 meson@1.3.2
+gdb@15.2
 
 # system libraries
 openssl@3.4.0 certs=mozilla shared=True docs=True
