@@ -1,5 +1,5 @@
 # build tools
-git@2.46.0
+git@2.47.1
 libtool@2.4.7
 pkg-config@0.29.2
 gmake
