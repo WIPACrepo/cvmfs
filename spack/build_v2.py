@@ -436,14 +436,14 @@ spack:
 
     def setup_python(self):
         # pip install
-        path = os.path.abspath(os.path.join(os.path.dirname(__file__), *self.version)+'-pip')
+        path = Path(os.path.abspath(os.path.join(os.path.dirname(__file__), *self.version)+'-pip'))
         path_os = path.parent / (path.name + '-' + str(self.sroot.name))
-        if os.path.exists(path_os):
+        if path_os.is_file():
             myprint('pip install using', path_os.name)
-            cmd = ['python', '-m', 'pip', 'install', '-r', path_os]
-        elif os.path.exists(path):
+            cmd = ['python', '-m', 'pip', 'install', '-r', str(path_os)]
+        elif path.is_file():
             myprint('pip install using', path.name)
-            cmd = ['python', '-m', 'pip', 'install', '-r', path]
+            cmd = ['python', '-m', 'pip', 'install', '-r', str(path)]
         else:
             myprint('no pip install')
             return
