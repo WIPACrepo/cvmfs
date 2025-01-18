@@ -38,7 +38,7 @@ if os.path.isdir(ocl_path):
     tmp_path = tempfile.mkdtemp()
     
     os.makedirs(os.path.join(tmp_path, 'etc/OpenCL/vendors'))
-    for name in devices:
+    for name in os.listdir(ocl_path):
         path = os.path.join(tmp_path, 'etc/OpenCL/vendors', name)
         os.symlink(os.path.join(ocl_path, name), path)
     for name in os.listdir(cvmfs_ocl):
