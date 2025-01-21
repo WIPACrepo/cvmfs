@@ -60,22 +60,23 @@ def run_cmd_source_env(source_script, lines):
 
 
 def get_sroot(dir_name):
-    """Get the SROOT from dir/setup.sh"""
-    code,output,error = run_cmd_output(os.path.join(dir_name,'setup.sh'), shell=True)
-    for line in output.split(';'):
-        line = line.strip()
-        myprint(line)
-        if line and line.startswith('export'):
-            parts = line.split('=',1)
-            name = parts[0].replace('export ','').strip()
-            value = parts[1].strip(' "')
-            if name in ('SROOT','ICEPRODROOT'):
-                return value
-    raise Exception('could not find SROOT')
+    """Get the SROOT from dir/os_arch.sh"""
+    code,output,error = run_cmd_output(os.path.join(dir_name,'os_arch.sh'), shell=True)
+    if code != 0:
+        raise Exception('Failed to find SROOT')
+    return Path(dir_name) / output.strip()
+
+
+def get_sroot_no_arch(dir_name, *args):
+    """Get the SROOT witout ARCH"""
+    s = get_sroot(dir_name, *args)
+    return s.parent / '_'.join(s.name.split('_')[:2])
 
 
 def copy_src(src, dest):
     """Copy anything from src to dest"""
+    src = str(src)
+    dest = str(dest)
     print("copy_src", src, dest)
     if not os.path.exists(dest):
         os.makedirs(dest)
@@ -173,51 +174,66 @@ def num_cpus():
     return ret
 
 
+def relative_to(path1, path2):
+    try:
+        path1.relative_to(path2)
+    except ValueError:
+        return False
+    return True
+
+
 class Build:
-    def __init__(self, src, dest, version, mirror=None):
+    def __init__(self, src, dest, version, mirror=None, spack_tag=None, spack_target=None, compiler_target=None):
         myprint('building version', version)
         if 'PYTHONPATH' in os.environ:
             del os.environ['PYTHONPATH']
 
-        self.src = src
-        self.dest = dest
+        self.src = Path(src)
+        self.dest = Path(dest)
 
         self.version = version.split('/') if '/' in version else [version]
 
-        srootbase = os.path.join(dest, *self.version)
+        myprint('spack tag:', spack_tag)
+        self.spack_tag = spack_tag
+        self.spack_target = spack_target if spack_target else 'x86_64_v2'
+        self.compiler_target = compiler_target if compiler_target else self.spack_target
+        os.environ['ARCH'] = self.spack_target
+
+        sroot_arch = self.spack_target
+        if self.version[0] == 'iceprod':
+            sroot_arch = None
+
+        srootbase = self.dest.joinpath(*self.version)
         try:
-            sroot = get_sroot(srootbase)
+            sroot = get_sroot(str(srootbase))
         except Exception:
             sroot = None
-        if (not sroot) or sroot == 'RHEL_7_x86_64' or not sroot.startswith('/cvmfs'):
+        if (not sroot) or sroot == 'RHEL_7_x86_64' or not relative_to(sroot, '/cvmfs'):
             if self.version[0] == 'iceprod':
-                copy_src(os.path.join(src,'iceprod','all'), srootbase)
-            elif '.' in self.version[0] and not os.path.exists(os.path.join(src, *self.version)):
-                copy_src(os.path.join(src, self.version[0].split('.')[0], *self.version[1:]), srootbase)
+                copy_src(self.src / 'iceprod' / 'all', srootbase)
+            elif '.' in self.version[0] and not self.src.joinpath(*self.version).exists():
+                copy_src(self.src.joinpath(self.version[0].split('.')[0], *self.version[1:]), srootbase)
             else:
-                copy_src(os.path.join(src, *self.version), srootbase)
+                copy_src(self.src.joinpath(*self.version), srootbase)
         if not sroot:
-            sroot = get_sroot(srootbase)
+            sroot = get_sroot(str(srootbase))
         self.srootbase = srootbase
         self.sroot = sroot
 
-        if self.version == ['iceprod','master'] and os.path.isdir(self.sroot):
-            myprint('iceprod/master - deleting sroot')
+        if self.version == ['iceprod','master'] and self.sroot.is_dir():
+            myprint('iceprod/master - deleting sroot '+str(self.sroot))
             shutil.rmtree(self.sroot)
-        if not os.path.isdir(self.sroot):
-            os.makedirs(self.sroot)
-
-        self.spack_tag = 'v0.20.0'
-        self.spack_targets = ['x86_64_v2']
+        if not self.sroot.is_dir():
+            self.sroot.mkdir(parents=True)
 
         # set up spack
-        self.spack_path = os.path.join(self.sroot, 'spack')
-        if not os.path.exists(self.spack_path):
+        self.spack_path = self.sroot / 'spack'
+        if not self.spack_path.is_dir():
             url = 'https://github.com/spack/spack.git'
-            run_cmd(['git', 'clone', '--depth', '1', '--branch', self.spack_tag, url, self.spack_path])
+            run_cmd(['git', 'clone', '--depth', '1', '--branch', self.spack_tag, url, str(self.spack_path)])
 
-        os.environ['SPACK_ROOT'] = self.spack_path
-        self.spack_bin = os.path.join(self.spack_path, 'bin', 'spack')
+        os.environ['SPACK_ROOT'] = str(self.spack_path)
+        self.spack_bin = str(self.spack_path / 'bin' / 'spack')
 
         # add custom repo
         repo_path = os.path.join(os.path.dirname(__file__), *self.version)+'-repo'
@@ -231,8 +247,8 @@ class Build:
             repo_path = os.path.join(os.path.dirname(__file__), self.version[0].split('.')[0], *self.version[1:])+'-repo'
         if not os.path.exists(repo_path): # last resort
             repo_path = os.path.join(os.path.dirname(__file__), 'repo')
-        icecube_repo_path = os.path.join(self.spack_path, 'var/spack/repos/icecube')
-        if os.path.exists(icecube_repo_path):
+        icecube_repo_path = self.spack_path / 'var/spack/repos/icecube'
+        if icecube_repo_path.exists():
             shutil.rmtree(icecube_repo_path)
         copy_src(repo_path, icecube_repo_path)
         ret,out,err = run_cmd_output([self.spack_bin, 'repo', 'list', '--scope', 'site'])
@@ -257,7 +273,12 @@ class Build:
         self.spack_arch = {
             'platform': ret[0],
             'platform_os': ret[1],
-            'target': self.spack_targets[0]
+            'target': self.spack_target
+        }
+        self.compiler_arch = {
+            'platform': ret[0],
+            'platform_os': ret[1],
+            'target': self.compiler_target
         }
 
         self.setup_compiler()
@@ -266,14 +287,14 @@ class Build:
         self.setup_python()
 
         # make I3_DATA symlinks
-        i3_data = os.path.join(dest,'data')
+        i3_data = self.dest / 'data'
         for path in ('etc/vomsdir', 'etc/vomses', 'share/certificates', 'share/vomsdir'):
-            basedir = os.path.join(self.sroot, os.path.dirname(path))
-            if not os.path.isdir(basedir):
-                os.makedirs(basedir)
-            if not os.path.lexists(os.path.join(self.sroot, path)):
-                os.symlink(os.path.join(i3_data, 'voms', path),
-                           os.path.join(self.sroot, path))
+            basedir = self.sroot / os.path.dirname(path)
+            if not basedir.exists():
+                basedir.mkdir(parents=True)
+            link = self.sroot / path
+            if not os.path.lexists(link):
+                (self.sroot / path).symlink_to(i3_data / 'voms' / path)
 
     def setup_compiler(self):
         # find system compiler first
@@ -296,7 +317,7 @@ class Build:
             
             cmd = [self.spack_bin, 'find', '--json']
             for pkg in json.loads(run_cmd_output(cmd)[1]):
-                if pkg['name'] == compiler_name and pkg['arch'] == self.spack_arch:
+                if pkg['name'] == compiler_name and pkg['arch'] == self.compiler_arch:
                     myprint('compiler', compiler_name, 'already installed')
                     break
             else:
@@ -304,13 +325,12 @@ class Build:
                 for name, package in packages.items():
                     myprint('installing', name)
                     self.fileMirror.download(package)
-                    for target in self.spack_targets:
-                        run_cmd(cmd+package.split()+['target='+target])
+                    run_cmd(cmd+package.split()+['target='+self.compiler_target])
         self.compiler_package = compiler_package
 
         # add compiler to spack's list of compilers
         if compiler_package:
-            self.compiler_package_with_arch = f'{compiler_package} arch={self.spack_arch["platform"]}-{self.spack_arch["platform_os"]}-{self.spack_arch["target"]}'
+            self.compiler_package_with_arch = f'{compiler_package} arch={self.compiler_arch["platform"]}-{self.compiler_arch["platform_os"]}-{self.compiler_arch["target"]}'
 
             cmd = [self.spack_bin, 'compiler', 'list']
             needs_install = True
@@ -320,7 +340,7 @@ class Build:
                     platform_os = line.replace('-', ' ').strip().split()[1]
                 if line.startswith('gcc'):
                     for comp in line.split():
-                        if comp == compiler_package and platform_os == self.spack_arch['platform_os']:
+                        if comp == compiler_package and platform_os == self.compiler_arch['platform_os']:
                             needs_install = False
                             break
             if needs_install:
@@ -344,7 +364,7 @@ class Build:
 
     def setup_env(self):
         # create spack env
-        env_name = Path(self.sroot).name.replace('.','_')
+        env_name = self.sroot.name.replace('.','_')
         env_yaml = """# This is a Spack Environment file.
 #
 # It describes a set of packages to be installed, along with
@@ -354,27 +374,37 @@ spack:
 """
         self.packages = get_packages(os.path.join(os.path.dirname(__file__), *self.version))
         for name, package in self.packages.items():
+            if self.spack_target == 'aarch64' and name == 'fftw':
+                # FFTW: libquadmath is not avaliable on ARM
+                package = package.replace(',quad','')
+
             env_yaml += f'  - {package}\n'
 
         env_yaml += f"""
   view: false
   concretizer:
+    targets:
+      granularity: generic
+      #host_compatible: false
     unify: true
+    duplicates:
+      strategy: none
   packages:
     all:
-      target: [{', '.join(self.spack_targets)}]"""
+      require: '"""
+        if self.compiler_package:
+            env_yaml += f'%{self.compiler_package} '
+        env_yaml += f"""arch={self.spack_arch["platform"]}-{self.spack_arch["platform_os"]}-{self.spack_arch["target"]}'"""
         if self.compiler_package:
             env_yaml += f"""
-      compiler:: [{self.compiler_package}]
-      require: '%{self.compiler_package}'
-"""
-        env_path = Path(self.spack_path) / 'var' / 'spack' / 'environments' / env_name / 'spack.yaml'
+      compiler:: [{self.compiler_package}]"""
+        env_path = self.spack_path / 'var' / 'spack' / 'environments' / env_name / 'spack.yaml'
         env_path.parent.mkdir(parents=True, exist_ok=True)
         with open(env_path, 'w') as f:
             f.write(env_yaml)
 
         # now build the env
-        spack_env = os.path.join(self.spack_path, 'share', 'spack', 'setup-env.sh')
+        spack_env = str(self.spack_path / 'share' / 'spack' / 'setup-env.sh')
         cmds = [
             f'spack env activate {env_name}',
             'spack concretize -f',
@@ -385,30 +415,39 @@ spack:
     def setup_view(self):
         # set up dirs
         for d in ('bin',):
-            path = os.path.join(self.sroot, d)
-            if not os.path.exists(path):
-                os.makedirs(path)
+            path = self.sroot / d
+            if not path.exists():
+                path.mkdir(parents=True)
 
         # set up view
         if self.compiler_package:
-            run_cmd([self.spack_bin, 'view', '-d', 'false', 'soft', '-i', self.sroot, self.compiler_package_with_arch])
-            run_cmd([self.spack_bin, 'view', '-d', 'false', 'soft', '-i', self.sroot, 'binutils'])
-            if not os.path.lexists(os.path.join(self.sroot,'bin','cc')):
-                run_cmd(['ln','-s','gcc','cc'], cwd=os.path.join(self.sroot,'bin'))
-        cmd = [self.spack_bin, 'view', 'soft', '-i', self.sroot]
+            run_cmd([self.spack_bin, 'view', '-d', 'false', 'soft', '-i', str(self.sroot), self.compiler_package_with_arch])
+            run_cmd([self.spack_bin, 'view', '-d', 'false', 'soft', '-i', str(self.sroot), 'binutils'])
+            if not os.path.lexists(self.sroot / 'bin' / 'cc'):
+                run_cmd(['ln','-s','gcc','cc'], cwd=(self.sroot / 'bin'))
+        cmd = [self.spack_bin, 'view', 'soft', '-i', str(self.sroot)]
         for name, package in self.packages.items():
             myprint('adding', name, 'to view')
             view_cmd = cmd+package.split()[:1]
             if self.compiler_package:
-                view_cmd[-1] += '%'+self.compiler_package_with_arch
+                view_cmd[-1] += '%'+self.compiler_package
+            view_cmd[-1] += f' arch={self.spack_arch["platform"]}-{self.spack_arch["platform_os"]}-{self.spack_arch["target"]}'
             run_cmd(view_cmd)
 
     def setup_python(self):
         # pip install
-        path = os.path.abspath(os.path.join(os.path.dirname(__file__), *self.version)+'-pip')
-        if os.path.exists(path):
-            cmd = ['python', '-m', 'pip', 'install', '-r', path]
-            run_cmd_sroot(cmd, self.srootbase, cwd=self.sroot)
+        path = Path(os.path.abspath(os.path.join(os.path.dirname(__file__), *self.version)+'-pip'))
+        path_os = path.parent / (path.name + '-' + str(self.sroot.name))
+        if path_os.is_file():
+            myprint('pip install using', path_os.name)
+            cmd = ['python', '-m', 'pip', 'install', '-r', str(path_os)]
+        elif path.is_file():
+            myprint('pip install using', path.name)
+            cmd = ['python', '-m', 'pip', 'install', '-r', str(path)]
+        else:
+            myprint('no pip install')
+            return
+        run_cmd_sroot(cmd, str(self.srootbase), cwd=self.sroot)
 
 
 def meta_download(url, dest, tag=None):
@@ -429,9 +468,11 @@ def meta_download(url, dest, tag=None):
     if not os.path.exists(dest):
         raise Exception('download failed')
 
-def build_meta(dest, version, checkout=False):
-    srootbase = os.path.join(dest,version.replace('-metaproject',''))
-    sroot = get_sroot(srootbase)
+def build_meta(dest, version, checkout=False, spack_target=None):
+    srootbase = os.path.join(dest, version.replace('-metaproject',''))
+    spack_target = spack_target if spack_target else 'x86_64_v2'
+    os.environ['ARCH'] = spack_target
+    sroot = str(get_sroot(str(srootbase)))
 
     metaprojects = get_packages(os.path.join(os.path.dirname(__file__), version))
     for meta_name in metaprojects:
@@ -492,21 +533,37 @@ def build_meta(dest, version, checkout=False):
             shutil.rmtree(src_dir)
 
 if __name__ == '__main__':
-    from optparse import OptionParser
+    from argparse import ArgumentParser
 
-    parser = OptionParser(usage="%prog [options] versions")
-    parser.add_option("--src", help="base source path")
-    parser.add_option("--dest", help="base dest path")
-    parser.add_option("--checkout", action='store_true', help="metaproject checkout only")
-    parser.add_option("--mirror", help="mirror location")
-    (options, args) = parser.parse_args()
-    if not args:
-        parser.error("need to specify a version")
+    parser = ArgumentParser()
+    parser.add_argument('--src', help='base source path')
+    parser.add_argument('--dest', help='base dest path')
+    parser.add_argument('--checkout', action='store_true', help='metaproject checkout only')
+    parser.add_argument('--mirror', help='mirror location')
+    parser.add_argument('--spack-tag', default=None, help='spack tag')
+    parser.add_argument('--spack-target', default=None, help='CPU arch to optimize for. ex: x86_64_v2 or neoverse_v2')
+    parser.add_argument('--compiler-target', default=None, help='CPU arch to build compiler (may need to be lower than --spack-target)')
+    parser.add_argument('versions', nargs='+', help='cvmfs versions to build')
+    args = parser.parse_args()
 
-    for version in args:
+    for version in args.versions:
         if version.endswith('-metaproject'):
-            build_meta(options.dest, version, checkout=options.checkout)
+            build_meta(args.dest, version,
+                checkout=args.checkout,
+                spack_target=args.spack_target,
+            )
         #elif float(version.split('-')[1][1:3]) < 4.3:
-        #    build_old(options.src, options.dest, version, mirror=options.mirror)
+        #    build_old(args.src, args.dest, version, mirror=args.mirror)
         else:
-            Build(options.src, options.dest, version, mirror=options.mirror)
+            spack_tag = args.spack_tag
+            if not spack_tag:
+                if version.startswith('py') and float(version.split('-')[1][1:3]) == 4.3:
+                    spack_tag = 'v0.20.0'
+                else:
+                    spack_tag = 'v0.23.0'
+            Build(args.src, args.dest, version,
+                mirror=args.mirror,
+                spack_tag=spack_tag,
+                spack_target=args.spack_target,
+                compiler_target=args.compiler_target,
+            )

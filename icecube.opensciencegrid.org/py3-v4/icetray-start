@@ -135,9 +135,13 @@ TARBALL=$METAPROJECT.$OS_ARCH.tar.gz
 unset env_shell
 # Find the appropriate environment
 # 1) a pre-built metaproject in CVMFS
-if [ -x "$SROOT/metaprojects/$METAPROJECT/env-shell.sh" ]; then
+if [ -x "$SROOT/metaprojects/$METAPROJECT/bin/icetray-shell" ]; then
+	env_shell=$SROOT/metaprojects/$METAPROJECT/bin/icetray-shell
+elif [ -x "$SROOT/metaprojects/$METAPROJECT/env-shell.sh" ]; then
 	env_shell=$SROOT/metaprojects/$METAPROJECT/env-shell.sh
 # 2) a build directory (hopefully the architecture matches)
+elif [ -x "$METAPROJECT/bin/icetray-shell" ]; then
+	env_shell=$METAPROJECT/bin/icetray-shell
 elif [ -x "$METAPROJECT/env-shell.sh" ]; then
 	env_shell=$METAPROJECT/env-shell.sh
 # 3) a tarball.
@@ -155,7 +159,11 @@ else
 	if [ ! -d $build_dir ]; then
 		tar xzf `basename $TARBALL`
 	fi
-	env_shell=$build_dir/env-shell.sh
+	if [ -x "$build_dir/bin/icetray-shell" ]; then
+		env_shell=$build_dir/bin/icetray-shell
+	else
+		env_shell=$build_dir/env-shell.sh
+	fi
 fi
 
 # Set up a proxy if http URLs appear in the command line

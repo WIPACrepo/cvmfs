@@ -16,7 +16,7 @@ fi
 
 # VARS is the list of variables to be exported to the user's environment
 #
-VARS="SROOTBASE SROOT OS_ARCH PATH LD_LIBRARY_PATH PYTHONPATH"
+VARS="SROOTBASE SROOT OS_ARCH PATH LD_LIBRARY_PATH"
 
 # set the architecture-specific root directory
 SROOT=$SROOTBASE/$OS_ARCH
@@ -37,15 +37,6 @@ else
     LD_LIBRARY_PATH="$sroot_lib:$LD_LIBRARY_PATH"
 fi
 
-# prepend the standard library directory to the user's PYTHONPATH
-python_version=$($SROOT/bin/python -V|awk '{print $2}'|awk -F. '{print $1"."$2}')
-sroot_pythonpath="$SROOT/lib/python${python_version}/site-packages"
-if [ "" = "$PYTHONPATH" ]; then
-    PYTHONPATH="$sroot_pythonpath"
-else
-    PYTHONPATH="$sroot_pythonpath:$PYTHONPATH"
-fi
-
 # initialize I3_DATA variable
 sroot_data=$SROOTBASE/../data
 if [ -d "$sroot_data" ]; then
@@ -59,6 +50,10 @@ if [ -d "$sroot_data" ]; then
         VARS="$VARS I3_TESTDATA"
     fi
 fi
+
+# CMake
+CMAKE_PREFIX_PATH=$SROOT
+VARS="$VARS CMAKE_PREFIX_PATH"
 
 # ROOT specific bits
 ROOTSYS=$SROOT
