@@ -77,17 +77,10 @@ erfa@2.0.1
 pal@0.9.8
 wcslib@8.4 cfitsio=True
 healpix@3.82
-<<<<<<< HEAD
-root@6.30.08~davix~examples+fftw+fits~gdml~opengl~tbb~unuran~vdt~x~python cxxstd=20
-py-uproot@5.0.5~xrootd
-clhep@2.4.7.1 cxxstd=20
-geant4@11.2.2 cxxstd=20 threads=False
-=======
 root@6.30.08~davix~examples+fftw+fits~gdml~math~opengl~python~tbb~webgui~unuran~vdt~x~xml cxxstd=17
 py-uproot@5.0.5~xrootd
 clhep@2.4.7.1 cxxstd=17
 geant4@11.2.2 cxxstd=17 threads=False
->>>>>>> origin/master
 lhapdf@6.5.4
 
 # icecube packages
