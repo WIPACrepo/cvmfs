@@ -440,10 +440,18 @@ spack:
 
     def setup_python(self):
         # pip install
-        path = os.path.abspath(os.path.join(os.path.dirname(__file__), *self.version)+'-pip')
-        if os.path.exists(path):
-            cmd = ['python', '-m', 'pip', 'install', '-r', path]
-            run_cmd_sroot(cmd, str(self.srootbase), cwd=self.sroot)
+        path = Path(os.path.abspath(os.path.join(os.path.dirname(__file__), *self.version)+'-pip'))
+        path_os = path.parent / (path.name + '-' + str(self.sroot.name))
+        if path_os.is_file():
+            myprint('pip install using', path_os.name)
+            cmd = ['python', '-m', 'pip', 'install', '-r', str(path_os)]
+        elif path.is_file():
+            myprint('pip install using', path.name)
+            cmd = ['python', '-m', 'pip', 'install', '-r', str(path)]
+        else:
+            myprint('no pip install')
+            return
+        run_cmd_sroot(cmd, str(self.srootbase), cwd=self.sroot)
 
 
 def meta_download(url, dest, tag=None):
