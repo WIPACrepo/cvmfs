@@ -8,9 +8,9 @@ import tempfile
 from util import srootbase, sroot, os_arch
 
 cvmfs_ocl = os.path.join(os.path.dirname(srootbase),
-                         'distrib/OpenCL_{}/etc/OpenCL/vendors'.format(os_arch))
+                         'distrib/OpenCL_Linux/etc/OpenCL/vendors')
 cvmfs_lib = os.path.join(os.path.dirname(srootbase),
-                         'distrib/OpenCL_{}/lib/{}'.format(os_arch, os_arch))
+                         'distrib/OpenCL_Linux/lib/x86_64')
 
 ocl_path = ''
 if ('OPENCL_VENDOR_PATH' in os.environ and
@@ -38,7 +38,7 @@ if os.path.isdir(ocl_path):
     tmp_path = tempfile.mkdtemp()
     
     os.makedirs(os.path.join(tmp_path, 'etc/OpenCL/vendors'))
-    for name in devices:
+    for name in os.listdir(ocl_path):
         path = os.path.join(tmp_path, 'etc/OpenCL/vendors', name)
         os.symlink(os.path.join(ocl_path, name), path)
     for name in os.listdir(cvmfs_ocl):
