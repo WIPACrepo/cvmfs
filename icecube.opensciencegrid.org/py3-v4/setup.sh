@@ -37,6 +37,10 @@ else
     LD_LIBRARY_PATH="$sroot_lib:$LD_LIBRARY_PATH"
 fi
 
+# play nice with python virtualenvs and system site packages
+PYTHONHOME=$SROOT
+VARS="$VARS PYTHONHOME"
+
 # initialize I3_DATA variable
 sroot_data=$SROOTBASE/../data
 if [ -d "$sroot_data" ]; then
