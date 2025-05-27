@@ -394,7 +394,7 @@ spack:
       target: [{self.spack_target}]"""
         if self.compiler_package:
             env_yaml += f"""
-      compiler:: [{self.compiler_package}]"""
+      compiler: [{self.compiler_package}]"""
         env_path = self.spack_path / 'var' / 'spack' / 'environments' / env_name / 'spack.yaml'
         env_path.parent.mkdir(parents=True, exist_ok=True)
         with open(env_path, 'w') as f:
