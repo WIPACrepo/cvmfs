@@ -17,3 +17,69 @@ snappy@1.1.10
 c-blosc@1.21.2 avx2=False
 libsodium@1.0.18
 libzmq@4.3.4
+
+# system applications
+sqlite@3.40.1
+python@3.11.3+optimizations+pythoncmd
+cmake@3.26.3
+log4cpp@1.1.4
+perl
+
+# basic python
+py-pip@23.0
+py-setuptools@59.8.0
+py-six@1.16.0
+py-tomli@2.0.1
+py-packaging@21.3
+py-typing-extensions@4.5.0
+py-setuptools-scm@7.1.0
+py-pyparsing@3.0.9
+py-wheel@0.37.1
+py-distlib@0.3.6
+py-virtualenv@20.22.0
+
+# file transfer tools
+curl@8.0.1
+wget@1.21.3
+#globus-toolkit@6.0.1558548600 gram5=False myproxy=False
+#gsoap@2.8.55
+#voms@2.1.0-rc2
+#uberftp@2_8
+
+# numeric libraries
+gsl@2.7
+sprng@2.0b
+openblas@0.3.23 threads=pthreads
+suite-sparse@5.13.0
+
+# core libraries
+py-cython@0.29.34
+py-numpy@1.24.3
+py-pybind11@2.10.1
+py-pythran@0.12.2
+py-scipy@1.10.1
+boost@1.82.0+atomic+chrono+container+context+contract+coroutine+date_time+exception+filesystem+graph+icu+iostreams+json+locale+log+math+nowide+numpy+program_options+python+random+regex+serialization+system+test+thread+timer+type_erasure+wave cxxstd=17 pic=True
+cppzmq@4.9.0
+json-c@0.16
+
+# physics libraries
+cfitsio@4.2.0
+fftw@3.3.10 mpi=False precision=float,double,long_double,quad
+cdk@5.0-20230201
+gnuplot@5.4.7 cairo=False qt=False wx=False X=False
+hdf5@1.14.0 cxx=True hl=True mpi=False
+nlopt@2.7.1 cxx=True python=True
+
+# physics applications
+erfa@2.0.0
+pal@0.9.8
+wcslib@8.1 cfitsio=True
+healpix@3.82
+root@6.28.02~davix~examples+fftw+fits~gdml~opengl~pythia6~tbb~unuran~vdt~x cxxstd=17
+clhep@2.4.6.4 cxxstd=17
+geant4-data@11.1.1
+geant4@11.1.1 cxxstd=17 threads=False
+lhapdf@6.5.1
+
+# icecube packages
+photospline@2.1.1
