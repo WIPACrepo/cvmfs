@@ -408,7 +408,9 @@ spack:
         spack_env = str(self.spack_path / 'share' / 'spack' / 'setup-env.sh')
         cmds = [
             f'spack env activate {env_name}',
-            'spack concretize -f',
+            f'spack spec',
+            f'spack solve -L',
+            f'spack concretize -f -j {num_cpus()}',
             f'spack install -y -v --fail-fast -j {num_cpus()}',
         ]
         run_cmd_source_env(spack_env, cmds)
