@@ -561,6 +561,8 @@ if __name__ == '__main__':
         else:
             spack_tag = args.spack_tag
             if not spack_tag:
+                print(f"version: {version.startswith('py')}")
+                print(f"{float(version.split('-')[1][1:3])}")
                 if version.startswith('py') and float(version.split('-')[1][1:3]) == 4.3:
                     spack_tag = 'v0.20.0'
                 else:
