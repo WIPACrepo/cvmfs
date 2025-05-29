@@ -398,7 +398,8 @@ spack:
       require: '"""
         if self.compiler_package:
             env_yaml += f'%{self.compiler_package} '
-        env_yaml += f"""arch={self.spack_arch["platform"]}-{self.spack_arch["platform_os"]}-{self.spack_arch["target"]}'"""
+        # env_yaml += f"""arch={self.spack_arch["platform"]}-{self.spack_arch["platform_os"]}-{self.spack_arch["target"]}'"""
+        env_yaml += f"""target={self.spack_arch["target"]}'"""
         if self.compiler_package:
             env_yaml += f"""
       compiler: [{self.compiler_package}]"""
