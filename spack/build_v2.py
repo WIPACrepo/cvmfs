@@ -378,7 +378,7 @@ spack:
 """
         self.packages = get_packages(os.path.join(os.path.dirname(__file__), *self.version))
         for name, package in self.packages.items():
-            if self.spack_target == 'aarch64' and name == 'fftw':
+            if (self.spack_target in ["neoverse_n1", "neoverse_v1", "neoverse_v2", "neoverse_n2", "aarch64", "arm", "armv8.1a", "armv8.2a", "armv8.3a", "armv8.4a", "armv8.5a", "armv9.0a"]) and name == 'fftw':
                 # FFTW: libquadmath is not avaliable on ARM
                 package = package.replace(',quad','')
 
@@ -412,9 +412,7 @@ spack:
         # now build the env
         spack_env = str(self.spack_path / 'share' / 'spack' / 'setup-env.sh')
         cmds = [
-            f'cat /cvmfs/icecube.opensciencegrid.org/py3-v4.4.1/RHEL_9_neoverse_v2/spack/var/spack/environments/RHEL_9_neoverse_v2/spack.yaml',
             f'spack env activate {env_name}',
-            f'printenv',
             f'spack concretize -f -j {num_cpus()}',
             f'spack install -y -v --fail-fast -j {num_cpus()}',
         ]
