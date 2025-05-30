@@ -390,15 +390,16 @@ spack:
     duplicates:
       strategy: none
   packages:
-    all:
-      require: '"""
-        if self.compiler_package:
-            env_yaml += f'%{self.compiler_package} '
+    all: """
+      # require: '"""
+        # if self.compiler_package:
+            # env_yaml += f'%{self.compiler_package} '
         # env_yaml += f"""arch={self.spack_arch["platform"]}-{self.spack_arch["platform_os"]}-{self.spack_arch["target"]}'"""
-        env_yaml += f"""target={self.spack_arch["target"]}'"""
+        # env_yaml += f"""target={self.spack_arch["target"]}'"""
         if self.compiler_package:
             env_yaml += f"""
-      compiler: [{self.compiler_package}]"""
+      compiler: [{self.compiler_package}]
+      target:[{self.spack_arch["target"]}]'"""
         env_path = self.spack_path / 'var' / 'spack' / 'environments' / env_name / 'spack.yaml'
         env_path.parent.mkdir(parents=True, exist_ok=True)
         with open(env_path, 'w') as f:
