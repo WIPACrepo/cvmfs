@@ -431,8 +431,8 @@ spack:
         for name, package in self.packages.items():
             myprint('adding', name, 'to view')
             view_cmd = cmd+package.split()[:1]
-            if self.compiler_package:
-                view_cmd[-1] += '%'+self.compiler_package
+            # if self.compiler_package:
+            #     view_cmd[-1] += '%'+self.compiler_package
             # view_cmd[-1] += f' target={self.spack_arch["target"]}'
             run_cmd(view_cmd)
 
