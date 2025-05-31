@@ -403,8 +403,8 @@ spack:
         # env_yaml += f"""target={self.spack_arch["target"]}'"""
         if self.compiler_package:
             env_yaml += f"""
-      compiler: [{self.compiler_package}]
-      target: [{self.spack_arch["target"]}]"""
+      # compiler: [{self.compiler_package}]
+      # target: [{self.spack_arch["target"]}]"""
         print("----")
         print(env_yaml)
         print("-----")
