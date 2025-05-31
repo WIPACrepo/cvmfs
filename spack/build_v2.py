@@ -381,10 +381,10 @@ spack:
             env_yaml += f'  - {package}\n'
 
         env_yaml += f"""
-  view: 
-    default:
-      root: {str(self.sroot)}
-      select: ['%{self.compiler_package}']
+  view: false 
+    # default:
+    #   root: {str(self.sroot / 'default')}
+    #   select: ['%{self.compiler_package}']
   concretizer:
     targets:
       granularity: generic
@@ -405,6 +405,9 @@ spack:
             env_yaml += f"""
       compiler: [{self.compiler_package}]
       target: [{self.spack_arch["target"]}]"""
+        print("----")
+        print(env_yaml)
+        print("-----")
         env_path = self.spack_path / 'var' / 'spack' / 'environments' / env_name / 'spack.yaml'
         env_path.parent.mkdir(parents=True, exist_ok=True)
         with open(env_path, 'w') as f:
