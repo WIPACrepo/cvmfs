@@ -381,7 +381,7 @@ spack:
             env_yaml += f'  - {package}\n'
 
         env_yaml += f"""
-  view: false
+  view: {str(self.sroot)}
   concretizer:
     targets:
       granularity: generic
