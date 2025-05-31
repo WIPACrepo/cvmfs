@@ -381,7 +381,10 @@ spack:
             env_yaml += f'  - {package}\n'
 
         env_yaml += f"""
-  view: {str(self.sroot)}
+  view: 
+    default:
+      root: {str(self.sroot)}
+      select: ['%{self.compiler_package}']
   concretizer:
     targets:
       granularity: generic
@@ -390,8 +393,10 @@ spack:
     duplicates:
       strategy: none
   packages:
-    all: """
-      # require: '"""
+    all: 
+      require: 
+        - {self.spack_arch["target"]}
+        - '%{self.compiler_package}'"""
         # if self.compiler_package:
             # env_yaml += f'%{self.compiler_package} '
         # env_yaml += f"""arch={self.spack_arch["platform"]}-{self.spack_arch["platform_os"]}-{self.spack_arch["target"]}'"""
