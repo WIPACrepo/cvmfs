@@ -442,7 +442,7 @@ spack:
             view_cmd = cmd+package.split()[:1]
             if self.compiler_package:
                 view_cmd[-1] += ' %'+self.compiler_package
-            # view_cmd[-1] += f' target={self.spack_arch["target"]}'
+            view_cmd[-1] += f' target={self.spack_arch["target"]}'
             run_cmd(view_cmd)
 
     def setup_python(self):
