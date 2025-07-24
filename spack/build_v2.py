@@ -550,26 +550,6 @@ if __name__ == '__main__':
     parser.add_argument('versions', nargs='+', help='cvmfs versions to build')
     args = parser.parse_args()
 
-    parser = OptionParser(usage="%prog [options] versions")
-    parser.add_option("--src", help="base source path")
-    parser.add_option("--dest", help="base dest path")
-    parser.add_option("--checkout", action='store_true', 
-                      help="metaproject checkout only")
-    parser.add_option("--mirror", help="mirror location")
-    parser.add_option("--spack-version", 
-                      help="spack version to use",
-                      default="v0.22.1")
-    parser.add_option("--spack-targets",
-                      help="""list of CPU archs to optimize for. 
-                      Use multiple spack-targets to build more than one 
-                      target.""",
-                      action="append",
-                      default=['x86_64_v2']
-                      )
-    (options, args) = parser.parse_args()
-    print(options)
-    if not args:
-        parser.error("need to specify a version")
     for version in args.versions:
         if version.endswith('-metaproject'):
             build_meta(args.dest, version,
