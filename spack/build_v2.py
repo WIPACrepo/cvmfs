@@ -397,17 +397,10 @@ spack:
       require: 
         - {self.spack_arch["target"]}
         - '%{self.compiler_package}'"""
-        # if self.compiler_package:
-            # env_yaml += f'%{self.compiler_package} '
-        # env_yaml += f"""arch={self.spack_arch["platform"]}-{self.spack_arch["platform_os"]}-{self.spack_arch["target"]}'"""
-        # env_yaml += f"""target={self.spack_arch["target"]}'"""
         if self.compiler_package:
             env_yaml += f"""
       # compiler: [{self.compiler_package}]
       # target: [{self.spack_arch["target"]}]"""
-        print("----")
-        print(env_yaml)
-        print("-----")
         env_path = self.spack_path / 'var' / 'spack' / 'environments' / env_name / 'spack.yaml'
         env_path.parent.mkdir(parents=True, exist_ok=True)
         with open(env_path, 'w') as f:
