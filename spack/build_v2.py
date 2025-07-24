@@ -166,7 +166,7 @@ class Mirror:
 
 
 def num_cpus():
-    ret = 50
+    ret = 1
     try:
         ret = int(os.environ['CPUS'])
     except Exception:
@@ -313,7 +313,7 @@ class Build:
             packages = get_packages(path)
             compiler_name = None
             for name, package in packages.items():
-                if 'gcc' in name or 'llvm' in name or 'nvhpc' in name:
+                if 'gcc' in name or 'llvm' in name:
                     compiler_name = name
                     compiler_package = package.split()[0]
             if not compiler_package:
@@ -378,17 +378,14 @@ spack:
 """
         self.packages = get_packages(os.path.join(os.path.dirname(__file__), *self.version))
         for name, package in self.packages.items():
-            if (self.spack_target in ["neoverse_n1", "neoverse_v1", "neoverse_v2", "neoverse_n2", "aarch64", "arm", "armv8.1a", "armv8.2a", "armv8.3a", "armv8.4a", "armv8.5a", "armv9.0a"]) and name == 'fftw':
+            if self.spack_target == 'aarch64' and name == 'fftw':
                 # FFTW: libquadmath is not avaliable on ARM
                 package = package.replace(',quad','')
 
             env_yaml += f'  - {package}\n'
 
         env_yaml += f"""
-  view: false 
-    # default:
-    #   root: {str(self.sroot / 'default')}
-    #   select: ['%{self.compiler_package}']
+  view: false
   concretizer:
     targets:
       granularity: generic
@@ -397,21 +394,14 @@ spack:
     duplicates:
       strategy: none
   packages:
-    all: 
-      require: 
-        - {self.spack_arch["target"]}
-        - '%{self.compiler_package}'"""
-        # if self.compiler_package:
-            # env_yaml += f'%{self.compiler_package} '
-        # env_yaml += f"""arch={self.spack_arch["platform"]}-{self.spack_arch["platform_os"]}-{self.spack_arch["target"]}'"""
-        # env_yaml += f"""target={self.spack_arch["target"]}'"""
+    all:
+      require: '"""
+        if self.compiler_package:
+            env_yaml += f'%{self.compiler_package} '
+        env_yaml += f"""arch={self.spack_arch["platform"]}-{self.spack_arch["platform_os"]}-{self.spack_arch["target"]}'"""
         if self.compiler_package:
             env_yaml += f"""
-      # compiler: [{self.compiler_package}]
-      # target: [{self.spack_arch["target"]}]"""
-        print("----")
-        print(env_yaml)
-        print("-----")
+      compiler:: [{self.compiler_package}]"""
         env_path = self.spack_path / 'var' / 'spack' / 'environments' / env_name / 'spack.yaml'
         env_path.parent.mkdir(parents=True, exist_ok=True)
         with open(env_path, 'w') as f:
@@ -421,7 +411,7 @@ spack:
         spack_env = str(self.spack_path / 'share' / 'spack' / 'setup-env.sh')
         cmds = [
             f'spack env activate {env_name}',
-            f'spack concretize -f -j {num_cpus()}',
+            'spack concretize -f',
             f'spack install -y -v --fail-fast -j {num_cpus()}',
         ]
         run_cmd_source_env(spack_env, cmds)
@@ -444,8 +434,8 @@ spack:
             myprint('adding', name, 'to view')
             view_cmd = cmd+package.split()[:1]
             if self.compiler_package:
-                view_cmd[-1] += ' %'+self.compiler_package
-            # view_cmd[-1] += f' target={self.spack_arch["target"]}'
+                view_cmd[-1] += '%'+self.compiler_package
+            view_cmd[-1] += f' arch={self.spack_arch["platform"]}-{self.spack_arch["platform_os"]}-{self.spack_arch["target"]}'
             run_cmd(view_cmd)
 
     def setup_python(self):
@@ -591,8 +581,6 @@ if __name__ == '__main__':
         else:
             spack_tag = args.spack_tag
             if not spack_tag:
-                print(f"version: {version.startswith('py')}")
-                print(f"{version.split('-')[1][1:3]}")
                 if version.startswith('py') and float(version.split('-')[1][1:3]) == 4.3:
                     spack_tag = 'v0.20.0'
                 else:
