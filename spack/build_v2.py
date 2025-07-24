@@ -545,22 +545,29 @@ if __name__ == '__main__':
     parser.add_argument('--checkout', action='store_true', help='metaproject checkout only')
     parser.add_argument('--mirror', help='mirror location')
     parser.add_argument('--spack-tag', default=None, help='spack tag')
-    parser.add_argument('--spack-target', default='x86_64_v2', help='CPU arch to optimize for. ex: x86_64_v2 or neoverse_v2')
+    parser.add_argument('--spack-target', default=None, help='CPU arch to optimize for. ex: x86_64_v2 or neoverse_v2')
+    parser.add_argument('--compiler-target', default=None, help='CPU arch to build compiler (may need to be lower than --spack-target)')
     parser.add_argument('versions', nargs='+', help='cvmfs versions to build')
     args = parser.parse_args()
 
     for version in args.versions:
         if version.endswith('-metaproject'):
-            build_meta(args.dest, version, checkout=args.checkout)
+            build_meta(args.dest, version,
+                checkout=args.checkout,
+                spack_target=args.spack_target,
+            )
         #elif float(version.split('-')[1][1:3]) < 4.3:
         #    build_old(args.src, args.dest, version, mirror=args.mirror)
         else:
             spack_tag = args.spack_tag
             if not spack_tag:
-                print(f"version: {version.startswith('py')}")
-                print(f"{version.split('-')[1][1:3]}")
                 if version.startswith('py') and float(version.split('-')[1][1:3]) == 4.3:
                     spack_tag = 'v0.20.0'
                 else:
-                    spack_tag = 'v0.22.1'
-            Build(args.src, args.dest, version, mirror=args.mirror, spack_tag=spack_tag, spack_target=args.spack_target)
+                    spack_tag = 'v0.23.0'
+            Build(args.src, args.dest, version,
+                mirror=args.mirror,
+                spack_tag=spack_tag,
+                spack_target=args.spack_target,
+                compiler_target=args.compiler_target,
+            )
