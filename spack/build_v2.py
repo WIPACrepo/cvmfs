@@ -223,13 +223,8 @@ class Build:
         if self.version == ['iceprod','master'] and self.sroot.is_dir():
             myprint('iceprod/master - deleting sroot '+str(self.sroot))
             shutil.rmtree(self.sroot)
-        if not os.path.isdir(self.sroot):
-            os.makedirs(self.sroot)
-
-        myprint('spack tag:', spack_tag)
-        self.spack_tag = spack_tag
-        self.spack_target = spack_target if spack_target else 'x86_64_v2'
-        os.environ['ARCH'] = self.spack_target
+        if not self.sroot.is_dir():
+            self.sroot.mkdir(parents=True)
 
         # set up spack
         self.spack_path = self.sroot / 'spack'
@@ -280,6 +275,11 @@ class Build:
             'platform_os': ret[1],
             'target': self.spack_target
         }
+        self.compiler_arch = {
+            'platform': ret[0],
+            'platform_os': ret[1],
+            'target': self.compiler_target
+        }
 
         self.setup_compiler()
         self.setup_env()
@@ -309,7 +309,7 @@ class Build:
             packages = get_packages(path)
             compiler_name = None
             for name, package in packages.items():
-                if 'gcc' in name or 'llvm' in name or 'nvhpc' in name:
+                if 'gcc' in name or 'llvm' in name:
                     compiler_name = name
                     compiler_package = package.split()[0]
             if not compiler_package:
@@ -325,7 +325,7 @@ class Build:
                 for name, package in packages.items():
                     myprint('installing', name)
                     self.fileMirror.download(package)
-                    run_cmd(cmd+package.split()+['target='+self.spack_target])
+                    run_cmd(cmd+package.split()+['target='+self.compiler_target])
         self.compiler_package = compiler_package
 
         # add compiler to spack's list of compilers
