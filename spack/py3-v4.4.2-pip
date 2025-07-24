@@ -46,7 +46,7 @@ gevent==24.11.1
 geventhttpclient==2.3.3
 greenlet==3.1.1
 h11==0.14.0
-htcondor==24.7.3
+htcondor==24.0.9
 httpcore==1.0.7
 httpx==0.28.1
 idna==3.10
@@ -80,6 +80,7 @@ jupyterlab_server==2.27.3
 jupyterlab_widgets==3.0.13
 kiwisolver==1.4.7
 lazy_loader==0.4
+lightgbm==4.5.0
 locket==1.0.0
 MarkupSafe==3.0.2
 matplotlib==3.10.0
@@ -98,6 +99,8 @@ networkx==3.4.2
 notebook==7.3.1
 notebook_shim==0.2.4
 numexpr==2.10.2
+onnxruntime==1.21.0
+onnx
 overrides==7.7.0
 pandas==2.2.3
 pandocfilters==1.5.1
@@ -110,6 +113,7 @@ prometheus_client==0.21.1
 prompt_toolkit==3.0.48
 propcache==0.2.1
 psutil==6.1.0
+psycopg2==2.9.10
 ptyprocess==0.7.0
 pure_eval==0.2.3
 py-cpuinfo==9.0.0
@@ -176,6 +180,7 @@ websocket-client==1.8.0
 widgetsnbextension==4.0.13
 wipac-dev-tools==1.13.0
 wipac-rest-tools==1.8.5
+xgboost==2.1.2
 yarl==1.18.3
 zipp==3.21.0
 zope.event==5.0
