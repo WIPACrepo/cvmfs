@@ -486,7 +486,8 @@ def build_meta(dest, version, checkout=False, spack_target=None):
 
         trunk = False
         if meta == 'icetray':
-            src_url = 'https://github.com/icecube/icetray.git'
+            src_url = f'https://{os.environ["GH_TOKEN"]}@github.com/icecube/icetray.git'
+            # src_url = 'git@github.com:icecube/icetray.git'
             if name.startswith('V'):
                 # these are old releases ported to git, and need special tag names
                 name = 'tags/releases/'+name
