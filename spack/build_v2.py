@@ -166,7 +166,7 @@ class Mirror:
 
 
 def num_cpus():
-    ret = 50
+    ret = 1
     try:
         ret = int(os.environ['CPUS'])
     except Exception:
