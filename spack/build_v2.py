@@ -183,7 +183,6 @@ def relative_to(path1, path2):
 
 
 class Build:
-
     def __init__(self, src, dest, version, mirror=None, spack_tag=None, spack_target=None, compiler_target=None):
         myprint('building version', version)
         if 'PYTHONPATH' in os.environ:
