@@ -25,6 +25,7 @@ python@3.12.5+optimizations+pythoncmd
 cmake@3.30.5
 log4cpp@1.1.4
 perl
+lcov@2.0
 
 # basic python
 py-pip@23.1.2
@@ -50,7 +51,7 @@ wget@1.24.5
 # numeric libraries
 gsl@2.8
 sprng@2.0b
-openblas@0.3.26 threads=pthreads
+openblas@0.3.27 threads=pthreads
 suite-sparse@7.8.0
 
 # core libraries
@@ -59,9 +60,11 @@ py-numpy@1.26.4
 py-pybind11@2.12.0
 py-pythran@0.16.1
 py-scipy@1.14.1
-boost@1.86.0+atomic+chrono+container+context+contract+coroutine+date_time+exception+filesystem+graph+iostreams+json+locale+log+math+nowide+numpy+program_options+python+random+regex+serialization+system+test+thread+timer+type_erasure+wave cxxstd=17 pic=True
+boost@1.86.0+atomic+chrono+container+context+contract+coroutine+date_time+exception+filesystem+graph+icu+iostreams+json+locale+log+math+nowide+numpy+program_options+python+random+regex+serialization+system+test+thread+timer+type_erasure+wave cxxstd=17 pic=True
 cppzmq@4.10.0
 json-c@0.16
+arrow@19.0.1+bz2+compute+parquet+python+snappy+tensorflow+zlib+zstd
+py-pyarrow@19.0.1+parquet
 
 # physics libraries
 cfitsio@4.4.1
@@ -84,4 +87,4 @@ geant4@11.2.2 cxxstd=17 threads=False
 lhapdf@6.5.4
 
 # icecube packages
-photospline@2.3.1
+photospline@2.4.1

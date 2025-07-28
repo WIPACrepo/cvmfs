@@ -32,6 +32,7 @@ class Photospline(CMakePackage):
     homepage = "https://github.com/IceCubeOpenSource/photospline"
     url      = "https://github.com/IceCubeOpenSource/photospline/archive/v2.0.4.tar.gz"
 
+    version("2.4.1", sha256="c8bfd2a087300f3f217cecfe3e4354be4e2a485dfc503420c8ebbffeec5adf03")
     version("2.3.1", sha256="5d8cc8b54880092721122f4498b16ab63fdfbcf84b87df1c6a7992ece7baf9fe")
     version("2.1.1", sha256="0a0dae8e1b994a35be23896982bd572fa97c617ad55a99b3da34782ad9435de8")
     version('2.0.4', sha256='0a675ffe27e1d99fe482cdd7692320d6852c11c9a63de7e710ba075989e0bfb5')
