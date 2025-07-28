@@ -11,7 +11,6 @@ class Wcslib(AutotoolsPackage):
     defined in the FITS WCS papers."""
 
     homepage = "https://www.atnf.csiro.au/people/mcalabre/WCS/wcslib/"
-
     url = "https://www.atnf.csiro.au/computing/software/wcs/WCS/wcslib-8.4.tar.bz2"
 
     license("LGPL-3.0-or-later")
