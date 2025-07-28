@@ -198,9 +198,6 @@ class Build:
         self.spack_target = spack_target if spack_target else 'x86_64_v2'
         self.compiler_target = compiler_target if compiler_target else self.spack_target
         os.environ['ARCH'] = self.spack_target
-        sroot_arch = self.spack_target
-        if self.version[0] == 'iceprod':
-            sroot_arch = None
 
         sroot_arch = self.spack_target
         if self.version[0] == 'iceprod':
