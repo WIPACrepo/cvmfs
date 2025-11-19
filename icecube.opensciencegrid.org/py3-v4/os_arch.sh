@@ -29,8 +29,8 @@ case $ARCH in
         ARCH=`awk 'BEGIN {
     while (!/flags/) if (getline < "/proc/cpuinfo" != 1) exit 1
     level = 2
-    if (/avx/&&/avx2/&&/bmi1/&&/bmi2/&&/f16c/&&/fma/&&/abm/&&/movbe/&&/xsave/) level = 3
-    if (level == 3 && /avx512f/&&/avx512bw/&&/avx512cd/&&/avx512dq/&&/avx512vl/) level = 4
+    # if (/avx/&&/avx2/&&/bmi1/&&/bmi2/&&/f16c/&&/fma/&&/abm/&&/movbe/&&/xsave/) level = 3
+    # if (level == 3 && /avx512f/&&/avx512bw/&&/avx512cd/&&/avx512dq/&&/avx512vl/) level = 4
     print "x86_64_v" level
     exit level + 1
 }'`
