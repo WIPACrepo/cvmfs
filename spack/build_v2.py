@@ -166,7 +166,7 @@ class Mirror:
 
 
 def num_cpus():
-    ret = 1
+    ret = 50
     try:
         ret = int(os.environ['CPUS'])
     except Exception:
@@ -374,14 +374,17 @@ spack:
 """
         self.packages = get_packages(os.path.join(os.path.dirname(__file__), *self.version))
         for name, package in self.packages.items():
-            if self.spack_target == 'aarch64' and name == 'fftw':
+            if (self.spack_target in ["neoverse_n1", "neoverse_v1", "neoverse_v2", "neoverse_n2", "aarch64", "arm", "armv8.1a", "armv8.2a", "armv8.3a", "armv8.4a", "armv8.5a", "armv9.0a"]) and name == 'fftw':
                 # FFTW: libquadmath is not avaliable on ARM
                 package = package.replace(',quad','')
 
             env_yaml += f'  - {package}\n'
 
         env_yaml += f"""
-  view: false
+  view: false 
+    # default:
+    #   root: {str(self.sroot / 'default')}
+    #   select: ['%{self.compiler_package}']
   concretizer:
     targets:
       granularity: generic
@@ -390,14 +393,14 @@ spack:
     duplicates:
       strategy: none
   packages:
-    all:
-      require: '"""
-        if self.compiler_package:
-            env_yaml += f'%{self.compiler_package} '
-        env_yaml += f"""arch={self.spack_arch["platform"]}-{self.spack_arch["platform_os"]}-{self.spack_arch["target"]}'"""
+    all: 
+      require: 
+        - {self.spack_arch["target"]}
+        - '%{self.compiler_package}'"""
         if self.compiler_package:
             env_yaml += f"""
-      compiler:: [{self.compiler_package}]"""
+      # compiler: [{self.compiler_package}]
+      # target: [{self.spack_arch["target"]}]"""
         env_path = self.spack_path / 'var' / 'spack' / 'environments' / env_name / 'spack.yaml'
         env_path.parent.mkdir(parents=True, exist_ok=True)
         with open(env_path, 'w') as f:
@@ -407,7 +410,7 @@ spack:
         spack_env = str(self.spack_path / 'share' / 'spack' / 'setup-env.sh')
         cmds = [
             f'spack env activate {env_name}',
-            'spack concretize -f',
+            f'spack concretize -f -j {num_cpus()}',
             f'spack install -y -v --fail-fast -j {num_cpus()}',
         ]
         run_cmd_source_env(spack_env, cmds)
@@ -430,8 +433,8 @@ spack:
             myprint('adding', name, 'to view')
             view_cmd = cmd+package.split()[:1]
             if self.compiler_package:
-                view_cmd[-1] += '%'+self.compiler_package
-            view_cmd[-1] += f' arch={self.spack_arch["platform"]}-{self.spack_arch["platform_os"]}-{self.spack_arch["target"]}'
+                view_cmd[-1] += ' %'+self.compiler_package
+            # view_cmd[-1] += f' target={self.spack_arch["target"]}'
             run_cmd(view_cmd)
 
     def setup_python(self):
@@ -483,7 +486,8 @@ def build_meta(dest, version, checkout=False, spack_target=None):
 
         trunk = False
         if meta == 'icetray':
-            src_url = 'https://github.com/icecube/icetray.git'
+            src_url = f'https://{os.environ["GH_TOKEN"]}@github.com/icecube/icetray.git'
+            # src_url = 'git@github.com:icecube/icetray.git'
             if name.startswith('V'):
                 # these are old releases ported to git, and need special tag names
                 name = 'tags/releases/'+name
