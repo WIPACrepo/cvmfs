@@ -41,7 +41,7 @@ py-virtualenv@20.22.0
 # file transfer tools
 curl@8.0.1
 wget@1.21.3
-#globus-toolkit@6.0.1558548600 gram5=False myproxy=False
+globus-toolkit@6.0.1558548600 gram5=False myproxy=False
 #gsoap@2.8.55
 #voms@2.1.0-rc2
 #uberftp@2_8
@@ -58,7 +58,7 @@ py-numpy@1.24.3
 py-pybind11@2.10.1
 py-pythran@0.12.2
 py-scipy@1.10.1
-boost@1.82.0+atomic+chrono+container+context+contract+coroutine+date_time+exception+filesystem+graph+icu+iostreams+json+locale+log+math+nowide+numpy+program_options+python+random+regex+serialization+system+test+thread+timer+type_erasure+wave cxxstd=17 pic=True
+boost@1.82.0+atomic+chrono+container+context+contract+coroutine+date_time+exception+filesystem+graph+iostreams+json+locale+log+math+nowide+numpy+program_options+python+random+regex+serialization+system+test+thread+timer+type_erasure+wave cxxstd=17 pic=True
 cppzmq@4.9.0
 json-c@0.16
 
@@ -73,7 +73,7 @@ nlopt@2.7.1 cxx=True python=True
 # physics applications
 erfa@2.0.0
 pal@0.9.8
-wcslib@8.1 cfitsio=True
+wcslib@7.12 cfitsio=True
 healpix@3.82
 root@6.28.02~davix~examples+fftw+fits~gdml~opengl~pythia6~tbb~unuran~vdt~x cxxstd=17
 clhep@2.4.6.4 cxxstd=17
