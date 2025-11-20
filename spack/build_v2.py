@@ -559,8 +559,12 @@ if __name__ == '__main__':
             if not spack_tag:
                 if version.startswith('py') and float(version.split('-')[1][1:3]) == 4.3:
                     spack_tag = 'v0.20.0'
-                else:
+                elif version.startswith('py') and float(version.split('-')[1][1:3]) == 4.4:
                     spack_tag = 'v0.23.0'
+                elif version.startswith('py') and float(version.split('-')[1][1:3]) == 4.5:
+                    spack_tag = 'v1.1.0'
+                else:
+                    spack_tag = 'v0.20.0
             Build(args.src, args.dest, version,
                 mirror=args.mirror,
                 spack_tag=spack_tag,
