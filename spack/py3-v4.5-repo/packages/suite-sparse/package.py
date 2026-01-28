@@ -17,6 +17,7 @@ class SuiteSparse(Package):
 
     license("Apache-2.0")
 
+    version("7.12.1", sha256="794ae22f7e38e2ac9f5cbb673be9dd80cdaff2cdf858f5104e082694f743b0ba")
     version("7.8.0", sha256="8ea989f36be3646d0b0eecb06218698766ca06256c0de15a64350e993bf5c5f9")
     version("7.3.1", sha256="b512484396a80750acf3082adc1807ba0aabb103c2e09be5691f46f14d0a9718")
     version("7.2.1", sha256="304e959a163ff74f8f4055dade3e0b5498d9aa3b1c483633bb400620f521509f")
