@@ -557,14 +557,14 @@ if __name__ == '__main__':
         else:
             spack_tag = args.spack_tag
             if not spack_tag:
-                if version.startswith('py') and float(version.split('-')[1][1:3]) == 4.3:
+                if version.startswith('py') and float(version.split('-')[1][1:4]) == 4.3:
                     spack_tag = 'v0.20.0'
-                elif version.startswith('py') and float(version.split('-')[1][1:3]) == 4.4:
+                elif version.startswith('py') and float(version.split('-')[1][1:4]) == 4.4:
                     spack_tag = 'v0.23.0'
-                elif version.startswith('py') and float(version.split('-')[1][1:3]) == 4.5:
-                    spack_tag = 'v1.1.0'
+                elif version.startswith('py') and float(version.split('-')[1][1:4]) == 4.5:
+                    spack_tag = 'v1.1.1'
                 else:
-                    spack_tag = 'v0.20.0
+                    spack_tag = 'v0.20.0'
             Build(args.src, args.dest, version,
                 mirror=args.mirror,
                 spack_tag=spack_tag,
