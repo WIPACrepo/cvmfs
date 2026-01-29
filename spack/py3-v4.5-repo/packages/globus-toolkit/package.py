@@ -3,8 +3,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack import *
-
+from spack.package import *
 
 class GlobusToolkit(AutotoolsPackage):
     """The Globus Toolkit is an open source software toolkit used for building
