@@ -396,7 +396,7 @@ spack:
       require:
         - {self.spack_arch["target"]}"""
         if self.compiler_package:
-            env_yaml += f"        - '%{self.compiler_package}'"
+            env_yaml += f"\n        - '%{self.compiler_package}'"
         env_path = self.spack_path / 'var' / 'spack' / 'environments' / env_name / 'spack.yaml'
         env_path.parent.mkdir(parents=True, exist_ok=True)
         with open(env_path, 'w') as f:
