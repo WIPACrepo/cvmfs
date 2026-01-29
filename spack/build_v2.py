@@ -183,7 +183,7 @@ def relative_to(path1, path2):
 
 
 class Build:
-    def __init__(self, src, dest, version, mirror=None, spack_tag=None, spack_target=None, compiler_target=None):
+    def __init__(self, src, dest, version, mirror=None, spack_tag=None, spack_target=None, compiler_target=None, builtin_packages_tag=None):
         myprint('building version', version)
         if 'PYTHONPATH' in os.environ:
             del os.environ['PYTHONPATH']
@@ -268,6 +268,8 @@ class Build:
             else:
                 if mirror not in out:
                     run_cmd([self.spack_bin, 'mirror', 'add', 'remote_server', mirror])
+        if builtin_packages_tag:
+            run_cmd([self.spack_bin, 'repo', 'update', '-b', builtin_packages_tag, 'builtin'])
 
         ret = run_cmd_output([self.spack_bin, 'arch'])[1].split('-')
         self.spack_arch = {
@@ -540,6 +542,7 @@ if __name__ == '__main__':
     parser.add_argument('--spack-tag', default=None, help='spack tag')
     parser.add_argument('--spack-target', default=None, help='CPU arch to optimize for. ex: x86_64_v2 or neoverse_v2')
     parser.add_argument('--compiler-target', default=None, help='CPU arch to build compiler (may need to be lower than --spack-target)')
+    parser.add_argument('--builtin-packages-tag', default=None, help='spack builtin packages repo tag')
     parser.add_argument('versions', nargs='+', help='cvmfs versions to build')
     args = parser.parse_args()
 
@@ -567,4 +570,5 @@ if __name__ == '__main__':
                 spack_tag=spack_tag,
                 spack_target=args.spack_target,
                 compiler_target=args.compiler_target,
+                builtin_packages_tag=args.builtin_packages_tag
             )
