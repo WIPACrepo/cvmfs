@@ -30,7 +30,7 @@ class Cdk(AutotoolsPackage):
     homepage = "https://invisible-island.net/cdk/"
     url      = "https://invisible-island.net/archives/cdk/cdk-5.0-20160131.tgz"
 
-    version("5.0-20250526", sha256="8c5cfbbf6e1d21f248e1850ebe40310fd28b9587f2991bb95d39976214127a3a")
+    version("5.0-20250526", sha256="46bb68441e698a7b1f642e2564968a7700afef0386442afd5cf2e7b296d30ee5")
     version("5.0-20240619", sha256="436f14e8a756e63ddff5927eef70c9dcf71e4c59d56587e26302a4f726a19eff")
     version("5.0-20230201", sha256="a3127b59fe505f5e898daa3dd15b0cf724a1274ce68165b779be2f29d4c4f2f6")
     version('5.0-20180306', '3b52823d8a78c6d27d4be8839edd279e')
