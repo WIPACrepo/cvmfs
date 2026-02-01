@@ -55,6 +55,7 @@ class Healpix(Package):
 
     variant('cxx', default=True, description='Build cxx library')
 
+
     depends_on('m4', when='+cxx @:3.59')
     depends_on('libtool', when='+cxx @:3.59')
     depends_on('autoconf', when='+cxx @:3.59')

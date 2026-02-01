@@ -22,17 +22,19 @@
 # License along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##############################################################################
+from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
+
 from spack.package import *
 import os
 import glob
 
-class Sprng(MakefilePackage):
+class Sprng(AutotoolsPackage):
     """The Scalable Parallel Random Number Generators Library."""
 
     homepage = "http://www.sprng.org/sprng.html"
     url      = "http://www.sprng.org/Version2.0/sprng2.0b.tar.gz"
 
-    version('2.0b', 'cf825f9333d07acdcaa599f29f281b8d')
+    version('2.0b', sha256='8985d7cae4f20f57889bc7ba11dfed226a02057d396731f4a5cc174704131ac2')
 
     variant('pic', default=True, description='Build PIC libraries')
 

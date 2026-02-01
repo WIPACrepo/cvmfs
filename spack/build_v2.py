@@ -235,6 +235,9 @@ class Build:
         os.environ['SPACK_ROOT'] = str(self.spack_path)
         self.spack_bin = str(self.spack_path / 'bin' / 'spack')
 
+        if builtin_packages_tag:
+            run_cmd([self.spack_bin, 'repo', 'update', '-b', builtin_packages_tag, 'builtin'])
+
         # add custom repo
         repo_path = os.path.join(os.path.dirname(__file__), *self.version)+'-repo'
         if (not os.path.exists(repo_path)) and len(self.version) == 2 and '.' in self.version[1]:
@@ -252,7 +255,8 @@ class Build:
             shutil.rmtree(icecube_repo_path)
         copy_src(repo_path, icecube_repo_path)
         ret,out,err = run_cmd_output([self.spack_bin, 'repo', 'list', '--scope', 'site'])
-        if any(line.startswith('repo ') for line in out.split('\n')):
+        print(ret, out, err)
+        if any("repo " in line for line in out.split('\n')):
             run_cmd([self.spack_bin, 'repo', 'rm', '--scope', 'site', 'repo'])
         run_cmd([self.spack_bin, 'repo', 'add', '--scope', 'site', icecube_repo_path])
 
@@ -268,8 +272,7 @@ class Build:
             else:
                 if mirror not in out:
                     run_cmd([self.spack_bin, 'mirror', 'add', 'remote_server', mirror])
-        if builtin_packages_tag:
-            run_cmd([self.spack_bin, 'repo', 'update', '-b', builtin_packages_tag, 'builtin'])
+
 
         ret = run_cmd_output([self.spack_bin, 'arch'])[1].split('-')
         self.spack_arch = {
@@ -393,10 +396,36 @@ spack:
       strategy: none
   packages:
     all:
-      require:
-        - {self.spack_arch["target"]}"""
+      target: 
+      - {self.spack_arch["target"]}"""
+        # - cflags=='-std=gnu17'
+        # the old method is deemed incorrect by spack devs
         if self.compiler_package:
-            env_yaml += f"\n        - '%{self.compiler_package}'"
+            env_yaml += f"""
+    c:
+      require:
+      # - cflags=='-std=gnu17'
+      - {self.compiler_package}
+    cxx:
+      require:
+      - {self.compiler_package}
+    fortran:
+      require:
+      - {self.compiler_package}
+    gcc:
+      externals:
+      - spec: gcc@15.2.0 languages:='c,c++,fortran'
+        prefix: /scratch/briedel/cvmfs/icecube.opensciencegrid.org/py3-v4.5.0/RHEL_9_x86_64_v2/spack/opt/spack/linux-x86_64_v2/gcc-15.2.0-ikgl5fxri5pewm22z6bwgpxi7mmzyirk
+        extra_attributes:
+          compilers:
+            c: /scratch/briedel/cvmfs/icecube.opensciencegrid.org/py3-v4.5.0/RHEL_9_x86_64_v2/spack/opt/spack/linux-x86_64_v2/gcc-15.2.0-ikgl5fxri5pewm22z6bwgpxi7mmzyirk/bin/gcc
+            cxx: /scratch/briedel/cvmfs/icecube.opensciencegrid.org/py3-v4.5.0/RHEL_9_x86_64_v2/spack/opt/spack/linux-x86_64_v2/gcc-15.2.0-ikgl5fxri5pewm22z6bwgpxi7mmzyirk/bin/g++
+            fortran: /scratch/briedel/cvmfs/icecube.opensciencegrid.org/py3-v4.5.0/RHEL_9_x86_64_v2/spack/opt/spack/linux-x86_64_v2/gcc-15.2.0-ikgl5fxri5pewm22z6bwgpxi7mmzyirk/bin/gfortran
+          flags:
+            cflags: -std=gnu17"""
+    # gmake:
+    #   compiler_flags: 
+    #     cflags: '-std=gnu17'
         env_path = self.spack_path / 'var' / 'spack' / 'environments' / env_name / 'spack.yaml'
         env_path.parent.mkdir(parents=True, exist_ok=True)
         with open(env_path, 'w') as f:
@@ -406,7 +435,9 @@ spack:
         spack_env = str(self.spack_path / 'share' / 'spack' / 'setup-env.sh')
         cmds = [
             f'spack env activate {env_name}',
-            'spack concretize -f',
+            'spack repo list',
+            'spack concretize -f -U',
+            'cat /scratch/briedel/cvmfs/icecube.opensciencegrid.org/py3-v4.5.0/RHEL_9_x86_64_v2/spack/etc/spack/site/packages.yaml',
             f'spack install -y -v --fail-fast -j {num_cpus()}',
         ]
         run_cmd_source_env(spack_env, cmds)

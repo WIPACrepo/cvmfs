@@ -16,6 +16,8 @@ class Cfitsio(AutotoolsPackage):
 
     license("custom")
 
+    version("4.6.3", sha256="fad44fff274fdda5ffcc0c0fff3bc3c596362722b9292fc8944db91187813600")
+    version("4.5.0", sha256="e4854fc3365c1462e493aa586bfaa2f3d0bb8c20b75a524955db64c27427ce09")
     version("4.4.1", sha256="66a1dc3f21800f9eeabd9eac577b91fcdd9aabba678fbba3b8527319110d1d25")
     version("4.3.0", sha256="fdadc01d09cf9f54253802c5ec87eb10de51ce4130411415ae88c30940621b8b")
     version("4.2.0", sha256="eba53d1b3f6e345632bb09a7b752ec7ced3d63ec5153a848380f3880c5d61889")
@@ -31,6 +33,8 @@ class Cfitsio(AutotoolsPackage):
 
     variant("bzip2", default=True, description="Enable bzip2 support")
     variant("shared", default=True, description="Build shared libraries")
+
+    depends_on("c", type="build")
 
     depends_on("curl")
     depends_on("bzip2", when="+bzip2")

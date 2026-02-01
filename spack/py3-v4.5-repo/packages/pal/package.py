@@ -2,6 +2,7 @@
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
+from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 
 from spack.package import *
 
@@ -18,6 +19,10 @@ class Pal(AutotoolsPackage):
     license("LGPL-3.0-only")
 
     version("0.9.8", sha256="191fde8c4f45d6807d4b011511344014966bb46e44029a4481d070cd5e7cc697")
+
+    # This is reequired for spack to pick up the package
+    depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build")  # generated
 
     depends_on("sofa-c")
     depends_on("erfa")

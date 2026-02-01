@@ -2,7 +2,7 @@
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-
+from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 
 from spack.package import *
 
@@ -18,3 +18,6 @@ class Log4cpp(AutotoolsPackage):
 
     version("1.1.4", sha256="696113659e426540625274a8b251052cc04306d8ee5c42a0c7639f39ca90c9d6")
     version("1.1.3", sha256="2cbbea55a5d6895c9f0116a9a9ce3afb86df383cd05c9d6c1a4238e5e5c8f51d")
+
+    depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build")  # generated
