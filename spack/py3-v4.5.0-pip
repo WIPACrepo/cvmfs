@@ -160,7 +160,6 @@ sphinxcontrib-jsmath==1.0.1
 sphinxcontrib-qthelp==2.0.0
 sphinxcontrib-serializinghtml==2.0.0
 stack-data==0.6.3
-tables==3.10.1
 terminado==0.18.1
 tifffile==2024.12.12
 tinycss2==1.4.0
