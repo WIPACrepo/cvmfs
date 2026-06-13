@@ -138,7 +138,7 @@ pyerfa==2.0.1.5
 pyjwt==2.10.1
 pymongo==4.10.1
 pyrsistent==0.20.0
-python-dateutil-2.9.0.post0
+python-dateutil==2.9.0.post0
 python-json-logger==3.2.1
 python-rapidjson==1.20
 pytz==2024.2
