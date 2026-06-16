@@ -1,2 +1,2 @@
 # make install compatible with Alma10
-ncurses@6.4
+ncurses@6.4~termlib
