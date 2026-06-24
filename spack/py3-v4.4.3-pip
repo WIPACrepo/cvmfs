@@ -191,8 +191,8 @@ webcolors==24.11.1
 webencodings==0.5.1
 websocket-client==1.8.0
 widgetsnbextension==4.0.13
-wipac-dev-tools==1.13.0
-wipac-rest-tools==1.8.5
+wipac-dev-tools==1.21.0
+wipac-rest-tools==1.13.5
 xgboost==2.1.2
 yarl==1.18.3
 zipp==3.21.0
