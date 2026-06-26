@@ -59,7 +59,7 @@ def run_cmd_source_env(source_script, lines):
         subprocess.check_call(f'bash {script}', shell=True)
 
 
-def get_sroot(dir_name):
+def get_sroot(dir_name) -> Path:
     """Get the SROOT from dir/os_arch.sh"""
     code,output,error = run_cmd_output(os.path.join(dir_name,'os_arch.sh'), shell=True)
     if code != 0:
@@ -219,6 +219,7 @@ class Build:
             sroot = get_sroot(str(srootbase))
         self.srootbase = srootbase
         self.sroot = sroot
+        self.sroot_os = '_'.join(sroot.name.split('_')[:2])
 
         if self.version == ['iceprod','master'] and self.sroot.is_dir():
             myprint('iceprod/master - deleting sroot '+str(self.sroot))
@@ -363,7 +364,26 @@ class Build:
         run_cmd([self.spack_bin, 'compiler', 'add', '--scope', 'site', loc])
 
     def setup_env(self):
-        # create spack env
+        """Create spack env and build it"""
+        # get base packages
+        path = Path(os.path.abspath(os.path.join(os.path.dirname(__file__), *self.version)))
+        self.packages = get_packages(str(path))
+
+        # get os-specific or arch-specific packages
+        path_os = path.parent / (path.name + '-extras-' + str(self.sroot_os))
+        if path_os.is_file():
+            myprint('spack env adding', path_os.name)
+            self.packages.update(get_packages(str(path_os)))
+        path_arch = path.parent / (path.name + '-extras-' + '_'.join(self.sroot.name.split('_')[2:]))
+        if path_arch.is_file():
+            myprint('spack env adding', path_arch.name)
+            self.packages.update(get_packages(str(path_arch)))
+        path_os_arch = path.parent / (path.name + '-extras-' + str(self.sroot.name))
+        if path_os_arch.is_file():
+            myprint('spack env adding', path_os_arch.name)
+            self.packages.update(get_packages(str(path_os_arch)))
+
+        # create spack env config
         env_name = self.sroot.name.replace('.','_')
         env_yaml = """# This is a Spack Environment file.
 #
@@ -372,7 +392,6 @@ class Build:
 spack:
   specs:
 """
-        self.packages = get_packages(os.path.join(os.path.dirname(__file__), *self.version))
         for name, package in self.packages.items():
             if (self.spack_target in ["neoverse_n1", "neoverse_v1", "neoverse_v2", "neoverse_n2", "aarch64", "arm", "armv8.1a", "armv8.2a", "armv8.3a", "armv8.4a", "armv8.5a", "armv9.0a"]) and name == 'fftw':
                 # FFTW: libquadmath is not avaliable on ARM
